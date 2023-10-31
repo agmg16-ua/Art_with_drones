@@ -4,6 +4,42 @@ from confluent_kafka import Consumer, Producer, KafkaError
 
 import EscucharDrone
 
+import socket
+
+class EscucharDrones(threading.Thread):
+    def __init__(self, puerto):
+        super().__init__()
+        self.puerto = puerto
+        self.detener = False
+
+    def detener(self):
+        self.detener = True
+
+    def run(self):
+        try:
+            # Creo el servidor a la espera de drones que me llamen por ahí
+            s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s_socket.bind(('localhost', self.puerto))
+            s_socket.listen()
+
+            # Me mantengo en escucha de nuevos drones mientras no quiera detener el Engine
+            while not self.detener:
+                print("Esperando drone...")
+                conn, addr = s_socket.accept()
+
+                try:
+                    escuchar = EscucharDrone(conn)
+                    escuchar.start()
+                except Exception as e:
+                    print("Error:", e)
+
+            # Cierro el servidor
+            s_socket.close()
+
+        except Exception as e:
+            print("Error:", e)
+
+
 class Drone:
     def __init__(self, id):
         self.id = id
