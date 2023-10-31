@@ -94,10 +94,10 @@ if __name__ == "__main__":
     print(f"Escuchando puerto {puerto}")
     print(f"Maximo de drones establecido en {max_drones} drones")
 
-    escuchar_drones = threading.Thread(target=EscucharDrone())  # No se ha proporcionado el código para esta parte
+    escuchar_drones = EscucharDrone(target=run)  # No se ha proporcionado el código para esta parte
     escuchar_drones.start()
 
-    figuras = None  # No se ha proporcionado el código para esta parte
+    figuras = open('figuras.txt', 'r')  # No se ha proporcionado el código para esta parte
     while not figuras.exists():
         time.sleep(1)
 
