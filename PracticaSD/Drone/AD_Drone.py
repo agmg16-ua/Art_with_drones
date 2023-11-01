@@ -9,15 +9,16 @@ class EscucharDestino:
         self.broker = broker
         self.id = id
         self.posicionFin = [None, None]
-        self.posicionActual = [None, None]
+        self.posicionActual = [0, 0]
         self.estado = "Rojo"  # En movimiento "Rojo" y en la posición final "Verde"
+        self.mapa = ""
 
     #Me uno a los topics con los roles correspondientes a Drone
     def consumidorDestino(self):
         # Configura las propiedades del consumidor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'group.id': 'grupo_2',
+            'group.id': 'grupo_' + str(self.id),
             'auto.offset.reset': 'latest'  # Comienza desde el inicio del topic
         }
 
@@ -30,7 +31,7 @@ class EscucharDestino:
         # Configura las propiedades del consumidor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'group.id': 'grupo_2',
+            'group.id': 'grupo_' + str(self.id),
             'auto.offset.reset': 'latest'  # Comienza desde el inicio del topic
         }
 
@@ -64,18 +65,26 @@ class EscucharDestino:
                         break
                     else:
                         print('Error al recibir mensaje: {}'.format(mensaje.error()))
-
+                        break
                 else:
                     # Procesa el mensaje
                     print('Mensaje recibido: {}'.format(mensaje.value()))
+                    print(mensaje.value())
+                    valores = mensaje.value().decode('utf-8').split()
 
-    def escucharEstadoMapa(self, consumidor, productor):
+                    if int(valores[0]) == self.id:
+                        self.posicionFin[0] = int(valores[1])
+                        self.posicionFin[1] = int(valores[2])
+                        break
+
+    def escucharEstadoMapa(self, consumidor):
         topic = "mapa"
         consumidor.subscribe(topics=[topic])
 
-        while self.posicionActual[0] != self.posicionFin[0] and self.posicionActual[1] != self.posicionFin[1]:
+        while self.estado == "Rojo":
             mensaje = consumidor.poll(1.0)
-            while mensaje is not None:
+            
+            if mensaje is not None:
                 if mensaje.error():
                     if mensaje.error().code() == KafkaError._PARTITION_EOF:
                         print('No más mensajes en la partición')
@@ -84,35 +93,33 @@ class EscucharDestino:
                 else:
                     # Procesa el mensaje
                     print('Mensaje recibido: {}'.format(mensaje.value()))
-                mensaje = consumidor.poll(1.0)
-
-            self.mover()
-            self.enviarPosicion(productor)
-            time.sleep(3)
+                    self.mapa = str(mensaje.value())
 
     def enviarPosicion(self, productor):
         topic = "posiciones"
 
-        productor.produce(topic, value=f"{self.posicionActual[0]} {self.posicionActual[1]}")
-        time.sleep(3)
+        print(f"{self.id} {self.posicionActual[0]} {self.posicionActual[1]}")
+        productor.produce(topic, value=f"{self.id} {self.posicionActual[0]} {self.posicionActual[1]}")
+        productor.flush()
 
     #Operaciones con el mapa
-    def mover(self):
-        if self.estado == "Verde":
-            return
+    def mover(self,productor):
+        while self.estado != "Verde":
+            if self.posicionFin[0] > self.posicionActual[0]:
+                self.posicionActual[0] += 1
+            elif self.posicionFin[0] < self.posicionActual[0]:
+                self.posicionActual[0] -= 1
 
-        if self.posicionFin[0] > self.posicionActual[0]:
-            self.posicionActual[0] += 1
-        elif self.posicionFin[0] < self.posicionActual[0]:
-            self.posicionActual[0] -= 1
+            if self.posicionFin[1] > self.posicionActual[1]:
+                self.posicionActual[1] += 1
+            elif self.posicionFin[1] < self.posicionActual[1]:
+                self.posicionActual[1] -= 1
 
-        if self.posicionFin[1] > self.posicionActual[1]:
-            self.posicionActual[1] += 1
-        elif self.posicionFin[1] < self.posicionActual[1]:
-            self.posicionActual[1] -= 1
+            if self.posicionFin[0] == self.posicionActual[0] and self.posicionFin[1] == self.posicionActual[1]:
+                self.estado = "Verde"
 
-        if self.posicionFin[0] == self.posicionActual[0] and self.posicionFin[1] == self.posicionActual[1]:
-            self.estado = "Verde"
+            self.enviarPosicion(productor);
+            time.sleep(1)
 
     def run(self):
         try:
@@ -122,8 +129,11 @@ class EscucharDestino:
 
             destino = self.escucharPorKafkaDestino(consumidorDestino)
 
-            while not destino:
-                pass
+            dronMovimiendose = threading.Thread(target=self.mover,args=(productorPosicion,))
+            dronMovimiendose.start()
+
+            dronEscuchaMapa = threading.Thread(target=self.escucharEstadoMapa,args=(consumidorMapa,))
+            dronEscuchaMapa.start()
 
             opcionAux = -1
             while opcionAux != 2:
@@ -132,7 +142,7 @@ class EscucharDestino:
 
                 opcionAux = int(input())
                 if opcionAux == 1:
-                    self.escucharEstadoMapa(consumidorMapa, productorPosicion)
+                    print(self.mapa)
 
         except Exception as e:
             print("Error:", e)
@@ -148,23 +158,6 @@ class AD_Drone:
 
     def get_id(self):
         return self.id
-
-    def mover(self):
-        if self.estado == "Verde":
-            return
-
-        if self.posicionFin[0] > self.posicionActual[0]:
-            self.posicionActual[0] += 1
-        elif self.posicionFin[0] < self.posicionActual[0]:
-            self.posicionActual[0] -= 1
-
-        if self.posicionFin[1] > self.posicionActual[1]:
-            self.posicionActual[1] += 1
-        elif self.posicionFin[1] < self.posicionActual[1]:
-            self.posicionActual[1] -= 1
-
-        if self.posicionFin[0] == self.posicionActual[0] and self.posicionFin[1] == self.posicionActual[1]:
-            self.estado = "Verde"
 
     def registrarse(self, ip, puerto):
         try:
@@ -211,6 +204,7 @@ class AD_Drone:
             self.escribe_socket(skcliente, cadena)
 
             inclusion = self.lee_socket(skcliente)
+            print(inclusion)
             dron = inclusion.split(" ")
             print(dron)
             if dron[0] == "aceptado":

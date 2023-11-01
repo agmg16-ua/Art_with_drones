@@ -27,9 +27,8 @@ class EscucharDrone(threading.Thread):
                     palabras = linea.split(" ")
                     token_aux = palabras[0]
                     id_aux = palabras[1]
-                    print(palabras)
                     if token_aux == token and id_aux == id:
-                        return True
+                        return True,palabras[2]
         except Exception as e:
             print(f"Error: {e}")
             return False
@@ -43,10 +42,10 @@ class EscucharDrone(threading.Thread):
         try:
             token_id = self.lee_socket(token_id)
             palabras = token_id.split(" ")
-            existe = self.autenticar(palabras[0],palabras[1])
+            existe,id = self.autenticar(palabras[0],palabras[1])
 
             if existe:
-                self.escribe_socket("aceptado " + str(palabras[2]))
+                self.escribe_socket("aceptado " + id)
             else:
                 self.escribe_socket("denegado")
         except Exception as e:

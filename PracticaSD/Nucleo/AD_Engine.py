@@ -62,8 +62,10 @@ class Drone:
 class AD_Engine:
 
     def __init__(self):
+        #Formato de cada drone añadido: [id,[posFinX,posFinY]]
         self.drones = []
         self.figuras = []
+        self.dronesActuales = []
 
     #Me conecto a cada topic con el rol correspondiente
     def productor_destinos(self, broker):
@@ -90,7 +92,7 @@ class AD_Engine:
         # Configura las propiedades del consumidor
         config = {
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'group.id': 'grupo_2',
+            'group.id': 'grupo_9',
             'auto.offset.reset': 'latest'  # Comienza desde el inicio del topic
         }
 
@@ -101,48 +103,47 @@ class AD_Engine:
     #Operaciones en kafka
     def enviar_por_kafka_destinos(self, productor):
         topic = "destino"
-        #Selecciono la primera figura y la elimino del vector
-        figura = self.figuras[0]
-        del self.figuras[0]
 
-        #Envio el mensaje con la id de cada drone y con sus posiciones destino
-        print(figura)
-        for drone in figura[1]:
-            pos = drone[1].split(',')
+        for drone in self.drones:
+            pos = drone[1]
             mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
             productor.produce(topic, value=mensaje)
-            print(mensaje)
-
-        # Espera a que el mensaje se envíe
-        productor.flush()
-        time.sleep(3)
+            productor.flush()
 
     def enviar_mapa(self, productor):
         topic = "mapa"
-        mensaje = "El mapita"
+        mensaje = "El mapita: " + str(self.drones) + " " + str(self.dronesActuales)
         productor.produce(topic, value=mensaje)
-
-        # Espera a que el mensaje se envíe
         productor.flush()
-        time.sleep(3)
 
     def escuchar_posicion_drones(self, consumidor):
         topic = "posiciones"
         consumidor.subscribe(topics=[topic])
-        
-        mensaje = consumidor.poll(1.0)
-        while mensaje is not None:
-            if mensaje.error():
-                if mensaje.error().code() == KafkaError._PARTITION_EOF:
-                    print('No más mensajes en la partición')
-                else:
-                    print('Error al recibir mensaje: {}'.format(mensaje.error()))
-            else:
-                # Procesa el mensaje
-                print('Mensaje recibido: {}'.format(mensaje.value()))
-            mensaje = consumidor.poll(1.0)
 
-        time.sleep(3)
+        while not self.figura_completada():
+            mensaje = consumidor.poll(1.0)
+            if mensaje is not None:
+                if mensaje.error():
+                    if mensaje.error().code() == KafkaError._PARTITION_EOF:
+                        print('No más mensajes en la partición')
+                    else:
+                        print('Error al recibir mensaje: {}'.format(mensaje.error()))
+                else:
+                    # Procesa el mensaje
+                    print('Mensaje recibido: {}'.format(mensaje.value()))
+                    valores = mensaje.value().decode('utf-8').split()
+                    aux = [int(valores[0]),[int(valores[1]),int(valores[2])]]
+
+                    existe = False
+                    if len(self.dronesActuales) == 0:
+                        self.dronesActuales.append(aux)
+
+                    for dron in self.dronesActuales:
+                        if dron[0] == aux[0]:
+                            dron[1] = aux[1]
+                            existe = True
+                    if existe == False:
+                        self.dronesActuales.append(aux)
 
     #Leo las figuras que tenga el archivo Figuras.json y las almaceno en un vector
     def leer_figuras(self):
@@ -159,13 +160,17 @@ class AD_Engine:
             for drone in figura['Drones']:
                 id_drone = drone['ID']
                 posicion = drone['POS']
-                drones.append([id_drone, posicion])
-
+                pos = posicion.split(',')
+                drones.append([id_drone, [int(pos[0]),int(pos[1])]])
             self.figuras.append([nombre_figura, drones])
 
         # Ahora, 'resultados' contendrá los datos en el formato deseado
         print(self.figuras)
         return True
+
+    #Veo si la figura está completada o no
+    def figura_completada(self):
+        return self.dronesActuales == self.drones
 
     #Función encargada de iniciar el espectaculo, se activa cuando
     def start(self, productor_destinos, productor_mapa, consumidor):
@@ -176,9 +181,15 @@ class AD_Engine:
                     hay_figura = False
                 else:
                     hay_figura = True
-                    self.enviar_por_kafka_destinos(productor_destinos)
-                    self.escuchar_posicion_drones(consumidor_posiciones)
-                    self.enviar_mapa(productor_mapa)
+                    self.drones = self.figuras[0][1]
+
+                    posicionesDrones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor,))
+                    posicionesDrones.start()
+
+                    while not self.figura_completada():
+                        self.enviar_por_kafka_destinos(productor_destinos)
+                        self.enviar_mapa(productor_mapa)
+                    del self.figura[0]
         except Exception as e:
             print(f"Error en Engine: {e}")
 
