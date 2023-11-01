@@ -117,7 +117,7 @@ class AD_Engine:
         productor.flush()
         time.sleep(3)
 
-    def enviar_mapa(self, productor):
+    def enviar_mapa(self, productor): #FALTA AÑADIR EL MAPA
         topic = "mapa"
         mensaje = "El mapita"
         productor.produce(topic, value=mensaje)
@@ -168,7 +168,7 @@ class AD_Engine:
         return True
 
     #Función encargada de iniciar el espectaculo, se activa cuando
-    def start(self, productor_destinos, productor_mapa, consumidor):
+    def start(self, productor_destinos, productor_mapa, consumidor): #FALTA VOVLER A COMPROBAR FIGURAS
         hay_figura = self.leer_figuras()
         try:
             while hay_figura:
