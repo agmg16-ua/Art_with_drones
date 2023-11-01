@@ -1,12 +1,16 @@
 import time
 import threading
 from confluent_kafka import Consumer, Producer, KafkaError
-
-import EscucharDrone
-
+import json
+from EscucharDrone import EscucharDrone
+import os
 import socket
+import copy
 
+#Thread para escuchar drones en paralelo
 class EscucharDrones(threading.Thread):
+    # Contendrá las figuras del fichero
+    figuras = []
     def __init__(self, puerto):
         super().__init__()
         self.puerto = puerto
@@ -17,9 +21,15 @@ class EscucharDrones(threading.Thread):
 
     def run(self):
         try:
+            # Obtiene la dirección IP local de la red actual
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+            s.close()
+
             # Creo el servidor a la espera de drones que me llamen por ahí
             s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s_socket.bind(('localhost', self.puerto))
+            s_socket.bind((local_ip, self.puerto))
             s_socket.listen()
 
             # Me mantengo en escucha de nuevos drones mientras no quiera detener el Engine
@@ -31,7 +41,7 @@ class EscucharDrones(threading.Thread):
                     escuchar = EscucharDrone(conn)
                     escuchar.start()
                 except Exception as e:
-                    print("Error:", e)
+                    print("Error para escuchar al drone: ", e)
 
             # Cierro el servidor
             s_socket.close()
@@ -39,7 +49,7 @@ class EscucharDrones(threading.Thread):
         except Exception as e:
             print("Error:", e)
 
-
+#Clase para almacenar los drones con su coordenada actual
 class Drone:
     def __init__(self, id):
         self.id = id
@@ -48,71 +58,129 @@ class Drone:
     def set_coordenada(self, x, y):
         self.coordenada = (x, y)
 
+#Clase principal
 class AD_Engine:
+
     def __init__(self):
         self.drones = []
+        self.figuras = []
 
+    #Me conecto a cada topic con el rol correspondiente
     def productor_destinos(self, broker):
-        return KafkaProducer(bootstrap_servers=broker, value_serializer=str)
+        # Configura las propiedades del productor
+        config = {
+            'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
+        }
+
+        # Crea una instancia del productor
+        producer = Producer(config)
+        return producer
 
     def productor_mapa(self, broker):
-        return KafkaProducer(bootstrap_servers=broker, value_serializer=str)
+        # Configura las propiedades del productor
+        config = {
+            'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
+        }
+
+        # Crea una instancia del productor
+        producer = Producer(config)
+        return producer
 
     def consumidor_posiciones(self, broker):
-        grupo = "grupo_9"
-        return KafkaConsumer(bootstrap_servers=broker, auto_offset_reset='earliest',
-                             group_id=grupo, value_deserializer=str)
+        # Configura las propiedades del consumidor
+        config = {
+            'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
+            'group.id': 'grupo_2',
+            'auto.offset.reset': 'latest'  # Comienza desde el inicio del topic
+        }
 
-    def enviar_por_kafka_destinos(self, productor, palabras):
+        # Crea una instancia del consumidor
+        consumer = Consumer(config)
+        return consumer
+
+    #Operaciones en kafka
+    def enviar_por_kafka_destinos(self, productor):
         topic = "destino"
-        mensaje = f"{palabras[1]} {palabras[2]} {palabras[3]}"
-        productor.send(topic, value=mensaje)
+        #Selecciono la primera figura y la elimino del vector
+        figura = self.figuras[0]
+        del self.figuras[0]
 
-    def leer_figura(self, productor):
-        archivo = open("figuras.txt", "r")
-        hay_figura = True
-        while hay_figura:
-            linea = archivo.readline()
-            if "</figura>" in linea:
-                hay_figura = False
-            else:
-                palabras = [p.strip('<>') for p in linea.split('<') if p]
-                self.enviar_por_kafka_destinos(productor, palabras)
-        archivo.close()
+        #Envio el mensaje con la id de cada drone y con sus posiciones destino
+        print(figura)
+        for drone in figura[1]:
+            pos = drone[1].split(',')
+            mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
+            productor.produce(topic, value=mensaje)
+            print(mensaje)
+
+        # Espera a que el mensaje se envíe
+        productor.flush()
+        time.sleep(3)
 
     def enviar_mapa(self, productor):
         topic = "mapa"
         mensaje = "El mapita"
-        productor.send(topic, value=mensaje)
+        productor.produce(topic, value=mensaje)
+
+        # Espera a que el mensaje se envíe
+        productor.flush()
+        time.sleep(3)
 
     def escuchar_posicion_drones(self, consumidor):
         topic = "posiciones"
-        consumidor.subscribe([topic])
-        for mensaje in consumidor:
-            palabras = mensaje.value.split()
-            id_dron = int(palabras[1])
-            coordenada_x = int(palabras[2])
-            coordenada_y = int(palabras[3])
+        consumidor.subscribe(topics=[topic])
+        
+        mensaje = consumidor.poll(1.0)
+        while mensaje is not None:
+            if mensaje.error():
+                if mensaje.error().code() == KafkaError._PARTITION_EOF:
+                    print('No más mensajes en la partición')
+                else:
+                    print('Error al recibir mensaje: {}'.format(mensaje.error()))
+            else:
+                # Procesa el mensaje
+                print('Mensaje recibido: {}'.format(mensaje.value()))
+            mensaje = consumidor.poll(1.0)
 
-            # Compruebo si el mensaje recibido es de un dron que ya existe en mi lista de drones
-            ya_existe = False
-            for dron in self.drones:
-                if dron.id == id_dron:
-                    ya_existe = True
-                    dron.set_coordenada(coordenada_x, coordenada_y)
-                    break
+        time.sleep(3)
 
-            if not ya_existe:
-                dron = Drone(id_dron)
-                dron.set_coordenada(coordenada_x, coordenada_y)
-                self.drones.append(dron)
+    #Leo las figuras que tenga el archivo Figuras.json y las almaceno en un vector
+    def leer_figuras(self):
+        # Abre el archivo JSON en modo lectura
+        with open('Figuras.json', 'r') as archivo:
+            data = json.load(archivo)
 
+        # Itera a través de las figuras en el archivo JSON
+        for figura in data['figuras']:
+            nombre_figura = figura['Nombre']
+            drones = []
+
+            # Itera a través de los drones en la figura actual
+            for drone in figura['Drones']:
+                id_drone = drone['ID']
+                posicion = drone['POS']
+                drones.append([id_drone, posicion])
+
+            self.figuras.append([nombre_figura, drones])
+
+        # Ahora, 'resultados' contendrá los datos en el formato deseado
+        print(self.figuras)
+        return True
+
+    #Función encargada de iniciar el espectaculo, se activa cuando
     def start(self, productor_destinos, productor_mapa, consumidor):
-        hay_figura = True
-        while hay_figura:
-            self.leer_figura(productor_destinos)
-            self.escuchar_posicion_drones(consumidor)
-            self.enviar_mapa(productor_mapa)
+        hay_figura = self.leer_figuras()
+        try:
+            while hay_figura:
+                if not self.figuras:
+                    hay_figura = False
+                else:
+                    hay_figura = True
+                    self.enviar_por_kafka_destinos(productor_destinos)
+                    self.escuchar_posicion_drones(consumidor_posiciones)
+                    self.enviar_mapa(productor_mapa)
+        except Exception as e:
+            print(f"Error en Engine: {e}")
 
 if __name__ == "__main__":
     import sys
@@ -130,11 +198,10 @@ if __name__ == "__main__":
     print(f"Escuchando puerto {puerto}")
     print(f"Maximo de drones establecido en {max_drones} drones")
 
-    escuchar_drones = EscucharDrone(target=run)  # No se ha proporcionado el código para esta parte
+    escuchar_drones = EscucharDrones(int(puerto))  # No se ha proporcionado el código para esta parte
     escuchar_drones.start()
 
-    figuras = open('figuras.txt', 'r')  # No se ha proporcionado el código para esta parte
-    while not figuras.exists():
+    while not os.path.exists("Figuras.json"):
         time.sleep(1)
 
     engine = AD_Engine()
@@ -143,13 +210,6 @@ if __name__ == "__main__":
     consumidor_posiciones = engine.consumidor_posiciones(ip_puerto_broker)
 
     engine.start(productor_destinos, productor_mapa, consumidor_posiciones)
-    try:
-        while hay_figura:
-            self.leer_figura(productor_destinos)
-            self.escuchar_posicion_drones(consumidor_posiciones)
-            self.enviar_mapa(productor_mapa)
-    except Exception as e:
-        print(f"Error en Engine: {e}")
 
 # La parte que falta en el archivo main se debe completar según tus necesidades.
 # if __name__ == "__main__":

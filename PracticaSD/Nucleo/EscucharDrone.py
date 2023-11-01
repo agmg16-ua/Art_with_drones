@@ -20,13 +20,15 @@ class EscucharDrone(threading.Thread):
         except Exception as e:
             print(f"Error: {e}")
 
-    def autenticar(self, token):
+    def autenticar(self, token, id):
         try:
             with open("drones.txt", "r") as archivo:
                 for linea in archivo:
                     palabras = linea.split(" ")
                     token_aux = palabras[0]
-                    if token_aux == token:
+                    id_aux = palabras[1]
+                    print(palabras)
+                    if token_aux == token and id_aux == id:
                         return True
         except Exception as e:
             print(f"Error: {e}")
@@ -41,17 +43,13 @@ class EscucharDrone(threading.Thread):
         try:
             token_id = self.lee_socket(token_id)
             palabras = token_id.split(" ")
-            existe = self.autenticar(palabras[0])
+            existe = self.autenticar(palabras[0],palabras[1])
 
             if existe:
-                self.escribe_socket("aceptado")
+                self.escribe_socket("aceptado " + str(palabras[2]))
             else:
                 self.escribe_socket("denegado")
-
-            self.drone.close()
         except Exception as e:
             print(f"Error en escucharDrone: {e}")
         finally:
             self.drone.close()
-
-# El código restante debe ir en tu programa principal para iniciar la ejecución.
