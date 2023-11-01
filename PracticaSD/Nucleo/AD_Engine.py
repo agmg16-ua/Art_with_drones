@@ -110,7 +110,7 @@ class AD_Engine:
             productor.produce(topic, value=mensaje)
             productor.flush()
 
-    def enviar_mapa(self, productor):
+    def enviar_mapa(self, productor): #FALTA AÑADIR EL MAPA
         topic = "mapa"
         mensaje = "El mapita: " + str(self.drones) + " " + str(self.dronesActuales)
         productor.produce(topic, value=mensaje)
@@ -173,7 +173,7 @@ class AD_Engine:
         return self.dronesActuales == self.drones
 
     #Función encargada de iniciar el espectaculo, se activa cuando
-    def start(self, productor_destinos, productor_mapa, consumidor):
+    def start(self, productor_destinos, productor_mapa, consumidor): #FALTA VOVLER A COMPROBAR FIGURAS
         hay_figura = self.leer_figuras()
         try:
             while hay_figura:
