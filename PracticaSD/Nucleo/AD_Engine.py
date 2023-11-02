@@ -245,7 +245,7 @@ class AD_Engine:
                     if not self.figuras:
                         hay_figura = self.leer_figuras()
                     else:
-                        hat_figura = True
+                        hay_figura = True
 
             if self.detener == True:
                 print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
