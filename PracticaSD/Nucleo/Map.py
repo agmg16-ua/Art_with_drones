@@ -38,7 +38,7 @@ class Map:
             for j in range(0, 21):
                 if i == 0:
                     if j == 0:
-                        self.mapa += "     1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20 "
+                        self.mapa += "     1   2   3   4   5   6   7   8   9  10   11   12   13   14   15   16   17   18   19   20 "
                 elif j == 0:
                     if i < 10:
                         self.mapa += f" {i} "
@@ -46,6 +46,7 @@ class Map:
                         self.mapa += f"{i} "
                 else:
                     existe = False
+<<<<<<< HEAD
                     for drone in drones:
                         if drone.coord_y == i and drone.coord_x == j:
                             existe = True
@@ -60,6 +61,29 @@ class Map:
                                 else:
                                     self.mapa += f"{rojo} {drone.id} {reset} "
                     if not existe:
+=======
+                    for droneActual in dronesActuales:
+                        droneFinal = []
+
+                        #Encontrar posicion final del drone
+                        for drone in drones:
+                            if drone[0] == droneActual[0]:
+                                droneFinal = drone
+
+                        if droneActual[1][1] == i and droneActual[1][0] == j:
+                            existe = True
+                            if droneActual[0] < 10:
+                                if droneActual[1][0] == droneFinal[1][0] and droneActual[1][1] == droneFinal[1][1]:
+                                    self.mapa += f"{verde} {droneActual[0]} {reset}"
+                                else:
+                                    self.mapa += f"{rojo} {droneActual[0]} {reset}"
+                            else:
+                                if droneActual[1][0] == droneFinal[1][0] and droneActual[1][1] == droneFinal[1][1]:
+                                    self.mapa += f"{verde}{droneActual[0]} {reset}"
+                                else:
+                                    self.mapa += f"{rojo}{droneActual[0]} {reset}"
+                    if existe == False:
+>>>>>>> refs/remotes/origin/engine
                         self.mapa += "   "
                 self.mapa += " "
             self.mapa += "\n\n"
@@ -74,7 +98,7 @@ class Map:
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-"""
+
 if __name__ == "__main__":
     drone1 = Drone(1)
     drone1.set_coordenada(8, 5)
@@ -100,7 +124,14 @@ if __name__ == "__main__":
     drone10 = Drone(10)
     drone10.set_coordenada(10, 10)
 
+<<<<<<< HEAD
     drones = [drone1, drone2, drone3, drone4, drone5, drone6, drone7, drone8, drone9, drone10]
+=======
+
+    dronesActuales = [[1, [3, 4]], [2, [5, 6]], [3, [4, 4]], [4, [1, 2]]]
+>>>>>>> refs/remotes/origin/engine
+
+    drones = [[1, [3, 4]], [2, [5, 5]], [3, [4, 2]], [4, [1, 2]]]
 
     mapa = Map()
 
@@ -109,6 +140,7 @@ if __name__ == "__main__":
     time.sleep(3)
     clear_terminal()
 
+<<<<<<< HEAD
     drone1.set_pos_final(True)
     drone7.set_pos_final(True)
     drone9.set_pos_final(True)
@@ -117,3 +149,12 @@ if __name__ == "__main__":
 
     print(mapa.to_string(drones))
 """
+=======
+    dronesActuales[1][1][1] = 5
+
+
+    print(mapa.to_string(drones, dronesActuales))
+
+
+
+>>>>>>> refs/remotes/origin/engine
