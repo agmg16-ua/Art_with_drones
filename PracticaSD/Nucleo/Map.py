@@ -45,25 +45,25 @@ class Map:
                     else:
                         self.mapa += f"{i} "
                 else:
-                    for drone in drones:
+                    for droneActual in dronesActuales:
                         droneFinal = []
 
                         #Encontrar posicion final del drone
-                        for droneActual in dronesActuales:
-                            if droneActual[0] == drone[0]:
-                                droneFinal = droneActual
+                        for drone in drones:
+                            if drone[0] == droneActual[0]:
+                                droneFinal = drone
 
-                        if drone[1][1] == i and drone[1][0] == j:
-                            if drone[0] < 10:
-                                if drone[1][0] == droneFinal[1][0] and drone[1][1] == droneFinal[1][1]:
-                                    self.mapa += f"{verde} {drone[0]} {reset} "
+                        if droneActual[1][1] == i and droneActual[1][0] == j:
+                            if droneActual[0] < 10:
+                                if droneActual[1][0] == droneFinal[1][0] and droneActual[1][1] == droneFinal[1][1]:
+                                    self.mapa += f"{verde} {droneActual[0]} {reset} "
                                 else:
-                                    self.mapa += f"{rojo} {drone[0]} {reset} "
+                                    self.mapa += f"{rojo} {droneActual[0]} {reset} "
                             else:
-                                if drone[1][0] == droneFinal[1][0] and drone[1][1] == droneFinal[1][1]:
-                                    self.mapa += f"{verde} {drone[0]} {reset} "
+                                if droneActual[1][0] == droneFinal[1][0] and droneActual[1][1] == droneFinal[1][1]:
+                                    self.mapa += f"{verde} {droneActual[0]} {reset} "
                                 else:
-                                    self.mapa += f"{rojo} {drone[0]} {reset} "
+                                    self.mapa += f"{rojo} {droneActual[0]} {reset} "
                         else:
                             self.mapa += "   "
                 self.mapa += " "
