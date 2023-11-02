@@ -183,7 +183,7 @@ class AD_Engine:
         return self.dronesActuales == self.drones
 
     def clima(self):
-        
+        return True
 
     #Función encargada de iniciar el espectaculo, se activa cuando
     def start(self, productor_destinos, productor_mapa, consumidor):
