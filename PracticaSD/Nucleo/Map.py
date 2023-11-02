@@ -38,13 +38,14 @@ class Map:
             for j in range(0, 21):
                 if i == 0:
                     if j == 0:
-                        self.mapa += "     1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20 "
+                        self.mapa += "     1   2   3   4   5   6   7   8   9  10   11   12   13   14   15   16   17   18   19   20 "
                 elif j == 0:
                     if i < 10:
                         self.mapa += f" {i} "
                     else:
                         self.mapa += f"{i} "
                 else:
+                    existe = False
                     for droneActual in dronesActuales:
                         droneFinal = []
 
@@ -54,18 +55,19 @@ class Map:
                                 droneFinal = drone
 
                         if droneActual[1][1] == i and droneActual[1][0] == j:
+                            existe = True
                             if droneActual[0] < 10:
                                 if droneActual[1][0] == droneFinal[1][0] and droneActual[1][1] == droneFinal[1][1]:
-                                    self.mapa += f"{verde} {droneActual[0]} {reset} "
+                                    self.mapa += f"{verde} {droneActual[0]} {reset}"
                                 else:
-                                    self.mapa += f"{rojo} {droneActual[0]} {reset} "
+                                    self.mapa += f"{rojo} {droneActual[0]} {reset}"
                             else:
                                 if droneActual[1][0] == droneFinal[1][0] and droneActual[1][1] == droneFinal[1][1]:
-                                    self.mapa += f"{verde} {droneActual[0]} {reset} "
+                                    self.mapa += f"{verde}{droneActual[0]} {reset}"
                                 else:
-                                    self.mapa += f"{rojo} {droneActual[0]} {reset} "
-                        else:
-                            self.mapa += "   "
+                                    self.mapa += f"{rojo}{droneActual[0]} {reset}"
+                    if existe == False:
+                        self.mapa += "   "
                 self.mapa += " "
             self.mapa += "\n"
 
@@ -82,13 +84,13 @@ class Map:
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-"""
+
 if __name__ == "__main__":
 
 
-    drones = [[1, [3, 4]], [2, [5, 5]], [3, [4, 2]], [4, [1, 2]]]
-
     dronesActuales = [[1, [3, 4]], [2, [5, 6]], [3, [4, 4]], [4, [1, 2]]]
+
+    drones = [[1, [3, 4]], [2, [5, 5]], [3, [4, 2]], [4, [1, 2]]]
 
     mapa = Map()
 
@@ -98,10 +100,10 @@ if __name__ == "__main__":
     time.sleep(3)
     clear_terminal()
 
-    drones[1][1][1] = 6
+    dronesActuales[1][1][1] = 5
 
 
     print(mapa.to_string(drones, dronesActuales))
-"""
+
 
 
