@@ -69,12 +69,13 @@ class Map:
             self.mapa += "\n"
 
     def to_string(self, drones, dronesActuales):
-        if len(drones) == 0:
-            drones = [[0, [-1, -1]]]
-            
+        dronesAux = drones.copy()
+        if len(dronesActuales) == 0:
+            dronesAux = [[0, [0, 0]]]
+
         self.mapa = ""
         sys.stdout.write("\b")
-        self.print_mapa(drones, dronesActuales)
+        self.print_mapa(dronesAux, dronesActuales)
         return self.mapa
 
 def clear_terminal():
