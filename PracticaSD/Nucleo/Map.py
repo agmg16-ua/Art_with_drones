@@ -69,6 +69,9 @@ class Map:
             self.mapa += "\n"
 
     def to_string(self, drones, dronesActuales):
+        if len(drones) == 0:
+            drones = [[0, [-1, -1]]]
+            
         self.mapa = ""
         sys.stdout.write("\b")
         self.print_mapa(drones, dronesActuales)
