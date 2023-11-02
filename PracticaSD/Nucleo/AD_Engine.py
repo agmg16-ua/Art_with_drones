@@ -117,10 +117,12 @@ class AD_Engine:
     def enviar_mapa(self, productor):
         topic = "mapa"
 
-        mapa = Map()
 
+        mapa = Map()
+        print(self.drones)
+        print(self.dronesActuales)
         mensaje = mapa.to_string(self.drones,self.dronesActuales)
-        
+
         productor.produce(topic, value=mensaje)
         productor.flush()
 
@@ -180,6 +182,7 @@ class AD_Engine:
     def figura_completada(self):
         return self.dronesActuales == self.drones
 
+    
     #Función encargada de iniciar el espectaculo, se activa cuando
     def start(self, productor_destinos, productor_mapa, consumidor):
         hay_figura = self.leer_figuras()
