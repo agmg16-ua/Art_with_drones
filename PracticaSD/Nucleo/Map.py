@@ -1,7 +1,6 @@
 import time
 import sys
 import os
-import AD_Engine
 
 class Drone:
     def __init__(self, _id):
@@ -99,5 +98,3 @@ if __name__ == "__main__":
 
     print(mapa.to_string(drones, dronesActuales))
 """
-
-

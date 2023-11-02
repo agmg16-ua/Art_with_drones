@@ -6,6 +6,7 @@ from EscucharDrone import EscucharDrone
 import os
 import socket
 import copy
+from Map import Map
 
 #Thread para escuchar drones en paralelo
 class EscucharDrones(threading.Thread):
@@ -115,7 +116,11 @@ class AD_Engine:
 
     def enviar_mapa(self, productor):
         topic = "mapa"
-        mensaje = "El mapita: " + str(self.drones) + " " + str(self.dronesActuales)
+
+        mapa = Map()
+
+        mensaje = mapa.to_string(self.drones,self.dronesActuales)
+        
         productor.produce(topic, value=mensaje)
         productor.flush()
 
