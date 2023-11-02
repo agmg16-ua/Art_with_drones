@@ -159,6 +159,9 @@ class AD_Drone:
     def get_id(self):
         return self.id
 
+    def clear_terminal():
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     def registrarse(self, ip, puerto):
         try:
             cadena = f"{self.id} {self.alias}"

@@ -30,7 +30,7 @@ class Map:
     def get_columnas(self):
         return self.columnas
 
-    def print_mapa(self, drones):
+    def print_mapa(self, drones, dronesActuales):
         rojo = "\u001B[91m"
         verde = "\u001B[32m"
         reset = "\u001B[0m"
@@ -45,77 +45,59 @@ class Map:
                     else:
                         self.mapa += f"{i} "
                 else:
-                    existe = False
                     for drone in drones:
-                        if drone.coord_y == i and drone.coord_x == j:
-                            existe = True
-                            if drone.id < 10:
-                                if drone.pos_final:
-                                    self.mapa += f"{verde} {drone.id} {reset} "
-                                else:
-                                    self.mapa += f"{rojo} {drone.id} {reset} "
-                            else:
-                                if drone.pos_final:
-                                    self.mapa += f"{verde} {drone.id} {reset} "
-                                else:
-                                    self.mapa += f"{rojo} {drone.id} {reset} "
-                    if not existe:
-                        self.mapa += "   "
-                self.mapa += " "
-            self.mapa += "\n\n"
+                        droneFinal = []
 
-    def to_string(self, drones):
+                        #Encontrar posicion final del drone
+                        for droneActual in dronesActuales:
+                            if droneActual[0] == drone[0]:
+                                droneFinal = droneActual
+
+                        if drone[1][1] == i and drone[1][0] == j:
+                            if drone[0] < 10:
+                                if drone[1][0] == droneFinal[1][0] and drone[1][1] == droneFinal[1][1]:
+                                    self.mapa += f"{verde} {drone[0]} {reset} "
+                                else:
+                                    self.mapa += f"{rojo} {drone[0]} {reset} "
+                            else:
+                                if drone[1][0] == droneFinal[1][0] and drone[1][1] == droneFinal[1][1]:
+                                    self.mapa += f"{verde} {drone[0]} {reset} "
+                                else:
+                                    self.mapa += f"{rojo} {drone[0]} {reset} "
+                        else:
+                            self.mapa += "   "
+                self.mapa += " "
+            self.mapa += "\n"
+
+    def to_string(self, drones, dronesActuales):
         self.mapa = ""
         sys.stdout.write("\b")
-        self.print_mapa(drones)
+        self.print_mapa(drones, dronesActuales)
         return self.mapa
-
 
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 """
 if __name__ == "__main__":
-    drone1 = Drone(1)
-    drone1.set_coordenada(8, 5)
-    drone2 = Drone(2)
-    drone2.set_coordenada(5, 8)
-    drone2.set_pos_final(True)
-    drone3 = Drone(3)
-    drone3.set_coordenada(10, 10)
-    drone4 = Drone(4)
-    drone4.set_coordenada(15, 15)
-    drone5 = Drone(5)
-    drone5.set_coordenada(9, 11)
-    drone5.set_pos_final(True)
-    drone6 = Drone(6)
-    drone6.set_coordenada(11, 9)
-    drone7 = Drone(7)
-    drone7.set_coordenada(4, 1)
-    drone8 = Drone(8)
-    drone8.set_coordenada(1, 4)
-    drone8.set_pos_final(True)
-    drone9 = Drone(9)
-    drone9.set_coordenada(9, 9)
-    drone10 = Drone(10)
-    drone10.set_coordenada(10, 10)  
 
-    drones = [drone1, drone2, drone3, drone4, drone5, drone6, drone7, drone8, drone9, drone10]
+
+    drones = [[1, [3, 4]], [2, [5, 5]], [3, [4, 2]], [4, [1, 2]]]
+
+    dronesActuales = [[1, [3, 4]], [2, [5, 6]], [3, [4, 4]], [4, [1, 2]]]
 
     mapa = Map()
 
-    print(mapa.to_string(drones))
+    clear_terminal()
+    print(mapa.to_string(drones, dronesActuales))
 
     time.sleep(3)
     clear_terminal()
 
-    drone1.set_pos_final(True)
-    drone7.set_pos_final(True)
-    drone9.set_pos_final(True)
-    drone3.set_pos_final(True)
+    drones[1][1][1] = 6
 
 
-    print(mapa.to_string(drones))
+    print(mapa.to_string(drones, dronesActuales))
 """
 
 
