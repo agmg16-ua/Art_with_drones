@@ -67,6 +67,9 @@ class AD_Engine:
         self.figuras = []
         self.dronesActuales = []
 
+    def clear_terminal():
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     #Me conecto a cada topic con el rol correspondiente
     def productor_destinos(self, broker):
         # Configura las propiedades del productor
