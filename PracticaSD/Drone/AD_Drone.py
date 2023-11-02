@@ -12,6 +12,10 @@ class EscucharDestino:
         self.posicionActual = [0, 0]
         self.estado = "Rojo"  # En movimiento "Rojo" y en la posición final "Verde"
         self.mapa = ""
+        self.detener = False
+
+    def detener(self):
+        self.detener = True
 
     #Me uno a los topics con los roles correspondientes a Drone
     def consumidorDestino(self):
@@ -81,7 +85,7 @@ class EscucharDestino:
         topic = "mapa"
         consumidor.subscribe(topics=[topic])
 
-        while self.estado == "Rojo":
+        while True:
             mensaje = consumidor.poll(1.0)
 
             if mensaje is not None:
@@ -118,9 +122,8 @@ class EscucharDestino:
             if self.posicionFin[0] == self.posicionActual[0] and self.posicionFin[1] == self.posicionActual[1]:
                 self.estado = "Verde"
 
-            self.enviarPosicion(productor);
-            time.sleep(1)
-
+            self.enviarPosicion(productor)
+            time.sleep(2)
     def run(self):
         try:
             consumidorDestino = self.consumidorDestino()
@@ -135,8 +138,13 @@ class EscucharDestino:
             dronEscuchaMapa = threading.Thread(target=self.escucharEstadoMapa,args=(consumidorMapa,))
             dronEscuchaMapa.start()
 
+            """
+            controlarFigura = threading.Thread(target=self.cambio_figura,args=(ip_puerto_engine,consumidorDestino,))
+            controlarFigura.start()
+            """
+
             opcionAux = -1
-            while opcionAux != 2:
+            while opcionAux != 2 and self.detener == False:
                 print("[1] Imprimir Mapa")
                 print("[2] Salir del espectaculo")
 
@@ -146,6 +154,30 @@ class EscucharDestino:
 
         except Exception as e:
             print("Error:", e)
+
+    """
+    def cambio_figura(self,ip_puerto_engine,consumer):
+        while not self.detener:
+            # Obtiene la dirección IP local de la red actual
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(("8.8.8.8", 80))
+            local_ip = s.getsockname()[0]
+            s.close()
+
+            # Creo el servidor a la espera de drones que me llamen por ahí
+            s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s_socket.bind((local_ip, puerto))
+            s_socket.listen()
+
+            conn, addr = s_socket.accept()
+
+            cambio = sock.recv(1024).decode('utf-8')
+            if cambio == "1":
+                self.escucharPorKafkaDestino(consumer)
+            else:
+                self.detener = True
+                s_socket.close()
+    """
 
 class AD_Drone:
     def __init__(self, alias):
@@ -225,6 +257,35 @@ class AD_Drone:
 
         return aceptado
 
+
+
+"""
+def clima(drone,ip_puerto):
+    try:
+        skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        valores = ip_puerto.split(":")
+
+        skcliente.connect((valores[0], int(valores[1])))
+
+        while True:
+            temperatura = skcliente.recv(1024).decode('utf-8')
+
+            if int(temperatura) == 1:
+                print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
+                drone.detener()
+
+            time.sleep(1)
+
+    except Exception as e:
+        print("Error solicitando clima: " + str(e))
+        exit(-1)
+
+    return True
+"""
+
+
+
 if __name__ == "__main__":
     import sys
 
@@ -256,6 +317,8 @@ if __name__ == "__main__":
         elif opcion == 2:
             aceptado = drone.solicitar_inclusion(ip_Engine, puerto_Engine)
             if aceptado:
+                ip_puerto_engine = ip_Engine + ":" + puerto_Engine
+
                 escuchar_destino = EscucharDestino(broker,drone.id)
                 escuchar_destino.run()
 

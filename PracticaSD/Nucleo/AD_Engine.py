@@ -15,10 +15,17 @@ class EscucharDrones(threading.Thread):
     def __init__(self, puerto):
         super().__init__()
         self.puerto = puerto
-        self.detener = False
+        self.detener_thread = False
+        self.socket = None
+
+    def manejar_sigint(signum, frame):
+        print("Se ha solicitado detener el servidor.")
+        mi_objeto.detener()  # Llama a la función detener() de tu clase
 
     def detener(self):
-        self.detener = True
+        self.detener_thread = True
+
+        sys.exit(0)
 
     def run(self):
         try:
@@ -34,7 +41,7 @@ class EscucharDrones(threading.Thread):
             s_socket.listen()
 
             # Me mantengo en escucha de nuevos drones mientras no quiera detener el Engine
-            while not self.detener:
+            while not self.detener_thread:
                 print("Esperando drone...")
                 conn, addr = s_socket.accept()
 
@@ -43,9 +50,6 @@ class EscucharDrones(threading.Thread):
                     escuchar.start()
                 except Exception as e:
                     print("Error para escuchar al drone: ", e)
-
-            # Cierro el servidor
-            s_socket.close()
 
         except Exception as e:
             print("Error:", e)
@@ -67,6 +71,7 @@ class AD_Engine:
         self.drones = []
         self.figuras = []
         self.dronesActuales = []
+        self.detener = False
 
     def clear_terminal(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -117,14 +122,18 @@ class AD_Engine:
     def enviar_mapa(self, productor):
         topic = "mapa"
 
-
         mapa = Map()
         mensaje = mapa.to_string(self.drones,self.dronesActuales)
         self.clear_terminal()
+
+        if self.figura_completada():
+            mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
+
         print(mensaje)
-        time.sleep(1)
         productor.produce(topic, value=mensaje)
         productor.flush()
+
+        time.sleep(1)
 
     def escuchar_posicion_drones(self, consumidor):
         topic = "posiciones"
@@ -154,6 +163,7 @@ class AD_Engine:
                             existe = True
                     if existe == False:
                         self.dronesActuales.append(aux)
+                        self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
 
     #Leo las figuras que tenga el archivo Figuras.json y las almaceno en un vector
     def leer_figuras(self):
@@ -174,41 +184,113 @@ class AD_Engine:
                 drones.append([id_drone, [int(pos[0]),int(pos[1])]])
             self.figuras.append([nombre_figura, drones])
 
-        # Ahora, 'resultados' contendrá los datos en el formato deseado
-        print(self.figuras)
+        # Eliminar el archivo JSON
+        try:
+            os.remove('Figuras.json')
+            print(f"El archivo {'Figuras.json'} fue eliminado con éxito.")
+        except OSError as e:
+            print(f"No se pudo eliminar el archivo {'Figuras.json'}: {e}")
+
+        #Si se queda vacío self.figuras devuelvo falso
+        if not self.figuras:
+            return False
+
         return True
 
     #Veo si la figura está completada o no
     def figura_completada(self):
         return self.dronesActuales == self.drones
 
-    def clima(self):
-        return True
+    def lee_socket(self, p_datos):
+        try:
+            aux = self.drone.recv(1024)
+            p_datos = aux.decode()
+        except Exception as e:
+            print(f"Error: {e}")
+        return p_datos
+
+    def escribe_socket(self, p_datos):
+        try:
+            self.drone.send(p_datos.encode())
+        except Exception as e:
+            print(f"Error: {e}")
+
+    def stop(self,detener):
+        self.detener = detener
+
 
     #Función encargada de iniciar el espectaculo, se activa cuando
     def start(self, productor_destinos, productor_mapa, consumidor):
-
-        controlarClima = threading.Thread(target=climadetener,args=(self,))
-        controlarClima.start()
-
         hay_figura = self.leer_figuras()
         try:
-            while hay_figura:
+            while hay_figura and self.detener == False:
                 if not self.figuras:
                     hay_figura = False
                 else:
-                    hay_figura = True
                     self.drones = self.figuras[0][1]
 
                     posicionesDrones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor,))
                     posicionesDrones.start()
 
-                    while not self.figura_completada():
+                    while not self.figura_completada() and self.detener == False:
                         self.enviar_por_kafka_destinos(productor_destinos)
                         self.enviar_mapa(productor_mapa)
-                    del self.figura[0]
+
+                    print("*********************************************Figura Completada******************************************************")
+                    self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
+                    del self.figuras[0]
+
+                    time.sleep(5)
+
+                    if not self.figuras:
+                        hay_figura = self.leer_figuras()
+                    else:
+                        hat_figura = True
+
+            if self.detener == True:
+                print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
         except Exception as e:
             print(f"Error en Engine: {e}")
+
+def clima(engine,ip_puerto):
+    try:
+        skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        valores = ip_puerto.split(":")
+
+        skcliente.connect((valores[0], int(valores[1])))
+
+        while True:
+            cadena = "Alicante"
+            skcliente.send(cadena.encode('utf-8'))
+            temperatura = skcliente.recv(1024).decode('utf-8')
+            if float(temperatura) <= 0.0 and len(temperatura) > 0:
+                engine.stop(True)
+                break
+            time.sleep(1)
+
+    except Exception as e:
+        print("Error solicitando clima: " + str(e))
+        exit(-1)
+
+    return True
+
+"""
+def notificar_Drones(puerto):
+    # Obtiene la dirección IP local de la red actual
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    local_ip = s.getsockname()[0]
+    s.close()
+
+    # Creo el servidor a la espera de drones que me llamen por ahí
+    s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s_socket.bind((local_ip, puerto))
+    s_socket.listen()
+
+    conn, addr = s_socket.accept()
+    while True:
+"""
 
 if __name__ == "__main__":
     import sys
@@ -233,11 +315,20 @@ if __name__ == "__main__":
         time.sleep(1)
 
     engine = AD_Engine()
+
+    controlarClima = threading.Thread(target=clima,args=(engine,ip_puerto_weather))
+    controlarClima.start()
+
     productor_destinos = engine.productor_destinos(ip_puerto_broker)
     productor_mapa = engine.productor_mapa(ip_puerto_broker)
     consumidor_posiciones = engine.consumidor_posiciones(ip_puerto_broker)
+    time.sleep(2)
 
-    engine.start(productor_destinos, productor_mapa, consumidor_posiciones)
+    if engine.detener == False:
+        engine.start(productor_destinos, productor_mapa, consumidor_posiciones)
+
+    if escuchar_drones.is_alive() == True:
+        escuchar_drones.detener()
 
 # La parte que falta en el archivo main se debe completar según tus necesidades.
 # if __name__ == "__main__":

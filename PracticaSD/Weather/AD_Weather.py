@@ -1,5 +1,6 @@
 import socket
 import sys
+import time
 
 class AD_Weather:
     def __init__(self):
@@ -27,7 +28,7 @@ class AD_Weather:
         try:
             with open("climas.txt", "r") as archivo:
                 for linea in archivo:
-                    partes = linea.split()
+                    partes = linea.split(" ")
                     if len(partes) == 2:
                         ciudad = partes[0]
                         temperatura = float(partes[1])
@@ -54,25 +55,39 @@ if __name__ == "__main__":
 
         puerto = int(sys.argv[1])
 
-        s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s_socket.bind(('localhost', puerto))
-        s_socket.listen(1)
+        # Obtiene la dirección IP local de la red actual
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
 
+        # Creo el servidor a la espera de drones que me llamen por ahí
+        s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s_socket.bind((local_ip, puerto))
+        s_socket.listen()
+
+        clima = AD_Weather()
+
+        conn, addr = s_socket.accept()
         while True:
-            clima = AD_Weather()
             clima.actualizar_temperaturas()
 
             print("Esperando petición...")
-            conn, addr = s_socket.accept()
 
             peticion = clima.leer_socket(conn)
             print(peticion)
 
-            temperatura = clima.clima_actual(peticion)
+            if len(peticion) > 0:
+                temperatura = clima.clima_actual(peticion)
 
-            print("Enviando temperatura en " + peticion + ": " + str(temperatura))
-            clima.escribe_socket(conn, str(temperatura))
-            conn.close()
+                print("Enviando temperatura en " + peticion + ": " + str(temperatura))
+                clima.escribe_socket(conn, str(temperatura))
+                if float(temperatura) <= 0.0:
+                    print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
+                    break
+            time.sleep(2)
 
+        conn.close()
+        s_socket.close()
     except Exception as e:
         print("Error:", e)
