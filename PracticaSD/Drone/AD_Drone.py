@@ -83,7 +83,7 @@ class EscucharDestino:
 
         while self.estado == "Rojo":
             mensaje = consumidor.poll(1.0)
-            
+
             if mensaje is not None:
                 if mensaje.error():
                     if mensaje.error().code() == KafkaError._PARTITION_EOF:
@@ -159,7 +159,7 @@ class AD_Drone:
     def get_id(self):
         return self.id
 
-    def clear_terminal():
+    def clear_terminal(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def registrarse(self, ip, puerto):

@@ -68,7 +68,7 @@ class AD_Engine:
         self.figuras = []
         self.dronesActuales = []
 
-    def clear_terminal():
+    def clear_terminal(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
     #Me conecto a cada topic con el rol correspondiente
@@ -119,10 +119,10 @@ class AD_Engine:
 
 
         mapa = Map()
-        print(self.drones)
-        print(self.dronesActuales)
         mensaje = mapa.to_string(self.drones,self.dronesActuales)
-
+        self.clear_terminal()
+        print(mensaje)
+        time.sleep(1)
         productor.produce(topic, value=mensaje)
         productor.flush()
 
@@ -182,9 +182,15 @@ class AD_Engine:
     def figura_completada(self):
         return self.dronesActuales == self.drones
 
-    
+    def clima(self):
+        
+
     #Función encargada de iniciar el espectaculo, se activa cuando
     def start(self, productor_destinos, productor_mapa, consumidor):
+
+        controlarClima = threading.Thread(target=climadetener,args=(self,))
+        controlarClima.start()
+
         hay_figura = self.leer_figuras()
         try:
             while hay_figura:
