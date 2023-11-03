@@ -1,6 +1,7 @@
 import time
 import sys
 import os
+import copy
 
 class Drone:
     def _init_(self, _id):

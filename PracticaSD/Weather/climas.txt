@@ -1,4 +1,4 @@
-Alicante 27
+Alicante 0.0
 Valencia 28.6
 Alaska -3.2
 Paris 15.4

@@ -71,9 +71,6 @@ class EscucharDestino:
                         print('Error al recibir mensaje: {}'.format(mensaje.error()))
                         break
                 else:
-                    # Procesa el mensaje
-                    print('Mensaje recibido: {}'.format(mensaje.value()))
-                    print(mensaje.value())
                     valores = mensaje.value().decode('utf-8').split()
 
                     if int(valores[0]) == self.id:
@@ -85,7 +82,7 @@ class EscucharDestino:
         topic = "mapa"
         consumidor.subscribe(topics=[topic])
 
-        while True:
+        while self.detener == False:
             mensaje = consumidor.poll(1.0)
 
             if mensaje is not None:
@@ -95,44 +92,48 @@ class EscucharDestino:
                     else:
                         print('Error al recibir mensaje: {}'.format(mensaje.error()))
                 else:
-                    # Procesa el mensaje
-                    print('Mensaje recibido: {}'.format(mensaje.value()))
-                    self.mapa = str(mensaje.value())
+                    self.mapa = str(mensaje.value().decode('utf-8'))
 
     def enviarPosicion(self, productor):
         topic = "posiciones"
 
-        print(f"{self.id} {self.posicionActual[0]} {self.posicionActual[1]}")
         productor.produce(topic, value=f"{self.id} {self.posicionActual[0]} {self.posicionActual[1]}")
         productor.flush()
 
     #Operaciones con el mapa
-    def mover(self,productor):
-        while self.estado != "Verde":
-            if self.posicionFin[0] > self.posicionActual[0]:
-                self.posicionActual[0] += 1
-            elif self.posicionFin[0] < self.posicionActual[0]:
-                self.posicionActual[0] -= 1
+    def mover(self,productor,consumidorDestino):
+        while self.detener == False:
+            while self.estado != "Verde":
+                if self.posicionFin[0] > self.posicionActual[0]:
+                    self.posicionActual[0] += 1
+                elif self.posicionFin[0] < self.posicionActual[0]:
+                    self.posicionActual[0] -= 1
 
-            if self.posicionFin[1] > self.posicionActual[1]:
-                self.posicionActual[1] += 1
-            elif self.posicionFin[1] < self.posicionActual[1]:
-                self.posicionActual[1] -= 1
+                if self.posicionFin[1] > self.posicionActual[1]:
+                    self.posicionActual[1] += 1
+                elif self.posicionFin[1] < self.posicionActual[1]:
+                    self.posicionActual[1] -= 1
 
-            if self.posicionFin[0] == self.posicionActual[0] and self.posicionFin[1] == self.posicionActual[1]:
-                self.estado = "Verde"
+                if self.posicionFin[0] == self.posicionActual[0] and self.posicionFin[1] == self.posicionActual[1]:
+                    self.estado = "Verde"
 
-            self.enviarPosicion(productor)
-            time.sleep(2)
+                self.enviarPosicion(productor)
+                time.sleep(2)
+            self.escucharPorKafkaDestino(consumidorDestino)
+
+            self.estado = "Rojo"
+            if self.posicionActual[0] == 0 and self.posicionActual[1] == 0:
+                self.detener = True
+
     def run(self):
         try:
             consumidorDestino = self.consumidorDestino()
             consumidorMapa = self.consumidorMapa()
             productorPosicion = self.productorPosiciones()
 
-            destino = self.escucharPorKafkaDestino(consumidorDestino)
+            self.escucharPorKafkaDestino(consumidorDestino)
 
-            dronMovimiendose = threading.Thread(target=self.mover,args=(productorPosicion,))
+            dronMovimiendose = threading.Thread(target=self.mover,args=(productorPosicion,consumidorDestino))
             dronMovimiendose.start()
 
             dronEscuchaMapa = threading.Thread(target=self.escucharEstadoMapa,args=(consumidorMapa,))
@@ -237,15 +238,14 @@ class AD_Drone:
             skcliente.connect((ip, int(puerto)))
 
             self.escribe_socket(skcliente, cadena)
-
+            time.sleep(1)
             inclusion = self.lee_socket(skcliente)
-            print(inclusion)
+
             dron = inclusion.split(" ")
-            print(dron)
+
             if dron[0] == "aceptado":
                 print("---Drone unido de manera satisfactoria---\n")
                 self.id = int(dron[1])
-                print(dron)
                 aceptado = True
             else:
                 print("---No se ha podido unir---\n")
