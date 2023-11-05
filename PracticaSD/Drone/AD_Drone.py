@@ -244,8 +244,8 @@ class AD_Drone:
             dron = inclusion.split(" ")
 
             if dron[0] == "aceptado":
-                print("---Drone unido de manera satisfactoria---\n")
                 self.id = int(dron[1])
+                print("---Drone " + str(self.id) + " unido de manera satisfactoria---\n")
                 aceptado = True
             else:
                 print("---No se ha podido unir---\n")
