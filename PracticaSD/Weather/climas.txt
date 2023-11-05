@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-Alicante 28.0
-=======
 Alicante 20.0
->>>>>>> refs/remotes/origin/engine
-Valencia 28.6
+Valencia 20.0
 Alaska -3.2
 Paris 15.4

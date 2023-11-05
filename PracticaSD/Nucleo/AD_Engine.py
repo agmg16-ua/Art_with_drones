@@ -14,7 +14,6 @@ class EscucharDrones(threading.Thread):
         super().__init__()
         self.puerto = puerto
         self.detener_thread = False
-        self.socket = None
 
     def run(self):
         try:
@@ -99,17 +98,6 @@ class AD_Engine:
         return consumer
 
     #Operaciones en kafka
-    def drones_salir(self,productor):
-        try:
-            topic = "destino"
-
-            for drone in self.drones:
-                mensaje = f"{str(drone[0])} {str(0)} {str(0)}"
-                productor.produce(topic, value=mensaje)
-                productor.flush()
-        except Exception as e:
-            print("Error saliendo del espectaculo: ",e)
-
     def enviar_por_kafka_destinos(self, productor):
         try:
             topic = "destino"
@@ -240,6 +228,8 @@ class AD_Engine:
     def start(self, productor_destinos, productor_mapa, consumidor):
         hay_figura = self.leer_figuras()
         try:
+
+
             while hay_figura and self.detener == False and self.detener_por_clima == False:
                 if not self.figuras:
                     hay_figura = False
@@ -256,15 +246,24 @@ class AD_Engine:
                     print("*********************************************Figura Completada******************************************************")
                     self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
                     del self.figuras[0]
-
                     time.sleep(5)
 
                     if not self.figuras:
                         hay_figura = self.leer_figuras()
                         if hay_figura == False:
-                            self.stop()
+
+                            for index in range(len(self.drones)):
+                                self.drones[index][1] = [0,0]
+
+                            posicionesDrones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor,))
+                            posicionesDrones.start()
+
+                            while not self.figura_completada():
+                                self.enviar_por_kafka_destinos(productor_destinos)
+                                self.enviar_mapa(productor_mapa)
+                            self.clear_terminal()
                             print("Espectaculo finalizado")
-                            self.drones_salir(productor_destinos)
+                            self.stop()
                             return
                     else:
                         hay_figura = True
@@ -292,7 +291,7 @@ def clima(engine,ip_puerto,ciudad):
             if float(temperatura) <= 0.0 and len(temperatura) > 0:
                 engine.stop_clima()
                 break
-            time.sleep(1)
+            time.sleep(2)
 
         sys.exit(0)
     except Exception as e:

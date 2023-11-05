@@ -67,7 +67,7 @@ class EscucharEngine(threading.Thread):
                 if float(temperatura) <= 0.0:
                     print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
                     break
-            time.sleep(2)
+            time.sleep(1)
         self.engine.close()
 
 
@@ -89,7 +89,6 @@ if __name__ == "__main__":
         s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s_socket.bind((local_ip, puerto))
         s_socket.listen()
-
         while True:
             conn, addr = s_socket.accept()
             try:
