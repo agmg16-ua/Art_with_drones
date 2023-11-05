@@ -122,8 +122,8 @@ class EscucharDestino:
             self.escucharPorKafkaDestino(consumidorDestino)
 
             self.estado = "Rojo"
-            if self.posicionActual[0] == 0 and self.posicionActual[1] == 0:
-                self.detener = True
+            #if self.posicionActual[0] == 0 and self.posicionActual[1] == 0:
+            #    self.detener = True
 
     def run(self):
         try:
