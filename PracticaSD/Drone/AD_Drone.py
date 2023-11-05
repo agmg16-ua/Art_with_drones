@@ -139,11 +139,6 @@ class EscucharDestino:
             dronEscuchaMapa = threading.Thread(target=self.escucharEstadoMapa,args=(consumidorMapa,))
             dronEscuchaMapa.start()
 
-            """
-            controlarFigura = threading.Thread(target=self.cambio_figura,args=(ip_puerto_engine,consumidorDestino,))
-            controlarFigura.start()
-            """
-
             opcionAux = -1
             while opcionAux != 2 and self.detener == False:
                 print("[1] Imprimir Mapa")
@@ -155,30 +150,6 @@ class EscucharDestino:
 
         except Exception as e:
             print("Error:", e)
-
-    """
-    def cambio_figura(self,ip_puerto_engine,consumer):
-        while not self.detener:
-            # Obtiene la dirección IP local de la red actual
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect(("8.8.8.8", 80))
-            local_ip = s.getsockname()[0]
-            s.close()
-
-            # Creo el servidor a la espera de drones que me llamen por ahí
-            s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s_socket.bind((local_ip, puerto))
-            s_socket.listen()
-
-            conn, addr = s_socket.accept()
-
-            cambio = sock.recv(1024).decode('utf-8')
-            if cambio == "1":
-                self.escucharPorKafkaDestino(consumer)
-            else:
-                self.detener = True
-                s_socket.close()
-    """
 
 class AD_Drone:
     def __init__(self, alias):
@@ -198,13 +169,13 @@ class AD_Drone:
     def registrarse(self, ip, puerto):
         try:
             cadena = f"{self.id} {self.alias}"
-
             skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             skcliente.connect((ip, int(puerto)))
-
             skcliente.send(cadena.encode('utf-8'))
-
             token = skcliente.recv(1024).decode('utf-8')
+
+            while token == "":
+                token = skcliente.recv(1024).decode('utf-8')
             self.token = token
 
             print("---Drone registrado de manera satisfactoria---\n")
@@ -238,8 +209,10 @@ class AD_Drone:
             skcliente.connect((ip, int(puerto)))
 
             self.escribe_socket(skcliente, cadena)
-            time.sleep(1)
+
             inclusion = self.lee_socket(skcliente)
+            while inclusion == "":
+                inclusion = self.lee_socket(skcliente)
 
             dron = inclusion.split(" ")
 
@@ -257,39 +230,10 @@ class AD_Drone:
 
         return aceptado
 
-
-
-"""
-def clima(drone,ip_puerto):
-    try:
-        skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        valores = ip_puerto.split(":")
-
-        skcliente.connect((valores[0], int(valores[1])))
-
-        while True:
-            temperatura = skcliente.recv(1024).decode('utf-8')
-
-            if int(temperatura) == 1:
-                print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
-                drone.detener()
-
-            time.sleep(1)
-
-    except Exception as e:
-        print("Error solicitando clima: " + str(e))
-        exit(-1)
-
-    return True
-"""
-
-
-
 if __name__ == "__main__":
     import sys
 
-    if len(sys.argv) < 7:
+    if len(sys.argv) < 8:
         print("ERROR: No hay suficientes argumentos")
         print("$ ./AD_Drone.py alias ip_Engine puerto_Engine ip_Kafka puerto_Kafka ip_Registry puerto_Registry")
         exit(-1)
@@ -301,6 +245,9 @@ if __name__ == "__main__":
     puerto_Kafka = sys.argv[5]
     ip_Registry = sys.argv[6]
     puerto_Registry = sys.argv[7]
+
+    if len(sys.argv) == 9:
+        drone.id = int(sys.argv[8])
 
     opcion = -1
 

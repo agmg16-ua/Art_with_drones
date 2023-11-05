@@ -31,8 +31,8 @@ class EscucharDrone(threading.Thread):
                         return True,palabras[2]
         except Exception as e:
             print(f"Error: {e}")
-            return False
-        return False
+            return False,""
+        return False,""
 
     def run(self):
         print("Contactando drone...")
@@ -43,7 +43,6 @@ class EscucharDrone(threading.Thread):
             token_id = self.lee_socket(token_id)
             palabras = token_id.split(" ")
             existe,id = self.autenticar(palabras[0],palabras[1])
-
             if existe:
                 self.escribe_socket("aceptado " + id)
             else:

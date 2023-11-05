@@ -10,8 +10,6 @@ from Map import Map
 
 #Thread para escuchar drones en paralelo
 class EscucharDrones(threading.Thread):
-    # Contendrá las figuras del fichero
-    figuras = []
     def __init__(self, puerto):
         super().__init__()
         self.puerto = puerto
@@ -43,16 +41,6 @@ class EscucharDrones(threading.Thread):
                     print("Error para escuchar al drone: ", e)
         except Exception as e:
             print("Error creando servidor: ", e)
-
-
-#Clase para almacenar los drones con su coordenada actual
-class Drone:
-    def __init__(self, id):
-        self.id = id
-        self.coordenada = (0, 0)
-
-    def set_coordenada(self, x, y):
-        self.coordenada = (x, y)
 
 #Clase principal
 class AD_Engine:
@@ -226,6 +214,7 @@ class AD_Engine:
     def figura_completada(self):
         return self.dronesActuales == self.drones
 
+    #Operaciones con sockets
     def lee_socket(self, p_datos):
         try:
             aux = self.drone.recv(1024)
@@ -240,6 +229,7 @@ class AD_Engine:
         except Exception as e:
             print(f"Error: {e}")
 
+    #Motivos para detener la ejecucion
     def stop_clima(self):
         self.detener_por_clima = True
 
@@ -273,6 +263,7 @@ class AD_Engine:
                         hay_figura = self.leer_figuras()
                         if hay_figura == False:
                             self.stop()
+                            print("Espectaculo finalizado")
                             self.drones_salir(productor_destinos)
                             return
                     else:
@@ -283,7 +274,7 @@ class AD_Engine:
                 if posicionesDrones.is_alive():
                     posicionesDrones.detener()
 
-                sys.exit(0)
+            sys.exit(0)
         except Exception as e:
             print(f"Error en Engine: {e}")
 
@@ -309,23 +300,6 @@ def clima(engine,ip_puerto,ciudad):
         print("No se puede realizar el espectaculo")
         engine.stop_clima()
 
-"""
-def notificar_Drones(puerto):
-    # Obtiene la dirección IP local de la red actual
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
-    local_ip = s.getsockname()[0]
-    s.close()
-
-    # Creo el servidor a la espera de drones que me llamen por ahí
-    s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s_socket.bind((local_ip, puerto))
-    s_socket.listen()
-
-    conn, addr = s_socket.accept()
-    while True:
-"""
-
 if __name__ == "__main__":
     import sys
 
@@ -343,7 +317,7 @@ if __name__ == "__main__":
     print(f"Escuchando puerto {puerto}")
     print(f"Maximo de drones establecido en {max_drones} drones")
 
-    escuchar_drones = EscucharDrones(int(puerto))  # No se ha proporcionado el código para esta parte
+    escuchar_drones = EscucharDrones(int(puerto))
     escuchar_drones.start()
 
     while not os.path.exists("Figuras.json"):
@@ -364,32 +338,3 @@ if __name__ == "__main__":
     else:
         print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
     sys.exit(0)
-# La parte que falta en el archivo main se debe completar según tus necesidades.
-# if __name__ == "__main__":
-#    import sys
-#
-#    if len(sys.argv) != 4:
-#        print("ERROR: Los parámetros no son correctos")
-#        sys.exit(1)
-#
-##    puerto = sys.argv[1]
-#    max_drones = int(sys.argv[2])
- #   ip_puerto_broker = sys.argv[3]
- #   ip_puerto_weather = sys.argv[4]
-##
- #   print(f"Escuchando puerto {puerto}")
-#    print(f"Maximo de drones establecido en {max_drones} drones")
-#
- #   escuchar_drones = None  # Debes completar esta parte con la lógica de inicio de hilos o procesos
- #   escuchar_drones.start()  # Inicia el hilo para escuchar drones
-
-#    figuras = None  # Debes completar esta parte con la lógica de comprobación de existencia del archivo
- #   while not figuras.exists():
- #       time.sleep(1)
-
-#    engine = AD_Engine()
- #   productor_destinos = engine.productor_destinos(ip_puerto_broker)
-  #  productor_mapa = engine.productor_mapa(ip_puerto_broker)
- #   consumidor_posiciones = engine.consumidor_posiciones(ip_puerto_broker)
-
- #   engine.start(productor_destinos, productor_mapa, consumidor_posiciones)
