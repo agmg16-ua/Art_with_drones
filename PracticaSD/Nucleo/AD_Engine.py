@@ -235,7 +235,34 @@ class AD_Engine:
                 if not self.figuras:
                     hay_figura = False
                 else:
+                    dronesActuales_figura_anterior = self.dronesActuales.copy()
+                    drones_figura_anterior = self.drones.copy()
+
+                    #print("Drones Finales antes")
+                    #for drone in drones_figura_anterior:
+                    #    print(drone)
+                            
                     self.drones = self.figuras[0][1]
+
+                    for droneA in drones_figura_anterior:
+                        existe = False
+                        for droneN in self.drones:
+                            if droneA[0] == droneN[0]:
+                                existe = True
+                                break
+                        
+                        if existe == False:
+                            self.drones.append([droneA[0], [0, 0]])
+
+                    #print("Drones Finales despues")
+                    #for drone in self.drones:
+                    #    print(drone)
+                    
+                    #time.sleep(5)
+
+
+                    
+                    
 
                     posicionesDrones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor,))
                     posicionesDrones.start()
@@ -245,6 +272,7 @@ class AD_Engine:
                         self.enviar_mapa(productor_mapa)
 
                     print("*********************************************Figura Completada******************************************************")
+                    print("AAAAAAAAAAAAAA")
                     self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
                     del self.figuras[0]
                     time.sleep(5)

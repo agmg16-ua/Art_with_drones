@@ -54,7 +54,7 @@ class Map:
                             if drone[0] == droneActual[0]:
                                 droneFinal = drone
 
-                        if droneActual[1][1] == j and droneActual[1][0] == i:
+                        if droneActual[1][1] == i and droneActual[1][0] == j:
                             existe = True
                             if droneActual[0] < 10:
                                 if droneActual[1][0] == droneFinal[1][0] and droneActual[1][1] == droneFinal[1][1]:
@@ -87,8 +87,8 @@ class Map:
             if existe == False:
                 dronesAux.append([actual[0], [0, 0]])
 
-        print(dronesAux)
-        print(dronesActuales)
+        #print(dronesAux)
+        #print(dronesActuales)
 
         self.mapa = ""
         sys.stdout.write("\b")
