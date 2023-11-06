@@ -1,0 +1,4 @@
+Alicante 20.0
+Valencia 20.0
+Alaska -3.2
+Paris 15.4

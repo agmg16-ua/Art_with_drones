@@ -24,16 +24,19 @@ def existe_en_bd(id, alias):
         with open("drones.txt", "r") as archivo:
             for linea in archivo:
                 palabras = linea.split()
-                if palabras[0] == id:
+                if palabras[1] == id:
                     existe = True
+                    token_dron_actual = palabras[0]
     except Exception as e:
-        print("Error:", e)
+        print("Error al leer drones:", e)
     return existe
 
 def escribir_bd(id, alias):
     global id_nueva
+    global token_dron_actual
     with open("drones.txt", "a") as archivo:
         if not existe_en_bd(id, alias):
+            token_dron_actual = generar_token()
             archivo.write(f"{token_dron_actual} {id} {id_nueva} {alias}\n")
             id_nueva += 1
 
@@ -62,7 +65,7 @@ if __name__ == "__main__":
         borrar_fichero()
         Ssocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         Ssocket.bind(('', puerto))
-        Ssocket.listen(1)
+        Ssocket.listen()
 
         while True:
             print("Esperando solicitud...")
@@ -72,8 +75,6 @@ if __name__ == "__main__":
             print(peticion)
             palabras = peticion.split()
 
-            # Generación del token
-            token_dron_actual = generar_token()
             escribir_bd(palabras[0], palabras[1])
 
             enviar_socket(socket, token_dron_actual)
