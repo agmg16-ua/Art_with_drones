@@ -115,6 +115,7 @@ class AD_Engine:
             topic = "mapa"
 
             mapa = Map()
+            mensaje = ""
             mensaje = mapa.to_string(self.drones,self.dronesActuales)
             self.clear_terminal()
 
