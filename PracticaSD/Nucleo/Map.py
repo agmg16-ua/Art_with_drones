@@ -77,11 +77,24 @@ class Map:
         dronesAux = drones.copy()
         if len(dronesActuales) == 0:
             dronesAux = [[0, [0, 0]]]
+        
+        for actual in dronesActuales:
+            existe = False
+            for buscando in dronesAux:
+                if actual[0] == buscando[0]:
+                    existe = True
+            
+            if existe == False:
+                dronesAux.append([actual[0], [0, 0]])
+
+        print(dronesAux)
+        print(dronesActuales)
 
         self.mapa = ""
         sys.stdout.write("\b")
         self.print_mapa(dronesAux, dronesActuales)
         return self.mapa
+
 
 def clear_terminal():
     os.system('cls' if os.name == 'nt' else 'clear')
