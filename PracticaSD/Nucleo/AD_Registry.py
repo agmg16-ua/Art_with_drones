@@ -22,6 +22,7 @@ def enviar_socket(sock, token):
 
 #Compruebo si el drone ya se ha registrado anteriormente
 def existe_en_bd(id, alias):
+    global token_dron_actual
     existe = False
     try:
         with open("drones.txt", "r") as archivo:
