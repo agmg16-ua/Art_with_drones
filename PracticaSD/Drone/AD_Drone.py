@@ -60,6 +60,17 @@ class UnirseAccion:
 
         return productor
 
+    def productorActividad(self):
+        # Configura las propiedades del productor
+        config = {
+            'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
+        }
+
+        # Crea una instancia del productor
+        productor = Producer(config)
+
+        return productor
+
     #Operaciones en kafka
     #Escuha todos los destinos de los drones y filtro para elegir el mío.
     #Al encontrarlo almaceno el destino en mi posicionFin.
@@ -110,6 +121,15 @@ class UnirseAccion:
         productor.produce(topic, value=f"{self.id} {self.posicionActual[0]} {self.posicionActual[1]}")
         productor.flush()
 
+    #Envio mi id y espero un segundo
+    def estoyActivo(self,productor):
+        while self.detener == False:
+            topic = "activos"
+
+            productor.produce(topic, value=f"{self.id}")
+            productor.flush()
+            time.sleep(1)
+
     #Operaciones con el mapa
     #Cada vez que me muevo una casilla envio mi posicionActual al engine y espero 2 segundos.
     #Cuando haya llegado a mi destino me mantengo a la escucha de nuevos destinos.
@@ -147,15 +167,23 @@ class UnirseAccion:
             consumidorDestino = self.consumidorDestino()
             consumidorMapa = self.consumidorMapa()
             productorPosicion = self.productorPosiciones()
+            productorActividad = self.productorActividad()
 
             self.escucharPorKafkaDestino(consumidorDestino)
 
+            #Los drones envian constantemente sus posiciones
             dronMovimiendose = threading.Thread(target=self.mover,args=(productorPosicion,consumidorDestino))
             dronMovimiendose.start()
 
+            #Los drones escuchan constantemente el mapa
             dronEscuchaMapa = threading.Thread(target=self.escucharEstadoMapa,args=(consumidorMapa,))
             dronEscuchaMapa.start()
 
+            #Los drones envian su id si se encuentran activos
+            estoyActivo = threading.Thread(target=self.estoyActivo,args=(productorActividad,))
+            estoyActivo.start()
+
+            #Menu con opcion de imprimir el mapa o detener la accion
             opcionAux = -1
             while opcionAux != 2 and self.detener == False:
                 print("[1] Imprimir Mapa")
@@ -164,6 +192,8 @@ class UnirseAccion:
                 opcionAux = int(input())
                 if opcionAux == 1:
                     print(self.mapa)
+                elif opcionAux == 2:
+                    self.detener()
 
         except Exception as e:
             print("Error:", e)
@@ -233,6 +263,7 @@ class AD_Drone:
 
             dron = inclusion.split(" ")
 
+            #Comprueba si el drone ha sido aceptado o no en el espectaculo
             if dron[0] == "aceptado":
                 self.id = int(dron[1])
                 print("---Drone " + str(self.id) + " unido de manera satisfactoria---\n")

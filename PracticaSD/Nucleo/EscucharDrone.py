@@ -57,6 +57,7 @@ class EscucharDrone(threading.Thread):
                 self.escribe_socket("aceptado " + id)
             else:
                 self.escribe_socket("denegado")
+
         except Exception as e:
             print(f"Error en escucharDrone: {e}")
         finally:
