@@ -137,7 +137,6 @@ class AD_Drone:
 
             productor.produce(topic, value=f"{self.id_virtual}")
             productor.flush()
-            time.sleep(1)
 
     #Operaciones con el mapa
     #Cada vez que me muevo una casilla envio mi posicionActual al engine y espero 2 segundos.

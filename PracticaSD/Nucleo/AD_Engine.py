@@ -130,9 +130,6 @@ class AD_Engine:
             topic = "activos"
             consumidor.subscribe(topics=[topic])
             activos = []
-            #Crea un vector que contendra para cada posicion del vector de dronesActuales si está activo o no
-            for i in range(len(self.dronesActuales)):
-                activos.append(False)
 
             inicio = time.time()
 
@@ -147,19 +144,20 @@ class AD_Engine:
                             print('Error al recibir mensaje: {}'.format(mensaje.error()))
                     else:
                         #Si el drone que envio su id se encuentra entre los desactivados lo vuelvo a incluir a la accion
-                        if self.dronesDesactivados:
-                            index = 0
+                        if len(self.dronesDesactivados) != 0:
                             for drone in self.dronesDesactivados:
                                 if int(mensaje.value().decode('utf-8')) == drone[0][0]:
                                     self.dronesActuales.append(drone[0])
                                     self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
                                     self.dronesFinales.append(drone[1])
                                     self.dronesFinales = sorted(self.dronesFinales, key=lambda x: x[0])
-                                    del self.dronesDesactivados[index]
-                                    activos.append(False)
-                                index+=1
+                                    self.dronesDesactivados.remove(drone)
 
-                        if self.dronesActuales:
+                        #Crea un vector que contendra para cada posicion del vector de dronesActuales si está activo o no
+                        for i in range(len(self.dronesActuales)):
+                            activos.append(False)
+
+                        if len(self.dronesActuales) != 0:
                             #Compruebo las ids que me han mandado en el intervalo de tiempo de 5 segundos
                             index = 0
                             for drone in self.dronesActuales:
@@ -169,19 +167,23 @@ class AD_Engine:
                                 index += 1
                 #Si he leido durante 5 segundos salgo del bucle
                 final = time.time() - inicio
-                if final >= 5:
+                if final >= 3:
                     break
 
-            #Si alguno no está activo tengo que añadirlo a desactivados
-            if all(activos) == False:
-                #Ahora compruebo los que estan activos y los que no
-                indice = 0
-                for activo in activos:
-                    if activo == False:
-                        self.dronesDesactivados.append([self.dronesActuales[indice],self.dronesFinales[indice]])
-                        del self.dronesActuales[indice]
-                        del self.dronesFinales[indice]
-                    indice+=1
+
+            try:
+                #Si alguno no está activo tengo que añadirlo a desactivados
+                if len(activos) != 0 and all(activos) == False:
+                    #Ahora compruebo los que estan activos y los que no
+                    indice = 0
+                    for activo in activos:
+                        if activo == False:
+                            self.dronesDesactivados.append([self.dronesActuales[indice],self.dronesFinales[indice]])
+                            del self.dronesActuales[indice]
+                            del self.dronesFinales[indice]
+                        indice+=1
+            except Exception as e:
+                print("Es aqui")
 
         except Exception as e:
             print("Error escuchando activos: ", e)
@@ -246,21 +248,30 @@ class AD_Engine:
 
                         existe = False
 
-                        #Si no hay drones añadidos a mi vector de drones actuales añado al nuevo
-                        if len(self.dronesActuales) == 0:
-                            self.dronesActuales.append(aux)
 
-                        #Compruebo si el drone ya lo tengo guardado.
-                        for dron in self.dronesActuales:
-                            if dron[0] == aux[0]:
-                                dron[1] = aux[1]
-                                existe = True
-                                break
+                        #Si el drone esta desactivado no deberian llegarme mensajes de el
+                        esta_desactivado = False
+                        if len(self.dronesDesactivados) != 0:
+                            for drone in self.dronesDesactivados:
+                                if aux[0] == drone[0][0]:
+                                    esta_desactivado = True
 
-                        #Si el drone no existe entre los guardados en actuales lo añado al vector
-                        if existe == False:
+                        if esta_desactivado == False:
+                            #Si no hay drones añadidos a mi vector de drones actuales añado al nuevo
+                            if len(self.dronesActuales) == 0:
                                 self.dronesActuales.append(aux)
-                                self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
+
+                            #Compruebo si el drone ya lo tengo guardado.
+                            for dron in self.dronesActuales:
+                                if dron[0] == aux[0]:
+                                    dron[1] = aux[1]
+                                    existe = True
+                                    break
+
+                            #Si el drone no existe entre los guardados en actuales lo añado al vector
+                            if existe == False:
+                                    self.dronesActuales.append(aux)
+                                    self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
 
         except Exception as e:
             print("Error escuchando posiciones: ", e)
