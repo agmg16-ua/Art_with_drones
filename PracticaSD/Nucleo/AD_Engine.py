@@ -192,13 +192,14 @@ class AD_Engine:
     def enviar_por_kafka_destinos(self, productor):
         try:
             topic = "destino"
-
-            #Envio los destinos de los que se encuentran aqui
-            for drone in self.dronesFinales:
-                pos = drone[1]
-                mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
-                productor.produce(topic, value=mensaje)
-                productor.flush()
+            while  not self.figura_completada() and self.detener == False and self.detener_por_clima == False:
+            
+                #Envio los destinos de los que se encuentran aqui
+                for drone in self.dronesFinales:
+                    pos = drone[1]
+                    mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
+                    productor.produce(topic, value=mensaje)
+                    productor.flush()
 
         except Exception as e:
             print("Error enviando destinos: ",e)
@@ -208,21 +209,22 @@ class AD_Engine:
     def enviar_mapa(self, productor):
         try:
             topic = "mapa"
+            while not self.figura_completada() and self.detener == False and self.detener_por_clima == False:
 
-            mapa = Map()
-            mensaje = ""
-            mensaje = mapa.to_string(self.dronesFinales,self.dronesActuales)
-            self.clear_terminal()
+                mapa = Map()
+                mensaje = ""
+                mensaje = mapa.to_string(self.dronesFinales,self.dronesActuales)
+                self.clear_terminal()
 
-            if self.figura_completada():
-                mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
+                if self.figura_completada():
+                    mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
 
-            print(mensaje)
-            print(self.dronesActuales)
-            print(self.dronesFinales)
-            print(self.dronesDesactivados)
-            productor.produce(topic, value=mensaje)
-            productor.flush()
+                print(mensaje)
+                print(self.dronesActuales)
+                print(self.dronesFinales)
+                print(self.dronesDesactivados)
+                productor.produce(topic, value=mensaje)
+                productor.flush()
 
         except Exception as e:
             print("Error enviando mapa: ",e)
@@ -391,6 +393,15 @@ class AD_Engine:
                     dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
                     dronesActivos.start()
 
+                    #Envio los destinos paralelamente
+                    enviarDestinos = threading.Thread(target=self.enviar_por_kafka_destinos,args=(productor_destinos,))
+                    enviarDestinos.start()
+
+                    #Envio el mapa paralelamente
+                    enviarDestinos = threading.Thread(target=self.enviar_mapa,args=(productor_mapa,))
+                    enviarDestinos.start()
+
+
                     #Mientras que no se haya completado la figura o no se haya detenido por ninguna causa, envia los destinos finales para los drones
                     #y el mapa actual a los drones.
                     while not self.figura_completada() and self.detener == False and not self.detener_por_clima:
@@ -399,9 +410,6 @@ class AD_Engine:
                             #Comprueba los drones que esten activos actualmente
                             dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
                             dronesActivos.start()
-
-                        self.enviar_por_kafka_destinos(productor_destinos)
-                        self.enviar_mapa(productor_mapa)
                         time.sleep(1)
 
 
@@ -424,9 +432,6 @@ class AD_Engine:
                             for index in range(len(self.dronesFinales)):
                                 self.dronesFinales[index][1] = [0,0]
 
-                            posicionesDrones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor_posiciones,))
-                            posicionesDrones.start()
-
                             while not self.figura_completada():
 
                                 #Espero a que no exista ya el mismo hilo.
@@ -435,8 +440,6 @@ class AD_Engine:
                                     dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
                                     dronesActivos.start()
 
-                                self.enviar_por_kafka_destinos(productor_destinos)
-                                self.enviar_mapa(productor_mapa)
                                 time.sleep(1)
 
                             self.clear_terminal()
