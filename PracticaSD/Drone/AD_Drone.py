@@ -86,7 +86,7 @@ class AD_Drone:
             consumidor.subscribe(topics=[topic])
 
             while True:
-                mensaje = consumidor.poll(1.0)
+                mensaje = consumidor.poll(0.1)
                 if mensaje is not None:
                     if mensaje.error():
                         if mensaje.error().code() == KafkaError._PARTITION_EOF:
@@ -112,7 +112,7 @@ class AD_Drone:
         consumidor.subscribe(topics=[topic])
 
         while self.detener == False:
-            mensaje = consumidor.poll(1.0)
+            mensaje = consumidor.poll(0.1)
 
             if mensaje is not None:
                 if mensaje.error():
@@ -130,7 +130,7 @@ class AD_Drone:
         productor.produce(topic, value=f"{self.id_virtual} {self.posicionActual[0]} {self.posicionActual[1]}")
         productor.flush()
 
-    #Envio mi id y espero un segundo
+    #Envio mi id y espero tres segundo
     def estoyActivo(self,productor):
         while self.detener == False:
             topic = "activos"
@@ -157,7 +157,7 @@ class AD_Drone:
 
                 if self.posicionFin[0] == self.posicionActual[0] and self.posicionFin[1] == self.posicionActual[1]:
                     self.estado = "Verde"
-                time.sleep(2)
+                time.sleep(1)
                 self.enviarPosicion(productor)
             self.escucharPorKafkaDestino(consumidorDestino)
 
@@ -180,6 +180,10 @@ class AD_Drone:
             estoyActivo = threading.Thread(target=self.estoyActivo,args=(productorActividad,))
             estoyActivo.start()
 
+            #Los drones envian su id si se encuentran activos
+            estoyActivo = threading.Thread(target=self.escucharPorKafkaDestino,args=(consumidorDestino,))
+            estoyActivo.start()
+            
             self.escucharPorKafkaDestino(consumidorDestino)
 
             #Los drones envian constantemente sus posiciones

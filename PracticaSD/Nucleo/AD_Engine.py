@@ -113,7 +113,6 @@ class AD_Engine:
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
             'group.id': 'grupo_9',
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
-            'enable.auto.commit': False  # Deshabilita la confirmación automática
         }
         try:
             # Crea una instancia del consumidor
@@ -129,13 +128,16 @@ class AD_Engine:
         try:
             topic = "activos"
             consumidor.subscribe(topics=[topic])
+
             activos = []
+            for dron in self.dronesActuales:
+                activos.append(False)
 
             inicio = time.time()
 
             #Escucha las posiciones de los drones mientras la figura no este completada o no se haya detenido el programa
-            while not self.figura_completada() and not self.detener and not self.detener_por_clima:
-                mensaje = consumidor.poll(1.0)
+            while not self.detener and not self.detener_por_clima:
+                mensaje = consumidor.poll(0.1)
                 if mensaje is not None:
                     if mensaje.error():
                         if mensaje.error().code() == KafkaError._PARTITION_EOF:
@@ -148,28 +150,36 @@ class AD_Engine:
                             for drone in self.dronesDesactivados:
                                 if int(mensaje.value().decode('utf-8')) == drone[0][0]:
                                     self.dronesActuales.append(drone[0])
-                                    self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
-                                    self.dronesFinales.append(drone[1])
-                                    self.dronesFinales = sorted(self.dronesFinales, key=lambda x: x[0])
+                                    #Como vuelve a estar activado creo una auxiliar para modificar el tamaño de activos
+                                    activos.append(True)
+                                    
+                                    #Compruebo si he cambiado de figura
+                                    existe = False
+                                    for dron in self.dronesFinales:
+                                        if dron[0] == drone[1][0]:
+                                            existe = True
+                                    if existe == False:
+                                        self.dronesFinales.append(drone[1])
+                                        self.dronesFinales = sorted(self.dronesFinales, key=lambda x: x[0])
+
                                     self.dronesDesactivados.remove(drone)
 
-                        #Crea un vector que contendra para cada posicion del vector de dronesActuales si está activo o no
-                        for i in range(len(self.dronesActuales)):
-                            activos.append(False)
+                        try:
+                            if len(self.dronesActuales) != 0 and len(self.dronesActuales) == len(activos):
+                                #Compruebo las ids que me han mandado en el intervalo de tiempo de 5 segundos
+                                index = 0
+                                for drone in self.dronesActuales:
+                                    if int(mensaje.value().decode('utf-8')) == drone[0]:
+                                        activos[index] = True
+                                        break
+                                    index += 1
+                        except Exception as e:
+                            print("Error eliminando los drones del espectaculo: ",e)
 
-                        if len(self.dronesActuales) != 0:
-                            #Compruebo las ids que me han mandado en el intervalo de tiempo de 5 segundos
-                            index = 0
-                            for drone in self.dronesActuales:
-                                if int(mensaje.value().decode('utf-8')) == drone[0]:
-                                    activos[index] = True
-                                    break
-                                index += 1
                 #Si he leido durante 5 segundos salgo del bucle
                 final = time.time() - inicio
-                if final >= 3:
+                if final >= 5:
                     break
-
 
             try:
                 #Si alguno no está activo tengo que añadirlo a desactivados
@@ -181,9 +191,11 @@ class AD_Engine:
                             self.dronesDesactivados.append([self.dronesActuales[indice],self.dronesFinales[indice]])
                             del self.dronesActuales[indice]
                             del self.dronesFinales[indice]
+                            indice-=1
                         indice+=1
+                self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
             except Exception as e:
-                print("Es aqui")
+                print("Error eliminando los drones del espectaculo: ",e)
 
         except Exception as e:
             print("Error escuchando activos: ", e)
@@ -192,14 +204,12 @@ class AD_Engine:
     def enviar_por_kafka_destinos(self, productor):
         try:
             topic = "destino"
-            while  not self.figura_completada() and self.detener == False and self.detener_por_clima == False:
-            
-                #Envio los destinos de los que se encuentran aqui
-                for drone in self.dronesFinales:
-                    pos = drone[1]
-                    mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
-                    productor.produce(topic, value=mensaje)
-                    productor.flush()
+            #Envio los destinos de los que se encuentran aqui
+            for drone in self.dronesFinales:
+                pos = drone[1]
+                mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
+                productor.produce(topic, value=mensaje)
+                productor.flush()
 
         except Exception as e:
             print("Error enviando destinos: ",e)
@@ -209,22 +219,21 @@ class AD_Engine:
     def enviar_mapa(self, productor):
         try:
             topic = "mapa"
-            while not self.figura_completada() and self.detener == False and self.detener_por_clima == False:
 
-                mapa = Map()
-                mensaje = ""
-                mensaje = mapa.to_string(self.dronesFinales,self.dronesActuales)
-                self.clear_terminal()
+            mapa = Map()
+            mensaje = ""
+            mensaje = mapa.to_string(self.dronesFinales,self.dronesActuales)
+            self.clear_terminal()
 
-                if self.figura_completada():
-                    mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
+            if self.figura_completada():
+                mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
 
-                print(mensaje)
-                print(self.dronesActuales)
-                print(self.dronesFinales)
-                print(self.dronesDesactivados)
-                productor.produce(topic, value=mensaje)
-                productor.flush()
+            print(mensaje)
+            print(self.dronesActuales)
+            print(self.dronesFinales)
+            print(self.dronesDesactivados)
+            productor.produce(topic, value=mensaje)
+            productor.flush()
 
         except Exception as e:
             print("Error enviando mapa: ",e)
@@ -234,10 +243,8 @@ class AD_Engine:
         try:
             topic = "posiciones"
             consumidor.subscribe(topics=[topic])
-
-            #Escucha las posiciones de los drones mientras la figura no este completada o no se haya detenido el programa
             while not self.figura_completada() and not self.detener and not self.detener_por_clima:
-                mensaje = consumidor.poll(1.0)
+                mensaje = consumidor.poll(0.1)
                 if mensaje is not None:
                     if mensaje.error():
                         if mensaje.error().code() == KafkaError._PARTITION_EOF:
@@ -247,9 +254,6 @@ class AD_Engine:
                     else:
                         valores = mensaje.value().decode('utf-8').split()
                         aux = [int(valores[0]),[int(valores[1]),int(valores[2])]]
-
-                        existe = False
-
 
                         #Si el drone esta desactivado no deberian llegarme mensajes de el
                         esta_desactivado = False
@@ -264,6 +268,7 @@ class AD_Engine:
                                 self.dronesActuales.append(aux)
 
                             #Compruebo si el drone ya lo tengo guardado.
+                            existe = False
                             for dron in self.dronesActuales:
                                 if dron[0] == aux[0]:
                                     dron[1] = aux[1]
@@ -358,7 +363,7 @@ class AD_Engine:
                     hay_figura = False
                 else:
                     #Asegurar que todos los drones actuales tienen los mismos finales
-                    dronesActuales_figura_anterior = self.dronesActuales.copy()
+                    #dronesActuales_figura_anterior = self.dronesActuales.copy()
                     drones_figura_anterior = self.dronesFinales.copy()
 
                     #print("Drones Finales antes")
@@ -384,27 +389,20 @@ class AD_Engine:
                     #    print(drone)
 
                     #time.sleep(5)
-
-                    #Ejecuta el hilo para mantenerme a la escucha de las posiciones de los drones.
-                    posicionesDrones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor_posiciones,))
-                    posicionesDrones.start()
-
                     #Comprueba los drones que esten activos actualmente
                     dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
                     dronesActivos.start()
 
-                    #Envio los destinos paralelamente
-                    enviarDestinos = threading.Thread(target=self.enviar_por_kafka_destinos,args=(productor_destinos,))
-                    enviarDestinos.start()
-
-                    #Envio el mapa paralelamente
-                    enviarDestinos = threading.Thread(target=self.enviar_mapa,args=(productor_mapa,))
-                    enviarDestinos.start()
-
+                    #Escucha las posiciones de los drones en todo momento
+                    escucharPosiciones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor_posiciones,))
+                    escucharPosiciones.start()
 
                     #Mientras que no se haya completado la figura o no se haya detenido por ninguna causa, envia los destinos finales para los drones
                     #y el mapa actual a los drones.
                     while not self.figura_completada() and self.detener == False and not self.detener_por_clima:
+                        self.enviar_por_kafka_destinos(productor_destinos) #Envio los destinos a los drones
+                        self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
+
                         #Espero a que no exista ya el mismo hilo.
                         if dronesActivos.is_alive() == False:
                             #Comprueba los drones que esten activos actualmente
@@ -424,6 +422,12 @@ class AD_Engine:
 
                     time.sleep(5)
 
+                    #Espero a que no exista ya el mismo hilo.
+                    if dronesActivos.is_alive() == False:
+                        #Comprueba los drones que esten activos actualmente
+                        dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
+                        dronesActivos.start()
+
                     #Leo si hay mas figuras y si no hay mas termina el espectaculo.
                     if not self.figuras:
                         hay_figura = self.leer_figuras()
@@ -432,7 +436,12 @@ class AD_Engine:
                             for index in range(len(self.dronesFinales)):
                                 self.dronesFinales[index][1] = [0,0]
 
+                            escucharPosiciones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor_posiciones,))
+                            escucharPosiciones.start()
+
                             while not self.figura_completada():
+                                self.enviar_por_kafka_destinos(productor_destinos) #Envio los destinos a los drones
+                                self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
 
                                 #Espero a que no exista ya el mismo hilo.
                                 if dronesActivos.is_alive() == False:
