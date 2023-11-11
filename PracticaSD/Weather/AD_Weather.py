@@ -75,8 +75,8 @@ class EscucharEngine(threading.Thread):
 
                 #Si la temperatura es menor o igual a 0.0 se finaliza el espectaculo
                 if float(temperatura) <= 0.0:
-                    print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
-                    break
+                    print("CONDICIONES CLIMATICAS ADVERSAS. NOTIFICANDO CANCELACIÓN DE ESPECTÁCULO\n")
+            
             time.sleep(1)
         self.engine.close()
 
