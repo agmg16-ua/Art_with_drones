@@ -234,9 +234,9 @@ class AD_Engine:
                     mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
 
             print(mensaje)
-            print(self.dronesActuales)
-            print(self.dronesFinales)
-            print(self.dronesDesactivados)
+            print("DRONES ACTUALES: " + str(self.dronesActuales))
+            print("POSICIONES FINALES: " + str(self.dronesFinales))
+            print("DRONES DESACTIVADOS: " + str(self.dronesDesactivados))
             productor.produce(topic, value=mensaje)
             productor.flush()
 
@@ -386,6 +386,12 @@ class AD_Engine:
                     #Asegurar que todos los drones actuales tienen los mismos finales
                     #dronesActuales_figura_anterior = self.dronesActuales.copy()
                     drones_figura_anterior = self.dronesFinales.copy()
+                    print("")
+                    print("Drones de la figura anterior: " + str(drones_figura_anterior))
+                    print("Figura actual: " + str(self.figuras[0][1]))
+                    print("Drones actuales: " + str(self.dronesActuales))
+                    
+                    
 
                     #print("Drones Finales antes")
                     #for drone in drones_figura_anterior:
@@ -404,6 +410,11 @@ class AD_Engine:
 
                         if existe == False:
                             self.dronesFinales.append([droneA[0], [0, 0]])
+                    
+                    print("Drones Finales despues: " + str(self.dronesFinales))
+
+                    #Descomentar para ver los drones que no se utliizan en la figura actual
+                    ####################time.sleep(5)
 
                     #print("Drones Finales despues")
                     #for drone in self.drones:
