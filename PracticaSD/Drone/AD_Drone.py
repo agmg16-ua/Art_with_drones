@@ -5,13 +5,17 @@ import time
 from confluent_kafka import Consumer, Producer, KafkaError
 
 #Crea el consumidor de destinos, de mapa y el productor de posiciones
-class UnirseAccion:
+#Clase principal.
+class AD_Drone:
     #Inicializa la accion con el broker de kafka y la id del drone.
     #Además almacenará la posicion final del drone y la posicion actual del mismo como [x,y]
     #Tendrá el estado del drone y el mapa recibido por kafka, además de un booleano para detener la accion.
-    def __init__(self, broker, id):
-        self.broker = broker
-        self.id = id
+    def __init__(self, alias):
+        self.alias = alias
+        self.id = random.randint(1, 10000)
+        self.id_virtual = -1
+        self.token = ""
+        self.broker = ""
         self.posicionFin = [None, None]
         self.posicionActual = [0, 0]
         self.estado = "Rojo"  # En movimiento "Rojo" y en la posición final "Verde"
@@ -19,7 +23,7 @@ class UnirseAccion:
         self.detener = False
 
     #Detiene la accion
-    def detener(self):
+    def detenerAccion(self):
         self.detener = True
 
     #Me uno a los topics con los roles correspondientes a Drone
@@ -27,8 +31,9 @@ class UnirseAccion:
         # Configura las propiedades del consumidor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'group.id': 'grupo_' + str(self.id),
-            'auto.offset.reset': 'latest'  # Comienza desde el inicio del topic
+            'group.id': 'grupo_' + str(self.id_virtual),
+            'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
+            'enable.auto.commit': False  # Deshabilita la confirmación automática
         }
 
         # Crea una instancia del consumidor
@@ -40,8 +45,9 @@ class UnirseAccion:
         # Configura las propiedades del consumidor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'group.id': 'grupo_' + str(self.id),
-            'auto.offset.reset': 'latest'  # Comienza desde el inicio del topic
+            'group.id': 'grupo_' + str(self.id_virtual),
+            'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
+            'enable.auto.commit': False  # Deshabilita la confirmación automática
         }
 
         # Crea una instancia del consumidor
@@ -60,30 +66,44 @@ class UnirseAccion:
 
         return productor
 
+    def productorActividad(self):
+        # Configura las propiedades del productor
+        config = {
+            'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
+        }
+
+        # Crea una instancia del productor
+        productor = Producer(config)
+
+        return productor
+
     #Operaciones en kafka
     #Escuha todos los destinos de los drones y filtro para elegir el mío.
     #Al encontrarlo almaceno el destino en mi posicionFin.
     def escucharPorKafkaDestino(self, consumidor):
-        topic = "destino"
-        consumidor.subscribe(topics=[topic])
+        try:
+            topic = "destino"
+            consumidor.subscribe(topics=[topic])
 
-        while True:
-            mensaje = consumidor.poll(1.0)
-            if mensaje is not None:
-                if mensaje.error():
-                    if mensaje.error().code() == KafkaError._PARTITION_EOF:
-                        print('No más mensajes en la partición')
-                        break
+            while True:
+                mensaje = consumidor.poll(0.1)
+                if mensaje is not None:
+                    if mensaje.error():
+                        if mensaje.error().code() == KafkaError._PARTITION_EOF:
+                            print('No más mensajes en la partición')
+                            break
+                        else:
+                            print('Error al recibir mensaje: {}'.format(mensaje.error()))
+                            break
                     else:
-                        print('Error al recibir mensaje: {}'.format(mensaje.error()))
-                        break
-                else:
-                    valores = mensaje.value().decode('utf-8').split()
+                        valores = mensaje.value().decode('utf-8').split()
 
-                    if int(valores[0]) == self.id:
-                        self.posicionFin[0] = int(valores[1])
-                        self.posicionFin[1] = int(valores[2])
-                        break
+                        if int(valores[0]) == self.id_virtual:
+                            self.posicionFin[0] = int(valores[1])
+                            self.posicionFin[1] = int(valores[2])
+                            break
+        except Exception as e:
+            print("Error escuchando destino de drones: ",e)
 
     #Eschucho el estado del mapa mientras no se detenga la operación.
     #Almaceno el mapa en mi variable mapa como un string
@@ -92,7 +112,7 @@ class UnirseAccion:
         consumidor.subscribe(topics=[topic])
 
         while self.detener == False:
-            mensaje = consumidor.poll(1.0)
+            mensaje = consumidor.poll(0.1)
 
             if mensaje is not None:
                 if mensaje.error():
@@ -107,8 +127,16 @@ class UnirseAccion:
     def enviarPosicion(self, productor):
         topic = "posiciones"
 
-        productor.produce(topic, value=f"{self.id} {self.posicionActual[0]} {self.posicionActual[1]}")
+        productor.produce(topic, value=f"{self.id_virtual} {self.posicionActual[0]} {self.posicionActual[1]}")
         productor.flush()
+
+    #Envio mi id y espero tres segundo
+    def estoyActivo(self,productor):
+        while self.detener == False:
+            topic = "activos"
+
+            productor.produce(topic, value=f"{self.id_virtual}")
+            productor.flush()
 
     #Operaciones con el mapa
     #Cada vez que me muevo una casilla envio mi posicionActual al engine y espero 2 segundos.
@@ -116,7 +144,7 @@ class UnirseAccion:
     #Si escucho uno nuevo cambio el estado a rojo.
     def mover(self,productor,consumidorDestino):
         while self.detener == False:
-            while self.estado != "Verde":
+            while self.estado != "Verde" and self.detener == False:
                 if self.posicionFin[0] > self.posicionActual[0]:
                     self.posicionActual[0] += 1
                 elif self.posicionFin[0] < self.posicionActual[0]:
@@ -129,9 +157,8 @@ class UnirseAccion:
 
                 if self.posicionFin[0] == self.posicionActual[0] and self.posicionFin[1] == self.posicionActual[1]:
                     self.estado = "Verde"
-
+                time.sleep(1)
                 self.enviarPosicion(productor)
-                time.sleep(2)
             self.escucharPorKafkaDestino(consumidorDestino)
 
             self.estado = "Rojo"
@@ -147,15 +174,27 @@ class UnirseAccion:
             consumidorDestino = self.consumidorDestino()
             consumidorMapa = self.consumidorMapa()
             productorPosicion = self.productorPosiciones()
+            productorActividad = self.productorActividad()
 
+            #Los drones envian su id si se encuentran activos
+            estoyActivo = threading.Thread(target=self.estoyActivo,args=(productorActividad,))
+            estoyActivo.start()
+
+            #Los drones envian su id si se encuentran activos
+            estoyActivo = threading.Thread(target=self.escucharPorKafkaDestino,args=(consumidorDestino,))
+            estoyActivo.start()
+            
             self.escucharPorKafkaDestino(consumidorDestino)
 
+            #Los drones envian constantemente sus posiciones
             dronMovimiendose = threading.Thread(target=self.mover,args=(productorPosicion,consumidorDestino))
             dronMovimiendose.start()
 
+            #Los drones escuchan constantemente el mapa
             dronEscuchaMapa = threading.Thread(target=self.escucharEstadoMapa,args=(consumidorMapa,))
             dronEscuchaMapa.start()
 
+            #Menu con opcion de imprimir el mapa o detener la accion
             opcionAux = -1
             while opcionAux != 2 and self.detener == False:
                 print("[1] Imprimir Mapa")
@@ -164,18 +203,11 @@ class UnirseAccion:
                 opcionAux = int(input())
                 if opcionAux == 1:
                     print(self.mapa)
+                elif opcionAux == 2:
+                    self.detenerAccion()
 
         except Exception as e:
-            print("Error:", e)
-
-#Clase principal.
-class AD_Drone:
-
-    #Almacena el alias del drone, la id real del drone y el token para autenticarse en el espectaculo.
-    def __init__(self, alias):
-        self.alias = alias
-        self.id = random.randint(1, 10000)
-        self.token = ""
+            print("Error durante la accion:", e)
 
     #Se registra con el registry mediante sockets y recibe el token de acceso.
     #Se mantiene leyendo del socket mientras no haya leido nada.
@@ -186,9 +218,10 @@ class AD_Drone:
             skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             skcliente.connect((ip, int(puerto)))
 
-            while token == "":
-                skcliente.send(cadena.encode('utf-8'))
-                token = skcliente.recv(1024).decode('utf-8')
+
+            skcliente.send(cadena.encode('utf-8'))
+            token = skcliente.recv(1024).decode('utf-8')
+
             self.token = token
 
             print("---Drone registrado de manera satisfactoria---\n")
@@ -226,16 +259,14 @@ class AD_Drone:
 
             self.escribe_socket(skcliente, cadena)
 
-            inclusion = ""
-            while inclusion == "":
-                self.escribe_socket(skcliente, cadena)
-                inclusion = self.lee_socket(skcliente)
+            inclusion = self.lee_socket(skcliente)
 
             dron = inclusion.split(" ")
 
+            #Comprueba si el drone ha sido aceptado o no en el espectaculo
             if dron[0] == "aceptado":
-                self.id = int(dron[1])
-                print("---Drone " + str(self.id) + " unido de manera satisfactoria---\n")
+                self.id_virtual = int(dron[1])
+                print("---Drone " + str(self.id_virtual) + " unido de manera satisfactoria---\n")
                 aceptado = True
             else:
                 print("---No se ha podido unir---\n")
@@ -287,11 +318,9 @@ if __name__ == "__main__":
         elif opcion == 2:
             aceptado = drone.solicitar_inclusion(ip_Engine, puerto_Engine)
             if aceptado:
-                ip_puerto_engine = ip_Engine + ":" + puerto_Engine
-
                 #Se une a la acción y realiza todas las operaciones kafka o que necesite para su funcionamiento
-                union_accion = UnirseAccion(broker,drone.id)
-                union_accion.run()
-
+                drone.broker = broker
+                drone.detener = False
+                drone.run()
         else:
             exit(0)
