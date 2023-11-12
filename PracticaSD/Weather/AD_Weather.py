@@ -4,7 +4,7 @@ import time
 import threading
 
 #Thread para escuchar drones en paralelo a la ejecucion del espectaculo.
-class EscucharEngine(threading.Thread):
+class AD_Weather(threading.Thread):
     #Inicializa el thread con el socket del drone y los vectores de los datos vacios.
     def __init__(self, skEngine):
         super().__init__()
@@ -76,7 +76,7 @@ class EscucharEngine(threading.Thread):
                 #Si la temperatura es menor o igual a 0.0 se finaliza el espectaculo
                 if float(temperatura) <= 0.0:
                     print("CONDICIONES CLIMATICAS ADVERSAS. NOTIFICANDO CANCELACIÓN DE ESPECTÁCULO\n")
-            
+
             time.sleep(1)
         self.engine.close()
 
@@ -104,7 +104,7 @@ if __name__ == "__main__":
             conn, addr = s_socket.accept()
             try:
                 # Creo un hilo para escuchar al drone
-                escuchar = EscucharEngine(conn)
+                escuchar = AD_Weather(conn)
                 escuchar.start()
             except Exception as e:
                 print("Error para escuchar al engine: ", e)

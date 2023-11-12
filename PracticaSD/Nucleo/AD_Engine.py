@@ -234,12 +234,9 @@ class AD_Engine:
                     mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
 
             print(mensaje)
-<<<<<<< HEAD
-=======
             print("DRONES ACTUALES: " + str(self.dronesActuales))
             print("POSICIONES FINALES: " + str(self.dronesFinales))
             print("DRONES DESACTIVADOS: " + str(self.dronesDesactivados))
->>>>>>> refs/remotes/origin/fix_errors
             productor.produce(topic, value=mensaje)
             productor.flush()
 
@@ -336,7 +333,7 @@ class AD_Engine:
         for index in range(len(self.dronesActuales)):
             if self.dronesActuales[index][1] != [-1,-1]:
                 return False
-        
+
         return True
 
     #Veo si la figura está completada o no
@@ -389,12 +386,12 @@ class AD_Engine:
                     #Asegurar que todos los drones actuales tienen los mismos finales
                     #dronesActuales_figura_anterior = self.dronesActuales.copy()
                     drones_figura_anterior = self.dronesFinales.copy()
-                    print("")
-                    print("Drones de la figura anterior: " + str(drones_figura_anterior))
-                    print("Figura actual: " + str(self.figuras[0][1]))
-                    print("Drones actuales: " + str(self.dronesActuales))
-                    
-                    
+                    #print("")
+                    #print("Drones de la figura anterior: " + str(drones_figura_anterior))
+                    #print("Figura actual: " + str(self.figuras[0][1]))
+                    #print("Drones actuales: " + str(self.dronesActuales))
+
+
 
                     #print("Drones Finales antes")
                     #for drone in drones_figura_anterior:
@@ -413,8 +410,8 @@ class AD_Engine:
 
                         if existe == False:
                             self.dronesFinales.append([droneA[0], [0, 0]])
-                    
-                    print("Drones Finales despues: " + str(self.dronesFinales))
+
+                    #print("Drones Finales despues: " + str(self.dronesFinales))
 
                     #Descomentar para ver los drones que no se utliizan en la figura actual
                     ####################time.sleep(5)
@@ -451,7 +448,7 @@ class AD_Engine:
 
                     #Si se ha parado por el clima se detiene la ejecucion
                     if self.detener_por_clima == True and self.en_base_por_clima == True:
-                        break 
+                        break
 
                     #Espero a que no exista ya el mismo hilo.
                     if dronesActivos.is_alive() == False:
