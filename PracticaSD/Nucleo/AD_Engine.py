@@ -152,7 +152,7 @@ class AD_Engine:
                                     self.dronesActuales.append(drone[0])
                                     #Como vuelve a estar activado creo una auxiliar para modificar el tamaño de activos
                                     activos.append(True)
-                                    
+
                                     #Compruebo si he cambiado de figura
                                     existe = False
                                     for dron in self.dronesFinales:
@@ -229,9 +229,6 @@ class AD_Engine:
                 mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
 
             print(mensaje)
-            print(self.dronesActuales)
-            print(self.dronesFinales)
-            print(self.dronesDesactivados)
             productor.produce(topic, value=mensaje)
             productor.flush()
 
