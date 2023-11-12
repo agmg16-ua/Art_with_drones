@@ -234,9 +234,9 @@ class AD_Engine:
                     mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
 
             print(mensaje)
-            print("DRONES ACTUALES: " + str(self.dronesActuales))
-            print("POSICIONES FINALES: " + str(self.dronesFinales))
-            print("DRONES DESACTIVADOS: " + str(self.dronesDesactivados))
+            #print("DRONES ACTUALES: " + str(self.dronesActuales))
+            #print("POSICIONES FINALES: " + str(self.dronesFinales))
+            #print("DRONES DESACTIVADOS: " + str(self.dronesDesactivados))
             productor.produce(topic, value=mensaje)
             productor.flush()
 
@@ -422,8 +422,11 @@ class AD_Engine:
 
                     #time.sleep(5)
                     #Comprueba los drones que esten activos actualmente
-                    dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                    dronesActivos.start()
+                    #Espero a que no exista ya el mismo hilo.
+                    dronesActivos = None
+                    if dronesActivos == None or dronesActivos.is_alive() == False:
+                        dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
+                        dronesActivos.start()
 
                     #Escucha las posiciones de los drones en todo momento
                     escucharPosiciones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor_posiciones,))
@@ -450,19 +453,7 @@ class AD_Engine:
                     if self.detener_por_clima == True and self.en_base_por_clima == True:
                         break
 
-                    #Espero a que no exista ya el mismo hilo.
-                    if dronesActivos.is_alive() == False:
-                        #Comprueba los drones que esten activos actualmente
-                        dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                        dronesActivos.start()
-
                     time.sleep(5)
-
-                    #Espero a que no exista ya el mismo hilo.
-                    if dronesActivos.is_alive() == False:
-                        #Comprueba los drones que esten activos actualmente
-                        dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                        dronesActivos.start()
 
                     #Leo si hay mas figuras y si no hay mas termina el espectaculo.
                     if not self.figuras:
