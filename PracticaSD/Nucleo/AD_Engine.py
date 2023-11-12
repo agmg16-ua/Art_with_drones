@@ -59,6 +59,7 @@ class AD_Engine:
         self.dronesDesactivados = []
         self.detener = False
         self.detener_por_clima = False
+        self.en_base_por_clima = False
 
     #Limpia la terminal para mejor legibilidad
     def clear_terminal(self):
@@ -136,7 +137,7 @@ class AD_Engine:
             inicio = time.time()
 
             #Escucha las posiciones de los drones mientras la figura no este completada o no se haya detenido el programa
-            while not self.detener and not self.detener_por_clima:
+            while not self.detener and not self.en_base_por_clima:
                 mensaje = consumidor.poll(0.1)
                 if mensaje is not None:
                     if mensaje.error():
@@ -205,6 +206,7 @@ class AD_Engine:
         try:
             topic = "destino"
             #Envio los destinos de los que se encuentran aqui
+
             for drone in self.dronesFinales:
                 pos = drone[1]
                 mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
@@ -226,9 +228,18 @@ class AD_Engine:
             self.clear_terminal()
 
             if self.figura_completada():
-                mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
+                if self.detener_por_clima:
+                    mensaje = "**************************CONDICIONES CLIMATICAS ADVERSAS. ESPECTACULO FINALIZADO***********************************" + "\n" + mensaje
+                else:
+                    mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
 
             print(mensaje)
+<<<<<<< HEAD
+=======
+            print("DRONES ACTUALES: " + str(self.dronesActuales))
+            print("POSICIONES FINALES: " + str(self.dronesFinales))
+            print("DRONES DESACTIVADOS: " + str(self.dronesDesactivados))
+>>>>>>> refs/remotes/origin/fix_errors
             productor.produce(topic, value=mensaje)
             productor.flush()
 
@@ -240,7 +251,7 @@ class AD_Engine:
         try:
             topic = "posiciones"
             consumidor.subscribe(topics=[topic])
-            while not self.figura_completada() and not self.detener and not self.detener_por_clima:
+            while not self.figura_completada() and not self.detener and not self.en_base_por_clima:
                 mensaje = consumidor.poll(0.1)
                 if mensaje is not None:
                     if mensaje.error():
@@ -311,16 +322,29 @@ class AD_Engine:
                 pass
 
         # Eliminar el archivo JSON
-        try:
-            os.remove('Figuras.json')
-            print(f"El archivo {'Figuras.json'} fue eliminado con éxito.")
-        except OSError as e:
-            print(f"No se pudo eliminar el archivo {'Figuras.json'}: {e}")
+        if self.detener_por_clima == False:
+            try:
+                os.remove('Figuras.json')
+                print(f"El archivo {'Figuras.json'} fue eliminado con éxito.")
+            except OSError as e:
+                print(f"No se pudo eliminar el archivo {'Figuras.json'}: {e}")
 
+        return True
+
+    #Veo si todos los drones estan en la base por el clima
+    def retirada_clima(self):
+        for index in range(len(self.dronesActuales)):
+            if self.dronesActuales[index][1] != [-1,-1]:
+                return False
+        
         return True
 
     #Veo si la figura está completada o no
     def figura_completada(self):
+        if self.detener_por_clima == True and self.retirada_clima() == True:
+            en_base_por_clima = True
+            return True
+
         return self.dronesActuales == self.dronesFinales
 
     #Operaciones con sockets
@@ -345,6 +369,9 @@ class AD_Engine:
     def stop_clima(self):
         self.detener_por_clima = True
 
+        for index in range(len(self.dronesFinales)):
+            self.dronesFinales[index][1] = [-1,-1]
+
     #Se detiene por un mal funcionamiento
     def stop(self):
         self.detener = True
@@ -355,13 +382,19 @@ class AD_Engine:
     def start(self, productor_destinos, productor_mapa, consumidor_posiciones, consumidor_activos):
         hay_figura = self.leer_figuras()    #Lee las figuras del fichero json
         try:
-            while hay_figura and self.detener == False and self.detener_por_clima == False:
+            while hay_figura and self.detener == False and self.en_base_por_clima == False:
                 if not self.figuras:
                     hay_figura = False
                 else:
                     #Asegurar que todos los drones actuales tienen los mismos finales
                     #dronesActuales_figura_anterior = self.dronesActuales.copy()
                     drones_figura_anterior = self.dronesFinales.copy()
+                    print("")
+                    print("Drones de la figura anterior: " + str(drones_figura_anterior))
+                    print("Figura actual: " + str(self.figuras[0][1]))
+                    print("Drones actuales: " + str(self.dronesActuales))
+                    
+                    
 
                     #print("Drones Finales antes")
                     #for drone in drones_figura_anterior:
@@ -380,6 +413,11 @@ class AD_Engine:
 
                         if existe == False:
                             self.dronesFinales.append([droneA[0], [0, 0]])
+                    
+                    print("Drones Finales despues: " + str(self.dronesFinales))
+
+                    #Descomentar para ver los drones que no se utliizan en la figura actual
+                    ####################time.sleep(5)
 
                     #print("Drones Finales despues")
                     #for drone in self.drones:
@@ -396,7 +434,7 @@ class AD_Engine:
 
                     #Mientras que no se haya completado la figura o no se haya detenido por ninguna causa, envia los destinos finales para los drones
                     #y el mapa actual a los drones.
-                    while not self.figura_completada() and self.detener == False and not self.detener_por_clima:
+                    while not self.figura_completada() and self.detener == False and not self.en_base_por_clima:
                         self.enviar_por_kafka_destinos(productor_destinos) #Envio los destinos a los drones
                         self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
 
@@ -410,6 +448,10 @@ class AD_Engine:
 
                     self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
                     del self.figuras[0] #Elimina la figura debido a que se ha completado
+
+                    #Si se ha parado por el clima se detiene la ejecucion
+                    if self.detener_por_clima == True and self.en_base_por_clima == True:
+                        break 
 
                     #Espero a que no exista ya el mismo hilo.
                     if dronesActivos.is_alive() == False:
@@ -454,11 +496,12 @@ class AD_Engine:
                             return
                     else:
                         hay_figura = True
+
             #Si la ejecución se ha detenido por el clima sale el mensaje de finalización
             if self.detener_por_clima == True:
                 print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
-                if posicionesDrones.is_alive():
-                    posicionesDrones.detener()
+                if escucharPosiciones.is_alive():
+                    escucharPosiciones.detener()
 
             sys.exit(0)
         except Exception as e:
