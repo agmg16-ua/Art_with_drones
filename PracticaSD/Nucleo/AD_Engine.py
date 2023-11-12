@@ -153,7 +153,7 @@ class AD_Engine:
                                     self.dronesActuales.append(drone[0])
                                     #Como vuelve a estar activado creo una auxiliar para modificar el tamaño de activos
                                     activos.append(True)
-                                    
+
                                     #Compruebo si he cambiado de figura
                                     existe = False
                                     for dron in self.dronesFinales:
@@ -234,9 +234,9 @@ class AD_Engine:
                     mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
 
             print(mensaje)
-            print(self.dronesActuales)
-            print(self.dronesFinales)
-            print(self.dronesDesactivados)
+            #print("DRONES ACTUALES: " + str(self.dronesActuales))
+            #print("POSICIONES FINALES: " + str(self.dronesFinales))
+            #print("DRONES DESACTIVADOS: " + str(self.dronesDesactivados))
             productor.produce(topic, value=mensaje)
             productor.flush()
 
@@ -333,7 +333,7 @@ class AD_Engine:
         for index in range(len(self.dronesActuales)):
             if self.dronesActuales[index][1] != [-1,-1]:
                 return False
-        
+
         return True
 
     #Veo si la figura está completada o no
@@ -386,6 +386,12 @@ class AD_Engine:
                     #Asegurar que todos los drones actuales tienen los mismos finales
                     #dronesActuales_figura_anterior = self.dronesActuales.copy()
                     drones_figura_anterior = self.dronesFinales.copy()
+                    #print("")
+                    #print("Drones de la figura anterior: " + str(drones_figura_anterior))
+                    #print("Figura actual: " + str(self.figuras[0][1]))
+                    #print("Drones actuales: " + str(self.dronesActuales))
+
+
 
                     #print("Drones Finales antes")
                     #for drone in drones_figura_anterior:
@@ -405,14 +411,22 @@ class AD_Engine:
                         if existe == False:
                             self.dronesFinales.append([droneA[0], [0, 0]])
 
+                    #print("Drones Finales despues: " + str(self.dronesFinales))
+
+                    #Descomentar para ver los drones que no se utliizan en la figura actual
+                    ####################time.sleep(5)
+
                     #print("Drones Finales despues")
                     #for drone in self.drones:
                     #    print(drone)
 
                     #time.sleep(5)
                     #Comprueba los drones que esten activos actualmente
-                    dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                    dronesActivos.start()
+                    #Espero a que no exista ya el mismo hilo.
+                    dronesActivos = None
+                    if dronesActivos == None or dronesActivos.is_alive() == False:
+                        dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
+                        dronesActivos.start()
 
                     #Escucha las posiciones de los drones en todo momento
                     escucharPosiciones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor_posiciones,))
@@ -437,21 +451,9 @@ class AD_Engine:
 
                     #Si se ha parado por el clima se detiene la ejecucion
                     if self.detener_por_clima == True and self.en_base_por_clima == True:
-                        break 
-
-                    #Espero a que no exista ya el mismo hilo.
-                    if dronesActivos.is_alive() == False:
-                        #Comprueba los drones que esten activos actualmente
-                        dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                        dronesActivos.start()
+                        break
 
                     time.sleep(5)
-
-                    #Espero a que no exista ya el mismo hilo.
-                    if dronesActivos.is_alive() == False:
-                        #Comprueba los drones que esten activos actualmente
-                        dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                        dronesActivos.start()
 
                     #Leo si hay mas figuras y si no hay mas termina el espectaculo.
                     if not self.figuras:

@@ -21,6 +21,7 @@ class AD_Drone:
         self.estado = "Rojo"  # En movimiento "Rojo" y en la posición final "Verde"
         self.mapa = ""
         self.detener = False
+        self.auto = False #Si es true se ejecuta automaticamente
 
     #Detiene la accion
     def detenerAccion(self):
@@ -286,7 +287,7 @@ if __name__ == "__main__":
     #Comprueba el número de parametros importante
     if len(sys.argv) < 8:
         print("ERROR: No hay suficientes argumentos")
-        print("$ ./AD_Drone.py alias ip_Engine puerto_Engine ip_Kafka puerto_Kafka ip_Registry puerto_Registry")
+        print("$ ./AD_Drone.py alias ip_Engine puerto_Engine ip_Kafka puerto_Kafka ip_Registry puerto_Registry <id>")
         exit(-1)
 
     #Asigna los parametros
@@ -300,18 +301,27 @@ if __name__ == "__main__":
 
     #SI hay un noveno paraametro lo asigno a la id del drone
     if len(sys.argv) == 9:
-        drone.id = int(sys.argv[8])
+        if int(sys.argv[8]) == -1:
+            drone.auto = True
+        else:
+            drone.id = int(sys.argv[8])
 
     #Menu principal
     opcion = -1
 
     broker = ip_Kafka + ":" + puerto_Kafka
+    opcion_auto = 1
     while opcion != 3:
         print("[1] Registrar drone en el sistema")
         print("[2] Entrar al espectáculo")
         print("[3] Salir")
 
-        opcion = int(input())
+        if drone.auto == True:
+            opcion = opcion_auto
+            opcion_auto += 1
+            print(opcion)
+        else:
+            opcion = int(input())
 
         if opcion == 1:
             drone.registrarse(ip_Registry, puerto_Registry)
