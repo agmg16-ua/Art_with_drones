@@ -498,13 +498,24 @@ class AD_Engine:
 
 #Controlador del clima. Es un hilo. Recibe por parametros el engine, la ip y el puerto del weather y la ciudad donde tendrá ligar el espectaculo.
 #Esta función solicita el clima de la ciudad constantemente. Si la temperatura es <= a cero detiene al engine.
-def clima(engine,ciudad):
-
-    url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid=87abfee8afe72ffa53348ad3b23c36d8&units=metric'
+def clima(engine):
 
     try:
-
+        ciudad_antigua = ""
         while True:
+            with open('ciudad.txt', 'r') as archivo_ciudad:
+                ciudad = archivo_ciudad.read().strip()
+            
+            if ciudad_antigua == "":
+                print("Solicitando clima de: " + ciudad)
+
+            if ciudad != ciudad_antigua and ciudad_antigua != "":
+                print("Cambiando de ciudad... Nueva ciudad: " + ciudad)
+            
+            ciudad_antigua = ciudad
+
+            url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid=87abfee8afe72ffa53348ad3b23c36d8&units=metric'
+            
             response = requests.get(url)
             data = response.json()
             
@@ -524,10 +535,15 @@ def clima(engine,ciudad):
                 break
 
         sys.exit(0)
+    except FileNotFoundError as fileE:
+        print("El archivo ciudades.txt no existe")
+        engine.stop_clima()
+
     except Exception as e:
         print("Error solicitando clima: " + str(e))
         print("No se puede realizar el espectaculo")
         engine.stop_clima()
+
 
 #Programa principal
 if __name__ == "__main__":
