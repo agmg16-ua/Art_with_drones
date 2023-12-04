@@ -541,8 +541,9 @@ if __name__ == "__main__":
     puerto = sys.argv[1]
     max_drones = int(sys.argv[2])
     ip_puerto_broker = sys.argv[3]
-    ip_puerto_weather = sys.argv[4]
-    ciudad = sys.argv[5]
+
+    #ip_puerto_weather = sys.argv[4]
+    #ciudad = sys.argv[5]
 
     print(f"Escuchando puerto {puerto}")
     print(f"Maximo de drones establecido en {max_drones} drones")
@@ -558,7 +559,7 @@ if __name__ == "__main__":
     engine = AD_Engine()
 
     #Al iniciar el espectaculo creo el controlador del clima
-    controlarClima = threading.Thread(target=clima,args=(engine,ip_puerto_weather,ciudad))
+    controlarClima = threading.Thread(target=clima,args=(engine,ciudad))
     controlarClima.start()
 
     #Creo los productores de mapa y destino y el consumidor de posiciones.
