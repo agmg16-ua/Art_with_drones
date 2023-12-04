@@ -7,6 +7,7 @@ import os
 import socket
 import copy
 from Map import Map
+import requests
 
 #Thread para escuchar drones en paralelo a la ejecucion del espectaculo.
 class RecibirDrones(threading.Thread):
@@ -497,21 +498,30 @@ class AD_Engine:
 
 #Controlador del clima. Es un hilo. Recibe por parametros el engine, la ip y el puerto del weather y la ciudad donde tendrá ligar el espectaculo.
 #Esta función solicita el clima de la ciudad constantemente. Si la temperatura es <= a cero detiene al engine.
-def clima(engine,ip_puerto,ciudad):
+def clima(engine,ciudad):
+
+    url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid=87abfee8afe72ffa53348ad3b23c36d8&units=metric'
+
     try:
-        skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        valores = ip_puerto.split(":")
-
-        skcliente.connect((valores[0], int(valores[1])))
 
         while True:
-            skcliente.send(ciudad.encode('utf-8'))
-            temperatura = skcliente.recv(1024).decode('utf-8')
-            if float(temperatura) <= 0.0 and len(temperatura) > 0:
+            response = requests.get(url)
+            data = response.json()
+            
+            if response.status_code == 200:
+                temperatura = data['main']['temp']
+                print("Temperatura actual: " + str(temperatura))
+
+                if float(temperatura) <= 0.0 and len(temperatura) > 0:
+                    engine.stop_clima()
+                    break
+
+                time.sleep(2)
+            
+            else:
+                print(f'Error en la solicitud: {data["message"]}')
                 engine.stop_clima()
                 break
-            time.sleep(2)
 
         sys.exit(0)
     except Exception as e:
