@@ -186,9 +186,10 @@ class AD_Drone:
             skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             skcliente.connect((ip, int(puerto)))
 
-            while token == "":
-                skcliente.send(cadena.encode('utf-8'))
-                token = skcliente.recv(1024).decode('utf-8')
+
+            skcliente.send(cadena.encode('utf-8'))
+            token = skcliente.recv(1024).decode('utf-8')
+            
             self.token = token
 
             print("---Drone registrado de manera satisfactoria---\n")

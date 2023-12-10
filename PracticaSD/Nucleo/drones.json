@@ -1,0 +1,16 @@
+{
+    "figuras":[
+        {
+          "alias":"pepe",
+          "token":1234
+        },
+        {
+          "alias":"alex",
+          "token":1234
+        },
+        {
+          "alias":"victor",
+          "token":1234
+        }
+    ]
+}
