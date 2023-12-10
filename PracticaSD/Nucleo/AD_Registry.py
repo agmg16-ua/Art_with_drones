@@ -58,9 +58,106 @@ def get_items():
         # Return a JSON response with HTTP status code 500 (Internal ServerError)
         return jsonify(response), 500
 
-@app.route('/index')
-def index():
-    return "Hello, World!"
+@app.route('/additems', methods=['POST'])
+def add_items():
+    try:
+        # Get the JSON data from the request
+        datas = request.get_json()
+        print (datas)
+        cur= mysql.connection.cursor()
+        # Create a cursor object for interacting with the MySQL database
+        for data in datas :
+            # Extract the 'alias' and 'token' fields from the JSON data
+            alias = data['alias']
+            token = data['token']
+            cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)', (alias, token))
+        # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
+        #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
+        # Commit the changes to the database
+        mysql.connection.commit()
+        # Close the database cursor
+        cur.close()
+        # Create a response dictionary for a successful operation
+        response = {
+            'error' : False,
+            'message': 'Item Added Successfully',
+            'data': data
+        }
+        # Return a JSON response with HTTP status code 201 (Created)
+        return jsonify(response), 201
+    except Exception as e:
+        # Handle any exceptions that may occur during the process
+        response = {
+            'error' : False,
+            'message': f'Error Ocurred: {e}',
+            'data': None
+        }
+        # Return a JSON response with HTTP status code 500 (Internal ServerError)
+        return jsonify(response), 500
+
+@app.route('/updateitems/<int:item_id>', methods=['PUT'])
+def update_item(item_id):
+    try:
+        # Get the JSON data from the request
+        datas = request.get_json()
+        print(datas)
+        # Extract the 'name' and 'description' fields from the JSON data
+        alias = datas['alias']
+        token = datas['token']
+        # Create a cursor object for interacting with the MySQL database
+        cur = mysql.connection.cursor()
+        # Execute an SQL query to update the 'alias' and 'token' of an item with a specific 'item_id'
+        cur.execute('UPDATE drones SET alias = %s, token = %s WHERE id = %s', (alias, token, item_id))
+        # Commit the changes to the database
+        mysql.connection.commit()
+        # Close the database cursor
+        cur.close()
+        # Create a response dictionary for a successful update
+        response = {
+            'error' : False,
+            'message': 'Item Updated Successfully',
+            'data': { 'item_id': item_id }
+        }
+        # Return a JSON response with HTTP status code 201 (Created)
+        return jsonify(response), 201
+    except Exception as e:
+        # Handle any exceptions that may occur during the process
+        response = {
+            'error' : False,
+            'message': f'Error Occurred: {e}',
+            'data': None
+        }
+        # Return a JSON response with HTTP status code 500 (Internal ServerError)
+        return jsonify(response), 500
+
+@app.route('/deleteitems/<int:item_id>', methods=['DELETE'])
+def delete_items(item_id):
+    try:
+        # Create a cursor object for interacting with the MySQL database
+        cur = mysql.connection.cursor()
+        # Execute an SQL query to delete an item with a specific 'item_id'
+        cur.execute('DELETE FROM drones WHERE id = %s', (item_id,))
+        # Commit the changes to the database
+        mysql.connection.commit()
+        # Close the database cursor
+        cur.close()
+        # Create a response dictionary for a successful deletion
+        response = {
+            'error' : False,
+            'message': 'Item Deleted Successfully',
+            'data': { 'item_id': item_id }
+        }
+        # Return a JSON response with HTTP status code 201 (Created)
+        return jsonify(response), 201
+    except Exception as e:
+        # Handle any exceptions that may occur during the process
+        response = {
+            'error' : False,
+            'message': f'Error Occurred: {e}',
+            'data': None
+        }
+        # Return a JSON response with HTTP status code 500 (Internal ServerError)
+        return jsonify(response), 500
 
 #Lee el sokcet con el drone de forma controlada
 def leer_socket(sock, datos):
