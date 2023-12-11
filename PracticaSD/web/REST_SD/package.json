@@ -1,0 +1,25 @@
+{
+  "name": "rest_sd",
+  "version": "1.0.0",
+  "description": "API REST para SD",
+  "main": "appSD.js",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "mysql": "^2.18.1",
+    "request": "^2.88.2",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node appSD.js"
+  },
+  "keywords": [
+    "API",
+    "REST",
+    "SD"
+  ],
+  "author": "agmg16",
+  "license": "ISC"
+}
