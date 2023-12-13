@@ -1,3 +1,5 @@
+// API PARA EL REGISTRY
+
 const express = require("express");
 
 const app = express();
@@ -41,11 +43,12 @@ app.get("/usuarios", (req, res) => {
 });
 
 // Datos de un solo usuario
-app.get("/usuarios/:ciudad", (req, res) => {
+app.get("/usuarios/:id", (req, res) => {
    console.log('Obtener datos de un usuario');
    
-   const ciudad = req.params;
-   db.all("Select * FROM Usuarios WHERE ciudad = " + ciudad, (err,rows) => {
+   const {id} = req.params;
+
+   db.all("Select * FROM Usuarios WHERE idUsuario = " + id, (err,rows) => {
      if (err) {
      	console.error("Error al ejecutar la consulta", err.message);
      	res.status(500).send("Error en el servidor");
@@ -54,7 +57,6 @@ app.get("/usuarios/:ciudad", (req, res) => {
      }
    });
 });
-
 
 // Manejar errores 404
 app.use((req, res) => {
