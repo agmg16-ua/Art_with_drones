@@ -1,6 +1,7 @@
 import socket
 import uuid
 import sys
+import time
 import threading
 import sqlite3
 import ssl
@@ -130,6 +131,10 @@ def add_items():
                     'message': 'Item Updated Successfully',
                     'data': data
                 }
+
+            #Ejecuta el hilo para mantenerme a la escucha de las posiciones de los drones.
+            expirar_token = threading.Thread(target=controlar_token,args=(token,))
+            expirar_token.start()
 
             # Close the database cursor
             conn.close()
@@ -337,6 +342,27 @@ def handleSockets(num_args,puerto_args,socket):
     except Exception as e:
         print("Error:", e)
 """
+
+def controlar_token(token):
+    time.sleep(20)
+    print("Ya es la horaaa")
+    # Conectar a la base de datos (o crearla si no existe)
+    conexion = sqlite3.connect('registry')
+
+    # Crear un objeto cursor
+    cursor = conexion.cursor()
+
+    # Sentencia SQL DELETE
+    consulta_borrado = "UPDATE drones SET token = NULL WHERE token = ?"
+
+    # Ejecutar la sentencia con el parámetro proporcionado
+    cursor.execute(consulta_borrado, (token,))
+
+    # Confirmar la transacción
+    conexion.commit()
+
+    # Cerrar la conexión
+    conexion.close()
 
 if __name__ == "__main__":
     """
