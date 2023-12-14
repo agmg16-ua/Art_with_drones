@@ -2,21 +2,28 @@ import socket
 import uuid
 import sys
 import threading
+import sqlite3
+import ssl
 
 #Librerías para API_REST
 from flask import Flask, request
 from flask import jsonify
-from flask_mysqldb import MySQL
+from flask_sqlalchemy import SQLAlchemy
 
 #Se crea una
 app = Flask(__name__)
-app.config['MYSQL_HOST'] = 'localhost'
 
-app.config['MYSQL_USER'] = 'victor'
-app.config['MYSQL_PASSWORD'] = 'password'
-app.config['MYSQL_DB'] = 'registry'
+context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+context.load_cert_chain(certfile='certificados/certificado_registry.crt', keyfile='certificados/clave_privada_registry.pem')
 
-mysql = MySQL(app)
+#db = SQLAlchemy(app)
+
+# Definir el modelo de la tabla de usuarios
+#class Drones(db.Model):
+#    id = db.Column(db.Integer, primary_key=True)
+#    id_virtual = db.Column(db.Integer, nullable=False)
+#    alias = db.Column(db.String(50), nullable=False)
+#    token = db.Column(db.String(255), nullable=False)
 
 #Variables globales.
 id_nueva = 1                #Id nueva para el drone que se quiera registrar
@@ -28,17 +35,15 @@ token_dron_actual = ""      #Token de acceso
 def get_items():
     try:
         if request.method == "GET":
-            # Create a cursor object for interacting with the MySQL database
-            cur = mysql.connection.cursor()
-            # Execute an SQL query to select all items from the 'items' table
-            cur.execute('SELECT * FROM drones')
-            # Fetch all the data (items) from the executed query
-            data = cur.fetchall()
+            # Conectar a la base de datos (creará el archivo si no existe)
+            conn = sqlite3.connect('registry')
 
-            # es una tupla de tuplas, cada fila es una tupla
-            # print (data[0][1])
-            # Close the database cursor
-            cur.close()
+            # Crear un cursor para ejecutar comandos SQL
+            cursor = conn.cursor()
+
+            # Consultar datos
+            cursor.execute('SELECT * FROM drones')
+            data = cursor.fetchall()
 
             # Create a list of dictionaries to structure the retrieved items
             items = [{'id': item[0], 'id_virtual': item[1], 'alias': item[2], 'token': item[3]} for item in data]
@@ -65,36 +70,73 @@ def get_items():
 @app.route('/unirme', methods=['POST'])
 def add_items():
     global id_nueva
-    global token_dron_actual
+    existe = False
 
     try:
-        # Get the JSON data from the request
-        datas = request.get_json()
-        print (datas)
-        cur= mysql.connection.cursor()
+        if request.method == "POST":
+            # Get the JSON data from the request
+            datas = request.get_json()
+            print(datas)
 
-        # Create a cursor object for interacting with the MySQL database
-        # Extract the 'alias' and 'token' fields from the JSON data
-        for data in datas:
-            id = data['id']
-            alias = data['alias']
-        token_dron_actual = "Puede entrar"
-        cur.execute('INSERT INTO drones (id, id_virtual, alias, token) VALUES (%s, %s, %s, %s)', (int(id),int(id_nueva),alias, token_dron_actual))
-        # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
-        #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
-        # Commit the changes to the database
-        mysql.connection.commit()
-        # Close the database cursor
-        cur.close()
-        # Create a response dictionary for a successful operation
-        data = [{'id': id, 'id_virtual': id_nueva, 'alias': alias, 'token': token_dron_actual}]
-        id_nueva += 1
-        response = {
-            'error' : False,
-            'message': 'Item Added Successfully',
-            'data': data
-        }
-        # Return a JSON response with HTTP status code 201 (Created)
+            # Conectar a la base de datos (creará el archivo si no existe)
+            conn = sqlite3.connect('registry')
+
+            # Crear un cursor para ejecutar comandos SQL
+            cursor = conn.cursor()
+
+            data = []
+            # Consultar datos
+
+            cursor.execute('SELECT * FROM drones')
+            data = cursor.fetchall()
+
+            for item in data:
+                if item[0] == datas[0]['id']:
+                    existe = True
+
+            token = ""
+            if existe == False:
+                # Create a cursor object for interacting with the MySQL database
+                # Extract the 'alias' and 'token' fields from the JSON data
+                id = datas[0]['id']
+                alias = datas[0]['alias']
+
+                agregarlo = "INSERT INTO drones (id, id_virtual, alias, token) VALUES (?, ?, ?, ?)"
+                token = generar_token()
+                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token))
+                # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
+                #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
+                # Commit the changes to the database
+                conn.commit()
+                # Create a response dictionary for a successful operation
+                data = [{'id': id, 'id_virtual': id_nueva, 'alias': alias, 'token': token}]
+                id_nueva += 1
+
+                response = {
+                    'error' : False,
+                    'message': 'Item Added Successfully',
+                    'data': data
+                }
+            else:
+                agregartoken = "UPDATE drones SET token = ? WHERE id = ?"
+                token = generar_token()
+                cursor.execute(agregartoken,(token,datas[0]['id']))
+
+                # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
+                #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
+                # Commit the changes to the database
+                conn.commit()
+
+                response = {
+                    'error' : False,
+                    'message': 'Item Updated Successfully',
+                    'id': datas[0]['id'],
+                    'token': token
+                }
+
+            # Close the database cursor
+            conn.close()
+            # Return a JSON response with HTTP status code 201 (Created)
         return jsonify(response), 201
     except Exception as e:
         # Handle any exceptions that may occur during the process
@@ -177,6 +219,7 @@ def delete_items(item_id):
         return jsonify(response), 500
 """
 
+"""
 #Parte mediante sockets
 #Lee el sokcet con el drone de forma controlada
 def leer_socket(sock, datos):
@@ -234,7 +277,7 @@ def escribir_bd(id, alias):
             cur.close()
     except Exception as e:
         print("Error escribiendo bd:", e)
-
+"""
 #Genera un token de acceso
 def generar_token():
     token = str(uuid.uuid4())
@@ -244,29 +287,21 @@ def generar_token():
 def borrar_bd():
     try:
         app = Flask(__name__)
-        app.config['MYSQL_HOST'] = 'localhost'
 
-        app.config['MYSQL_USER'] = 'victor'
-        app.config['MYSQL_PASSWORD'] = 'password'
-        app.config['MYSQL_DB'] = 'registry'
+        # Conectar a la base de datos (creará el archivo si no existe)
+        conn = sqlite3.connect('registry')
 
-        mysql = MySQL(app)
+        # Crear un cursor para ejecutar comandos SQL
+        cursor = conn.cursor()
 
-        with app.app_context():
-            cur = mysql.connection.cursor()
-            # Execute an SQL query to select all items from the 'items' table
-            cur.execute('DELETE FROM drones')
+        cursor.execute("DELETE FROM drones")
+        conn.commit()
 
-            # Confirmar los cambios en la base de datos
-            mysql.connection.commit()
-
-            # es una tupla de tuplas, cada fila es una tupla
-            # print (data[0][1])
-            # Close the database cursor
-            cur.close()
+        conn.close()
     except Exception as e:
         print("Error al vaciar el fichero:", e)
 
+"""
 #Controla los drones que se quieran conectar por sockets
 def handleSockets(num_args,puerto_args,socket):
     try:
@@ -280,6 +315,7 @@ def handleSockets(num_args,puerto_args,socket):
 
         #Vacia el fichero y crea el servidor a la espera de nuevos drones
         borrar_bd()
+
         Ssocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         Ssocket.bind(('', puerto))
         Ssocket.listen()
@@ -299,13 +335,19 @@ def handleSockets(num_args,puerto_args,socket):
             enviar_socket(socket, token_dron_actual)
 
         Ssocket.close()
+
     except Exception as e:
         print("Error:", e)
+"""
 
 if __name__ == "__main__":
+    """
     #Ejecuta el hilo para mantenerme a la escucha de las posiciones de los drones.
     controlarRegistry = threading.Thread(target=handleSockets,args=(len(sys.argv),int(sys.argv[1]),socket))
     controlarRegistry.start()
-
+    """
+    #Casa: '192.168.1.84'
+    #EPS: 172.27.173.122
+    #Movil: 192.168.218.43
     app.debug = True
-    app.run(host='192.168.1.84',ssl_context=('certificados/cert.pem', 'certificados/key.pem'))
+    app.run(host='192.168.1.84',ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
