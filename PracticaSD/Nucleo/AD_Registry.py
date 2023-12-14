@@ -13,8 +13,8 @@ from flask_sqlalchemy import SQLAlchemy
 #Se crea una
 app = Flask(__name__)
 
-context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-context.load_cert_chain(certfile='certificados/certificado_registry.crt', keyfile='certificados/clave_privada_registry.pem')
+#context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+#context.load_cert_chain(certfile='certificados/certificado_registry.crt', keyfile='certificados/clave_privada_registry.pem')
 
 #db = SQLAlchemy(app)
 
@@ -77,13 +77,10 @@ def add_items():
             # Get the JSON data from the request
             datas = request.get_json()
             print(datas)
-
             # Conectar a la base de datos (creará el archivo si no existe)
             conn = sqlite3.connect('registry')
-
             # Crear un cursor para ejecutar comandos SQL
             cursor = conn.cursor()
-
             data = []
             # Consultar datos
 
@@ -91,17 +88,17 @@ def add_items():
             data = cursor.fetchall()
 
             for item in data:
-                if item[0] == datas[0]['id']:
+                if item[0] == datas['id']:
                     existe = True
 
             token = ""
             if existe == False:
                 # Create a cursor object for interacting with the MySQL database
                 # Extract the 'alias' and 'token' fields from the JSON data
-                id = datas[0]['id']
-                alias = datas[0]['alias']
-
+                id = datas['id']
+                alias = datas['alias']
                 agregarlo = "INSERT INTO drones (id, id_virtual, alias, token) VALUES (?, ?, ?, ?)"
+
                 token = generar_token()
                 cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token))
                 # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
@@ -120,22 +117,23 @@ def add_items():
             else:
                 agregartoken = "UPDATE drones SET token = ? WHERE id = ?"
                 token = generar_token()
-                cursor.execute(agregartoken,(token,datas[0]['id']))
+                cursor.execute(agregartoken,(token,datas['id']))
 
                 # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
                 #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
                 # Commit the changes to the database
                 conn.commit()
+                data = [{'id': datas['id'],'token': token}]
 
                 response = {
                     'error' : False,
                     'message': 'Item Updated Successfully',
-                    'id': datas[0]['id'],
-                    'token': token
+                    'data': data
                 }
 
             # Close the database cursor
             conn.close()
+
             # Return a JSON response with HTTP status code 201 (Created)
         return jsonify(response), 201
     except Exception as e:
@@ -350,4 +348,4 @@ if __name__ == "__main__":
     #EPS: 172.27.173.122
     #Movil: 192.168.218.43
     app.debug = True
-    app.run(host='192.168.1.84',ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
+    app.run(host='192.168.1.84')#,ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
