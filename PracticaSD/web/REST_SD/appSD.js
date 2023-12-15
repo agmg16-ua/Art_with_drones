@@ -16,7 +16,7 @@ const sqlite3 = require("sqlite3").verbose();
 const bodyParser = require("body-parser");
 
 // Configuración de la conexión a la base de datos SQLite
-const dbPath = "./SD_API_WEB"; // Ruta al archivo de la base de datos SQLite
+const dbPath = "./registry"; // Ruta al archivo de la base de datos SQLite
 const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
   if (err) {
     console.error("Error al abrir la base de datos", err.message);
@@ -28,11 +28,11 @@ const db = new sqlite3.Database(dbPath, sqlite3.OPEN_READWRITE, (err) => {
 // Middleware para procesar datos en formato JSON
 app.use(bodyParser.json());
 
-// Listado de todos los usuarios
-app.get("/usuarios", (req, res) => {
-  console.log('Listado de todos los usuarios');
+// Listado de todos los drones
+app.get("/drones", (req, res) => {
+  console.log('Listando los drones registrados...');
   
-  db.all("SELECT * FROM Usuarios", (err, rows) => {
+  db.all("SELECT * FROM Drones", (err, rows) => {
     if (err) {
       console.error("Error al ejecutar la consulta", err.message);
       res.status(500).send("Error en el servidor");
@@ -42,13 +42,11 @@ app.get("/usuarios", (req, res) => {
   });
 });
 
-// Datos de un solo usuario
-app.get("/usuarios/:id", (req, res) => {
-   console.log('Obtener datos de un usuario');
-   
-   const {id} = req.params;
+// Visualización del mapa
+app.get("/mapa", (req, res) => {
+   console.log('Mostrando mapa...');
 
-   db.all("Select * FROM Usuarios WHERE idUsuario = " + id, (err,rows) => {
+   db.all("Select * FROM Mapa", (err,rows) => {
      if (err) {
      	console.error("Error al ejecutar la consulta", err.message);
      	res.status(500).send("Error en el servidor");
@@ -56,6 +54,20 @@ app.get("/usuarios/:id", (req, res) => {
      	res.json(rows);
      }
    });
+});
+
+// Visualización de los estados de los componentes
+app.get("/estados", (req, res) => {
+  console.log('mostrando estados de componentes...');
+
+  db.all("Select * FROM Estados", (err,rows) => {
+    if (err) {
+      console.error("Error al ejecutar la consulta", err.message);
+      res.status(500).send("Error en el servidor");
+    } else {
+      res.json(rows);
+    }
+  });
 });
 
 // Manejar errores 404
