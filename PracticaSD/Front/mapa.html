@@ -48,6 +48,18 @@
         .fin-no {
             color: red;
         }
+
+        #back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -56,6 +68,7 @@
     <div id="drones-container">
         <table id="drones-table"></table>
     </div>
+    <button id="back-button" onclick="window.location.href = 'index.html'">Volver al menú</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
