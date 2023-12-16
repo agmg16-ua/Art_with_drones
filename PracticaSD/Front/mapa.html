@@ -96,6 +96,12 @@
 
                         // Muestra el vector en la tabla HTML
                         displayDronesTable(dronesData, tableSize);
+
+                        const todosOk = dronesData.every(drone => drone.fin === 'ok');
+
+                        // Muestra el mensaje "Figura Finalizada" si todos los drones están ok
+                        const finMensaje = document.getElementById('fin-mensaje');
+                        finMensaje.textContent = todosOk ? 'Figura Finalizada' : '';
                     })
                     .catch(error => console.error('Error:', error));
             }
