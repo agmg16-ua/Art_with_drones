@@ -1,0 +1,16 @@
+{
+  "name": "rest_sd",
+  "version": "1.0.0",
+  "description": "API REST para SD",
+  "main": "appSD.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "API",
+    "REST",
+    "SD"
+  ],
+  "author": "agmg16",
+  "license": "ISC"
+}

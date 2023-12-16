@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drones</title>
+    <style>
+        body {
+            text-align: center;
+            margin: 40px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        #drones-container {
+            position: relative;
+        }
+        #back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Drones</h1>
+    <div id="drones-container"></div>
+    <button id="back-button" onclick="window.location.href = 'index.html'">Volver al menú</button>
+
+    <script>
+        function fetchDrones() {
+            fetch('http://192.168.0.35:3000/drones')
+                .then(response => response.json())
+                .then(data => displayDrones(data))
+                .catch(error => console.error('Error:', error));
+        }
+
+        function displayDrones(drones) {
+            const dronesContainer = document.getElementById('drones-container');
+            dronesContainer.innerHTML = '<h2>Lista de Drones</h2>';
+
+            if (drones.length === 0) {
+                dronesContainer.innerHTML += '<p>No hay drones disponibles.</p>';
+            } else {
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ID Virtual</th>
+                            <th>Alias</th>
+                            <th>Token</th>
+                            <th>Posicion</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${drones.map(drone => `
+                            <tr>
+                                <td>${drone.id}</td>
+                                <td>${drone.id_virtual}</td>
+                                <td>${drone.alias}</td>
+                                <td>${drone.token}</td>
+                                <td>${drone.posicion}</td>
+                                <td>${drone.fin}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                `;
+
+                dronesContainer.appendChild(table);
+            }
+        }
+
+        // Realizar la primera consulta al cargar la página
+        fetchDrones();
+
+        // Configurar la consulta cada segundo
+        setInterval(fetchDrones, 1000);
+    </script>
+
+</body>
+</html>

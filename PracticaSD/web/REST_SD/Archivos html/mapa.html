@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa</title>
+    <style>
+        body {
+            text-align: center;
+            margin: 40px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        #drones-table {
+            margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
+            border-collapse: collapse;
+        }
+
+        #drones-table th, #drones-table td {
+            border: 1px solid #ddd;
+            padding: 0;
+            text-align: center;
+            width: 30px;
+            height: 30px;
+            box-sizing: border-box;
+        }
+
+        #drones-table th {
+            background-color: #f2f2f2;
+        }
+
+        #drones-container {
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .fin-ok {
+            color: green;
+        }
+
+        .fin-no {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Mapa</h1>
+    <div id="drones-container">
+        <table id="drones-table"></table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tableSize = 20;
+
+            // Definir la función para actualizar la tabla
+            function updateTable() {
+                fetch('http://192.168.0.35:3000/drones')
+                    .then(response => response.json())
+                    .then(data => {
+                        const dronesData = [];
+
+                        data.forEach(drone => {
+                            // Suponemos que la posición se almacena como "[x,y]"
+                            const [x, y] = JSON.parse(drone.posicion);
+
+                            // Almacena la información de cada drone en el vector
+                            dronesData.push({
+                                id: drone.id,
+                                x: parseFloat(x),
+                                y: parseFloat(y),
+                                fin: drone.fin === 'ok' ? 'ok' : 'no'
+                            });
+                        });
+
+                        // Muestra el vector en la tabla HTML
+                        displayDronesTable(dronesData, tableSize);
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            updateTable();
+
+            // Actualizar la tabla cada segundo
+            setInterval(updateTable, 1000);
+
+            // Función para mostrar la tabla
+            function displayDronesTable(dronesData, tableSize) {
+                const dronesContainer = document.getElementById('drones-table');
+
+                // Crear encabezados de columnas (números)
+                let tableHTML = '<thead><tr><th></th>';
+                for (let col = 1; col <= tableSize; col++) {
+                    tableHTML += `<th>${col}</th>`;
+                }
+                tableHTML += '</tr></thead>';
+
+                // Crear filas y celdas de la tabla
+                tableHTML += '<tbody>';
+                for (let row = 1; row <= tableSize; row++) {
+                    tableHTML += '<tr>';
+
+                    // Añadir números de fila
+                    tableHTML += `<th>${row}</th>`;
+
+                    // Rellenar celdas con IDs y estado "fin" de drones
+                    for (let col = 1; col <= tableSize; col++) {
+                        const drone = dronesData.find(d => d.x === col && d.y === row);
+                        const droneID = drone ? `${drone.id}` : '';
+                        const finClass = drone && drone.fin === 'ok' ? 'fin-ok' : 'fin-no';
+                        tableHTML += `<td class="${finClass}">${droneID}</td>`;
+                    }
+
+                    tableHTML += '</tr>';
+                }
+                tableHTML += '</tbody>';
+
+                // Aplicar HTML a la tabla
+                dronesContainer.innerHTML = tableHTML;
+            }
+        });
+    </script>
+
+</body>
+</html>
