@@ -241,7 +241,7 @@ class AD_Drone:
                 'id': self.id,
                 'alias':self.alias
             }
-            url= 'http://192.168.1.84:5000/unirme'
+            url= 'http://192.168.0.35:5000/unirme'
             response = requests.post(url,json=datos)#,verify='certificados/certificado_registry.crt')
 
             #if response.status_code == 201:

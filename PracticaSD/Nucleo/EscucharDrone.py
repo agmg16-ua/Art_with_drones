@@ -1,5 +1,6 @@
 import socket
 import threading
+import sqlite3
 
 #Realiza todas las operaciones posibles para autenticar a un drone
 class EscucharDrone(threading.Thread):
@@ -30,6 +31,7 @@ class EscucharDrone(threading.Thread):
     #para que el drone se vea en el espectaculo. En caso de que no se una obtiene un string vacio
     def autenticar(self, token, id):
         try:
+            """
             with open("drones.txt", "r") as archivo:
                 for linea in archivo:
                     palabras = linea.split(" ")
@@ -37,6 +39,20 @@ class EscucharDrone(threading.Thread):
                     id_aux = palabras[1]
                     if token_aux == token and id_aux == id:
                         return True,palabras[2]
+            """
+            conn = sqlite3.connect('registry')
+
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT id, token FROM drones WHERE id = ?", (id,))
+
+            rows = cursor.fetchall()
+
+            if rows is not None:
+                id_drone, token_drone = rows[0]
+                if token_drone == token:
+                    return True, id_drone
+
         except Exception as e:
             print(f"Error autenticando al drone: {e}")
             return False,""
@@ -54,7 +70,7 @@ class EscucharDrone(threading.Thread):
             palabras = token_id.split(" ")
             existe,id = self.autenticar(palabras[0],palabras[1])
             if existe:
-                self.escribe_socket("aceptado " + id)
+                self.escribe_socket("aceptado " + str(id))
             else:
                 self.escribe_socket("denegado")
 

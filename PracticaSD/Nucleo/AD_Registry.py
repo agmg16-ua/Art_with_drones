@@ -98,10 +98,10 @@ def add_items():
                 # Extract the 'alias' and 'token' fields from the JSON data
                 id = datas['id']
                 alias = datas['alias']
-                agregarlo = "INSERT INTO drones (id, id_virtual, alias, token) VALUES (?, ?, ?, ?)"
+                agregarlo = "INSERT INTO drones (id, id_virtual, alias, token, posicion) VALUES (?, ?, ?, ?, ?)"
 
                 token = generar_token()
-                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token))
+                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token, "[0, 0]"))
                 # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
                 #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
                 # Commit the changes to the database
@@ -373,5 +373,6 @@ if __name__ == "__main__":
     #Casa: '192.168.1.84'
     #EPS: 172.27.173.122
     #Movil: 192.168.218.43
+    #Alex: 192.168.0.35
     app.debug = True
-    app.run(host='192.168.1.84')#,ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
+    app.run(host='192.168.0.35')#,ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
