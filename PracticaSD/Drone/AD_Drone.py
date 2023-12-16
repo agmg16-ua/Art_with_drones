@@ -21,7 +21,7 @@ class AD_Drone:
         self.posicionFin = [None, None]
         self.posicionActual = [0, 0]
         self.estado = "Rojo"  # En movimiento "Rojo" y en la posición final "Verde"
-        self.mapa = ""
+        ###self.mapa = ""
         self.detener = False
         self.auto = False #Si es true se ejecuta automaticamente
 
@@ -44,6 +44,7 @@ class AD_Drone:
 
         return consumidor
 
+    """
     def consumidorMapa(self):
         # Configura las propiedades del consumidor
         config = {
@@ -57,6 +58,7 @@ class AD_Drone:
         consumidor = Consumer(config)
 
         return consumidor
+    """
 
     def productorPosiciones(self):
         # Configura las propiedades del productor
@@ -110,6 +112,7 @@ class AD_Drone:
 
     #Eschucho el estado del mapa mientras no se detenga la operación.
     #Almaceno el mapa en mi variable mapa como un string
+    """
     def escucharEstadoMapa(self, consumidor):
         topic = "mapa"
         consumidor.subscribe(topics=[topic])
@@ -125,6 +128,7 @@ class AD_Drone:
                         print('Error al recibir mensaje: {}'.format(mensaje.error()))
                 else:
                     self.mapa = str(mensaje.value().decode('utf-8'))
+    """
 
     #Envio mi posicionActual al engine
     def enviarPosicion(self, productor):
@@ -175,7 +179,7 @@ class AD_Drone:
     def run(self):
         try:
             consumidorDestino = self.consumidorDestino()
-            consumidorMapa = self.consumidorMapa()
+            #####consumidorMapa = self.consumidorMapa()
             productorPosicion = self.productorPosiciones()
             productorActividad = self.productorActividad()
 
@@ -187,15 +191,15 @@ class AD_Drone:
             estoyActivo = threading.Thread(target=self.escucharPorKafkaDestino,args=(consumidorDestino,))
             estoyActivo.start()
             
-            self.escucharPorKafkaDestino(consumidorDestino)
+            destino = self.escucharPorKafkaDestino(consumidorDestino)
 
             #Los drones envian constantemente sus posiciones
             dronMovimiendose = threading.Thread(target=self.mover,args=(productorPosicion,consumidorDestino))
             dronMovimiendose.start()
 
             #Los drones escuchan constantemente el mapa
-            dronEscuchaMapa = threading.Thread(target=self.escucharEstadoMapa,args=(consumidorMapa,))
-            dronEscuchaMapa.start()
+            ####dronEscuchaMapa = threading.Thread(target=self.escucharEstadoMapa,args=(consumidorMapa,))
+            ######dronEscuchaMapa.start()
 
             #Menu con opcion de imprimir el mapa o detener la accion
             opcionAux = -1
@@ -295,6 +299,7 @@ class AD_Drone:
 
             #Comprueba si el drone ha sido aceptado o no en el espectaculo
             if dron[0] == "aceptado":
+                #print(self.id_virtual)
                 self.id_virtual = int(dron[1])
                 print("---Drone " + str(self.id_virtual) + " unido de manera satisfactoria---\n")
                 aceptado = True

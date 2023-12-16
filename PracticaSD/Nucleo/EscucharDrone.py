@@ -44,14 +44,14 @@ class EscucharDrone(threading.Thread):
 
             cursor = conn.cursor()
 
-            cursor.execute("SELECT id, token FROM drones WHERE id = ?", (id,))
+            cursor.execute("SELECT id, id_virtual, token FROM drones WHERE id = ?", (id,))
 
             rows = cursor.fetchall()
 
             if rows is not None:
-                id_drone, token_drone = rows[0]
+                id_drone, id_virtual_drone, token_drone = rows[0]
                 if token_drone == token:
-                    return True, id_drone
+                    return True, id_virtual_drone
 
         except Exception as e:
             print(f"Error autenticando al drone: {e}")

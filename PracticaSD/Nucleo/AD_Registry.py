@@ -98,10 +98,10 @@ def add_items():
                 # Extract the 'alias' and 'token' fields from the JSON data
                 id = datas['id']
                 alias = datas['alias']
-                agregarlo = "INSERT INTO drones (id, id_virtual, alias, token, posicion) VALUES (?, ?, ?, ?, ?)"
+                agregarlo = "INSERT INTO drones (id, id_virtual, alias, token, posicion, fin) VALUES (?, ?, ?, ?, ?, ?)"
 
                 token = generar_token()
-                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token, "[0, 0]"))
+                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token, "[0, 0]", "no"))
                 # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
                 #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
                 # Commit the changes to the database

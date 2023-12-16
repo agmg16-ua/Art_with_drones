@@ -8,6 +8,7 @@ import socket
 import copy
 from Map import Map
 import requests
+import sqlite3
 
 #Thread para escuchar drones en paralelo a la ejecucion del espectaculo.
 class RecibirDrones(threading.Thread):
@@ -80,6 +81,7 @@ class AD_Engine:
 
         return producer
 
+    """
     def productor_mapa(self, broker):
         # Configura las propiedades del productor
         config = {
@@ -92,6 +94,7 @@ class AD_Engine:
             print("Error creando productor de mapas: ",e)
 
         return producer
+    """
 
     def consumidor_posiciones(self, broker):
         # Configura las propiedades del consumidor
@@ -217,6 +220,7 @@ class AD_Engine:
         except Exception as e:
             print("Error enviando destinos: ",e)
 
+    """
     #Envia el mapa como un string a los drones. Si la figura está completada tambien se añade el mensaje de finalizacion.
     #Para el mapa utilizamos una clase mapa que genera el mapa y tiene una opcion .to_string.
     def enviar_mapa(self, productor):
@@ -243,6 +247,66 @@ class AD_Engine:
 
         except Exception as e:
             print("Error enviando mapa: ",e)
+    """
+    
+    def actualizarPosicionesBD(self, drone):
+        try:
+            conn = sqlite3.connect('registry')
+
+            cursor = conn.cursor()
+
+            id = drone[0]
+
+            posicion = str(drone[1])
+
+            cursor.execute("UPDATE drones SET posicion = ? WHERE id_virtual = ?", (posicion, id,))
+
+            conn.commit()
+
+            conn.close()
+
+        except Exception as e:
+            print("Error actualizando posiciones: ",e)
+    
+    def pintarVerde(self, id_virtual):
+        try:
+            conn = sqlite3.connect('registry')
+
+            cursor = conn.cursor()
+
+            cursor.execute("UPDATE drones SET fin = ? WHERE id_virtual = ?", ("ok", id_virtual,))
+
+            conn.commit()
+
+            conn.close()
+
+        except Exception as e:
+            print("Error pintando de verde: ",e)
+
+    def comprobarFinBD(self):
+        try:
+            conn = sqlite3.connect('registry')
+
+            cursor = conn.cursor()
+
+            cursor.execute("SELECT id_virtual, posicion FROM drones")
+
+            rows = cursor.fetchall()
+
+            if rows is not None:
+                for drone in rows:
+                    id_virtual, posicion = drone
+                    pos = eval(posicion)
+                    for droneF in self.dronesFinales:
+                        if droneF[0] == id_virtual:
+                            if droneF[1] == pos:
+                                self.pintarVerde(id_virtual)
+                                break
+
+            conn.close()
+
+        except Exception as e:
+            print("Error comprobando fin: ",e)
 
     #Escucha las posiciones que le van llegando de los drones.
     def escuchar_posicion_drones(self, consumidor):
@@ -260,6 +324,10 @@ class AD_Engine:
                     else:
                         valores = mensaje.value().decode('utf-8').split()
                         aux = [int(valores[0]),[int(valores[1]),int(valores[2])]]
+                        
+                        self.actualizarPosicionesBD(aux)
+
+                        self.comprobarFinBD()
 
                         #Si el drone esta desactivado no deberian llegarme mensajes de el
                         esta_desactivado = False
@@ -377,7 +445,24 @@ class AD_Engine:
     #Función encargada de iniciar el espectaculo, se activa cuando existe el fichero Figuras.json
     #Recibe por parametros el productor de destinos, de mapa y el consumidor de posiciones de los drones
     #Se ejecuta mientras hayan figuras o se detenga la ejecucion
-    def start(self, productor_destinos, productor_mapa, consumidor_posiciones, consumidor_activos):
+
+    def todosRojo(self):
+        try:
+            conn = sqlite3.connect('registry')
+
+            cursor = conn.cursor()
+
+            cursor.execute("UPDATE drones SET fin = ?", ("no",))
+
+            conn.commit()
+
+            conn.close()
+
+        except Exception as e:
+            print("Error pintando de rojo: ",e)
+
+    #productor_mapa
+    def start(self, productor_destinos, consumidor_posiciones, consumidor_activos):
         hay_figura = self.leer_figuras()    #Lee las figuras del fichero json
         try:
             while hay_figura and self.detener == False and self.en_base_por_clima == False:
@@ -437,8 +522,7 @@ class AD_Engine:
                     #y el mapa actual a los drones.
                     while not self.figura_completada() and self.detener == False and not self.en_base_por_clima:
                         self.enviar_por_kafka_destinos(productor_destinos) #Envio los destinos a los drones
-                        self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
-
+                        ##########self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
                         #Espero a que no exista ya el mismo hilo.
                         if dronesActivos.is_alive() == False:
                             #Comprueba los drones que esten activos actualmente
@@ -447,7 +531,7 @@ class AD_Engine:
                         time.sleep(1)
 
 
-                    self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
+                    #############self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
                     del self.figuras[0] #Elimina la figura debido a que se ha completado
 
                     #Si se ha parado por el clima se detiene la ejecucion
@@ -456,6 +540,7 @@ class AD_Engine:
 
                     time.sleep(5)
 
+                    self.todosRojo()
                     #Leo si hay mas figuras y si no hay mas termina el espectaculo.
                     if not self.figuras:
                         hay_figura = self.leer_figuras()
@@ -469,7 +554,7 @@ class AD_Engine:
 
                             while not self.figura_completada():
                                 self.enviar_por_kafka_destinos(productor_destinos) #Envio los destinos a los drones
-                                self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
+                                #############self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
 
                                 #Espero a que no exista ya el mismo hilo.
                                 if dronesActivos.is_alive() == False:
@@ -498,7 +583,7 @@ class AD_Engine:
 
 #Controlador del clima. Es un hilo. Recibe por parametros el engine, la ip y el puerto del weather y la ciudad donde tendrá ligar el espectaculo.
 #Esta función solicita el clima de la ciudad constantemente. Si la temperatura es <= a cero detiene al engine.
-def clima(engine):
+def clima(engine, a):
 
     try:
         ciudad_antigua = ""
@@ -527,7 +612,7 @@ def clima(engine):
                     engine.stop_clima()
                     break
 
-                time.sleep(2)
+                time.sleep(5)
             
             else:
                 print(f'Error en la solicitud: {data["message"]}')
@@ -571,13 +656,15 @@ if __name__ == "__main__":
 
     engine = AD_Engine()
 
+    a = ""
+
     #Al iniciar el espectaculo creo el controlador del clima
-    controlarClima = threading.Thread(target=clima,args=(engine))
+    controlarClima = threading.Thread(target=clima,args=(engine, a))
     controlarClima.start()
 
     #Creo los productores de mapa y destino y el consumidor de posiciones.
     productor_destinos = engine.productor_destinos(ip_puerto_broker)
-    productor_mapa = engine.productor_mapa(ip_puerto_broker)
+    #########productor_mapa = engine.productor_mapa(ip_puerto_broker)
     consumidor_posiciones = engine.consumidor_posiciones(ip_puerto_broker)
     consumidor_activos = engine.consumidor_activos(ip_puerto_broker)
 
@@ -585,7 +672,7 @@ if __name__ == "__main__":
 
     #Si el clima no es malo comienzo el espectaculo.
     if engine.detener_por_clima == False:
-        engine.start(productor_destinos, productor_mapa, consumidor_posiciones, consumidor_activos)
+        engine.start(productor_destinos, consumidor_posiciones, consumidor_activos) #productor_mapa
     else:
         print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
     sys.exit(0)
