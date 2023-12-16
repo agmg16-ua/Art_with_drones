@@ -2,6 +2,8 @@ import socket
 import random
 import threading
 import time
+import requests
+import json
 from confluent_kafka import Consumer, Producer, KafkaError
 
 #Crea el consumidor de destinos, de mapa y el productor de posiciones
@@ -213,6 +215,7 @@ class AD_Drone:
     #Se registra con el registry mediante sockets y recibe el token de acceso.
     #Se mantiene leyendo del socket mientras no haya leido nada.
     #En el caso de que se caiga el registry saltará una excepción y se imprimirá por pantalla.
+    """
     def registrarse(self, ip, puerto):
         try:
             cadena = f"{self.id} {self.alias}"
@@ -230,7 +233,33 @@ class AD_Drone:
 
         except Exception as e:
             print("Error conectandose a registry: ",e)
+    """
 
+    def registrarse(self, ip, puerto):
+        try:
+            datos = {
+                'id': self.id,
+                'alias':self.alias
+            }
+            url= 'http://192.168.1.84:5000/unirme'
+            response = requests.post(url,json=datos)#,verify='certificados/certificado_registry.crt')
+
+            #if response.status_code == 201:
+            contenido=response.content
+            # print (contenido)
+            # print (response.json())
+            diccionario_respuesta=response.json()
+            print(json.dumps(diccionario_respuesta, indent=4,sort_keys=True))
+
+            self.token = diccionario_respuesta['data'][0]['token']
+        except Exception as e:
+            # Handle any exceptions that may occur during the process
+            response = {
+                'error' : False,
+                'message': f'Error Ocurred: {e}',
+                'data': None
+            }
+            print (json.dumps(response, indent=4, sort_keys=True))
     #Escribe en el socket mas controladamente.
     def escribe_socket(self, sock, datos):
         try:
