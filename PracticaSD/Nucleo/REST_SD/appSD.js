@@ -7,13 +7,12 @@ const app = express();
 const cors = require("cors");
 
 // Se define el puerto
-const port=3000;
+const port = 3000;
 
 app.use(cors());
 
-app.get("/",(req, res) => {
-
-res.json({message:'Página de inicio de aplicación de ejemplo de SD'})
+app.get("/", (req, res) => {
+  res.json({ message: "Página de inicio de aplicación de ejemplo de SD" });
 });
 
 const sqlite3 = require("sqlite3").verbose();
@@ -34,8 +33,8 @@ app.use(bodyParser.json());
 
 // Listado de todos los drones
 app.get("/drones", (req, res) => {
-  console.log('Listando los drones registrados...');
-  
+  console.log("Listando los drones registrados...");
+
   db.all("SELECT * FROM Drones", (err, rows) => {
     if (err) {
       console.error("Error al ejecutar la consulta", err.message);
@@ -48,23 +47,23 @@ app.get("/drones", (req, res) => {
 
 // Visualización del mapa
 app.get("/mapa", (req, res) => {
-   console.log('Mostrando mapa...');
+  console.log("Mostrando mapa...");
 
-   db.all("Select * FROM Mapa", (err,rows) => {
-     if (err) {
-     	console.error("Error al ejecutar la consulta", err.message);
-     	res.status(500).send("Error en el servidor");
-     } else {
-     	res.json(rows);
-     }
-   });
+  db.all("Select * FROM Mapa", (err, rows) => {
+    if (err) {
+      console.error("Error al ejecutar la consulta", err.message);
+      res.status(500).send("Error en el servidor");
+    } else {
+      res.json(rows);
+    }
+  });
 });
 
 // Visualización de los estados de los componentes
 app.get("/estados", (req, res) => {
-  console.log('mostrando estados de componentes...');
+  console.log("mostrando estados de componentes...");
 
-  db.all("Select * FROM Estados", (err,rows) => {
+  db.all("Select * FROM Estados", (err, rows) => {
     if (err) {
       console.error("Error al ejecutar la consulta", err.message);
       res.status(500).send("Error en el servidor");
@@ -83,4 +82,3 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Servidor iniciado en http://localhost:${port}`);
 });
-

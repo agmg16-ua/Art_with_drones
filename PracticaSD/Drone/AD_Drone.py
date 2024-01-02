@@ -5,6 +5,22 @@ import time
 import requests
 import json
 from confluent_kafka import Consumer, Producer, KafkaError
+#Libreria para auditoria
+from loguru import logger
+
+# Obtener la dirección IP de la máquina
+ip_address = socket.gethostbyname(socket.gethostname())
+
+# Configurar el sistema de registro con el formato personalizado
+logger.add('auditoria.log', level='INFO', format="{time} {level} - Acción: {function} - IP: {ip} - Descripción: {message}")
+
+# Decorador para asignar un Logger con IP a la función
+def logger_decorator(func):
+    def wrapper(*args, **kwargs):
+        loguru_logger = logger.bind(function=func.__name__, ip=ip_address)
+        func.logger = loguru_logger
+        return func(*args, **kwargs)
+    return wrapper
 
 #Crea el consumidor de destinos, de mapa y el productor de posiciones
 #Clase principal.
@@ -26,11 +42,15 @@ class AD_Drone:
         self.auto = False #Si es true se ejecuta automaticamente
 
     #Detiene la accion
+    @logger_decorator
     def detenerAccion(self):
+        self.logger.info('Deteniendo acción')
         self.detener = True
 
     #Me uno a los topics con los roles correspondientes a Drone
+    @logger_decorator
     def consumidorDestino(self):
+        self.consumidorDestino.logger.info('Consumidor de destinos creado')
         # Configura las propiedades del consumidor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
@@ -60,7 +80,9 @@ class AD_Drone:
         return consumidor
     """
 
+    @logger_decorator
     def productorPosiciones(self):
+        self.productorPosiciones.logger.info('Productor de posiciones creado')
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
@@ -71,7 +93,9 @@ class AD_Drone:
 
         return productor
 
+    @logger_decorator
     def productorActividad(self):
+        self.productorActividad.logger.info('Productor de actividad creado')
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
@@ -85,8 +109,10 @@ class AD_Drone:
     #Operaciones en kafka
     #Escuha todos los destinos de los drones y filtro para elegir el mío.
     #Al encontrarlo almaceno el destino en mi posicionFin.
+    @logger_decorator
     def escucharPorKafkaDestino(self, consumidor):
         try:
+            self.escucharPorKafkaDestino.logger.info('Escuchando destino de drones')
             topic = "destino"
             consumidor.subscribe(topics=[topic])
 
@@ -108,6 +134,7 @@ class AD_Drone:
                             self.posicionFin[1] = int(valores[2])
                             break
         except Exception as e:
+            self.escucharPorKafkaDestino.logger.error('Error escuchando destino de drones: ' + str(e))
             print("Error escuchando destino de drones: ",e)
 
     #Eschucho el estado del mapa mientras no se detenga la operación.
@@ -131,7 +158,9 @@ class AD_Drone:
     """
 
     #Envio mi posicionActual al engine
+    @logger_decorator
     def enviarPosicion(self, productor):
+        self.enviarPosicion.logger.info('Enviando posición actual')
         topic = "posiciones"
 
         productor.produce(topic, value=f"{self.id_virtual} {self.posicionActual[0]} {self.posicionActual[1]}")
@@ -149,7 +178,9 @@ class AD_Drone:
     #Cada vez que me muevo una casilla envio mi posicionActual al engine y espero 2 segundos.
     #Cuando haya llegado a mi destino me mantengo a la escucha de nuevos destinos.
     #Si escucho uno nuevo cambio el estado a rojo.
+    @logger_decorator
     def mover(self,productor,consumidorDestino):
+        self.mover.logger.info('Moviendo drone')
         while self.detener == False:
             while self.estado != "Verde" and self.detener == False:
                 if self.posicionFin[0] > self.posicionActual[0]:
@@ -176,7 +207,9 @@ class AD_Drone:
     #y el productor de las posiciones del drone. Crea un hilo para moverse y otro para
     #escuchar el mapa constantemente. Luego despliega un menu donde da la opción de Imprimir
     #el mapa o salir el espectaculo,, deteniendo todos los hilos y volviendo al menu principal.
+    @logger_decorator
     def run(self):
+        self.run.logger.info('Activando y ejecutando el drone')
         try:
             consumidorDestino = self.consumidorDestino()
             #####consumidorMapa = self.consumidorMapa()
@@ -214,6 +247,7 @@ class AD_Drone:
                     self.detenerAccion()
 
         except Exception as e:
+            self.run.logger.error('Error durante la acción: ' + str(e))
             print("Error durante la accion:", e)
 
     #Se registra con el registry mediante sockets y recibe el token de acceso.
@@ -239,7 +273,9 @@ class AD_Drone:
             print("Error conectandose a registry: ",e)
     """
 
+    @logger_decorator
     def registrarse(self, ip, puerto):
+        self.registrarse.logger.info('Registrando drone')
         try:
             datos = {
                 'id': self.id,
@@ -257,6 +293,7 @@ class AD_Drone:
 
             self.token = diccionario_respuesta['data'][0]['token']
         except Exception as e:
+            self.registrarse.logger.error('Error registrando drone: ' + str(e))
             # Handle any exceptions that may occur during the process
             response = {
                 'error' : False,
@@ -264,25 +301,34 @@ class AD_Drone:
                 'data': None
             }
             print (json.dumps(response, indent=4, sort_keys=True))
+
     #Escribe en el socket mas controladamente.
+    @logger_decorator
     def escribe_socket(self, sock, datos):
+        self.escribe_socket.logger.info('Escribiendo en socket')
         try:
             sock.send(datos.encode('utf-8'))
         except Exception as e:
+            self.escribe_socket.logger.error('Error escribiendo en socket: ' + str(e))
             print("Error escribiendo en socket: ", e)
 
     #Lee del socket más controladamente
+    @logger_decorator
     def lee_socket(self, sock):
+        self.lee_socket.logger.info('Leyendo socket')
         try:
             p_datos = sock.recv(1024).decode('utf-8')
             return p_datos
         except Exception as e:
+            self.lee_socket.logger.error('Error leyendo el socket: ' + str(e))
             print("Error leyendo el socket: ", e)
             return ""
 
     #Solicita unirse a la acción y espera una respuesta de un string que diga si ha sido aceptado
     #o denegado.
+    @logger_decorator
     def solicitar_inclusion(self, ip, puerto):
+        self.solicitar_inclusion.logger.info('Solicitando inclusion')
         aceptado = False
 
         try:
@@ -308,6 +354,7 @@ class AD_Drone:
 
             skcliente.close()
         except Exception as e:
+            self.solicitar_inclusion.logger.error('Error solicitando inclusion: ' + str(e))
             print("Error solicitando inclusion: " + str(e))
 
         return aceptado
