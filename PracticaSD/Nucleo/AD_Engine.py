@@ -1,3 +1,4 @@
+from logging import Logger
 import time
 import threading
 from confluent_kafka import Consumer, Producer, KafkaError
@@ -9,6 +10,25 @@ import copy
 from Map import Map
 import requests
 import sqlite3
+from loguru import logger
+
+# Obtener la dirección IP de la máquina
+ip_address = socket.gethostbyname(socket.gethostname())
+
+# Configurar el sistema de registro con el formato personalizado
+logger.add('auditoria.log', level='INFO', format="{time} {level} - Acción: {function} - IP: {ip} - Descripción: {message}")
+
+# Decorador para utilizar Logger con el módulo logging
+def logger_decorator(func):
+    def wrapper(*args, **kwargs):
+        # Obtener un Logger de Loguru para la función
+        loguru_logger = logger.bind(function=func.__name__, ip=ip_address)
+        # Convertir el Logger de Loguru en un Logger de logging
+        logging_logger = Logger(loguru_logger)
+        # Asignar el Logger de logging a la función
+        func.logger = logging_logger
+        return func(*args, **kwargs)
+    return wrapper
 
 #Thread para escuchar drones en paralelo a la ejecucion del espectaculo.
 class RecibirDrones(threading.Thread):
@@ -21,6 +41,7 @@ class RecibirDrones(threading.Thread):
     #Crea el servidor concurrente para escuchar varios drones a la vez
     #Al unirse un nuevo drone lo separo y trabajo con el mediante la clase thread EscucharDrone
     def run(self):
+        logger.info("Iniciando servidor de drones")
         try:
             # Obtiene la dirección IP local de la red actual
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -44,8 +65,10 @@ class RecibirDrones(threading.Thread):
                     escuchar.start()
 
                 except Exception as e:
+                    logger.error("Error escuchando al drone: ", e)
                     print("Error para escuchar al drone: ", e)
         except Exception as e:
+            logger.error("Error creando servidor: ", e)
             print("Error creando servidor: ", e)
 
 #Clase principal
