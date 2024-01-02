@@ -581,6 +581,14 @@ class AD_Engine:
         except Exception as e:
             print(f"Error en Engine: {e}")
 
+def leerApiKeyOpenWeather():
+    apiKey = ""
+    
+    with open("API_KEY OPENWeather", "r") as archivo:
+        apiKey = archivo.readline().strip()
+
+    return apiKey
+
 #Controlador del clima. Es un hilo. Recibe por parametros el engine, la ip y el puerto del weather y la ciudad donde tendrá ligar el espectaculo.
 #Esta función solicita el clima de la ciudad constantemente. Si la temperatura es <= a cero detiene al engine.
 def clima(engine, a):
@@ -598,8 +606,10 @@ def clima(engine, a):
                 print("Cambiando de ciudad... Nueva ciudad: " + ciudad)
             
             ciudad_antigua = ciudad
+            
+            apiKey = leerApiKeyOpenWeather()
 
-            url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid=87abfee8afe72ffa53348ad3b23c36d8&units=metric'
+            url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={apiKey}&units=metric'
             
             response = requests.get(url)
             data = response.json()
