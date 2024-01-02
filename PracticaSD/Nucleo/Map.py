@@ -2,6 +2,23 @@ import time
 import sys
 import os
 import copy
+import socket
+#Libreria para auditoria
+from loguru import logger
+
+# Obtener la dirección IP de la máquina
+ip_address = socket.gethostbyname(socket.gethostname())
+
+# Configurar el sistema de registro con el formato personalizado
+logger.add('auditoria.log', level='INFO', format="{time} {level} - Acción: {function} - IP: {ip} - Descripción: {message}")
+
+# Decorador para asignar un Logger con IP a la función
+def logger_decorator(func):
+    def wrapper(*args, **kwargs):
+        loguru_logger = logger.bind(function=func.__name__, ip=ip_address)
+        func.logger = loguru_logger
+        return func(*args, **kwargs)
+    return wrapper
 
 """
 class Drone:
@@ -28,16 +45,22 @@ class Map:
         self.mapa = ""
 
     #Devuelve las filas del mapa
+    @logger_decorator
     def get_filas(self):
+        self.get_filas.logger.info("Obteniendo filas")
         return self.filas
 
     #Devuelve las columnas del mapa
+    @logger_decorator
     def get_columnas(self):
+        self.get_columnas.logger.info("Obteniendo columnas")
         return self.columnas
 
     #Método principal para generar el mapa
     #Recibe las posiciones finales de los drones (drones) y los drones que hay en el sistema (dronesActuales)
+    @logger_decorator
     def print_mapa(self, drones, dronesActuales):
+        self.print_mapa.logger.info("Generando mapa")
         rojo = "\u001B[91m"
         verde = "\u001B[32m"
         reset = "\u001B[0m"
@@ -95,7 +118,9 @@ class Map:
             self.mapa += "\n\n"
 
     #Método para convertir los drones en un mapa en formato string
+    @logger_decorator
     def to_string(self, drones, dronesActuales):
+        self.to_string.logger.info("Convirtiendo el mapa a un string")
         dronesAux = drones.copy() #Copia las posiciones finales para no modificar el original
 
         if len(dronesActuales) == 0:
@@ -121,7 +146,9 @@ class Map:
         return self.mapa
 
 #Método para limpiar la terminal
+@logger_decorator
 def clear_terminal():
+    clear_terminal.logger.info("Limpiando terminal")
     os.system('cls' if os.name == 'nt' else 'clear')
 
 """
