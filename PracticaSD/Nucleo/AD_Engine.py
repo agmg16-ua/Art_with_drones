@@ -581,17 +581,17 @@ class AD_Engine:
         except Exception as e:
             print(f"Error en Engine: {e}")
 
-def leerApiKeyOpenWeather():
+def leerApiKeyOpenWeather(archivoApiKey):
     apiKey = ""
-    
-    with open("API_KEY OPENWeather", "r") as archivo:
+
+    with open(archivoApiKey, "r") as archivo:
         apiKey = archivo.readline().strip()
 
     return apiKey
 
 #Controlador del clima. Es un hilo. Recibe por parametros el engine, la ip y el puerto del weather y la ciudad donde tendrá ligar el espectaculo.
 #Esta función solicita el clima de la ciudad constantemente. Si la temperatura es <= a cero detiene al engine.
-def clima(engine, a):
+def clima(engine, archivoApiKey):
 
     try:
         ciudad_antigua = ""
@@ -644,7 +644,7 @@ def clima(engine, a):
 if __name__ == "__main__":
     import sys
     #Comprobación de parametros
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         print(len(sys.argv))
         print("ERROR: Los parámetros no son correctos")
         sys.exit(1)
@@ -652,6 +652,7 @@ if __name__ == "__main__":
     puerto = sys.argv[1]
     max_drones = int(sys.argv[2])
     ip_puerto_broker = sys.argv[3]
+    archivoApiKey = sys.argv[4]
 
     print(f"Escuchando puerto {puerto}")
     print(f"Maximo de drones establecido en {max_drones} drones")
@@ -666,10 +667,10 @@ if __name__ == "__main__":
 
     engine = AD_Engine()
 
-    a = ""
+    
 
     #Al iniciar el espectaculo creo el controlador del clima
-    controlarClima = threading.Thread(target=clima,args=(engine, a))
+    controlarClima = threading.Thread(target=clima,args=(engine, archivoApiKey,))
     controlarClima.start()
 
     #Creo los productores de mapa y destino y el consumidor de posiciones.
