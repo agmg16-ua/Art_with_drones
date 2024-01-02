@@ -190,7 +190,7 @@ class AD_Drone:
             #Los drones envian su id si se encuentran activos
             estoyActivo = threading.Thread(target=self.escucharPorKafkaDestino,args=(consumidorDestino,))
             estoyActivo.start()
-            
+
             destino = self.escucharPorKafkaDestino(consumidorDestino)
 
             #Los drones envian constantemente sus posiciones
@@ -245,7 +245,7 @@ class AD_Drone:
                 'id': self.id,
                 'alias':self.alias
             }
-            url= 'http://192.168.0.35:5000/unirme'
+            url= 'http://192.168.1.84:5000/unirme'
             response = requests.post(url,json=datos)#,verify='certificados/certificado_registry.crt')
 
             #if response.status_code == 201:

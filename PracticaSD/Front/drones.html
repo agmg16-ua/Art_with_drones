@@ -52,7 +52,7 @@
 
     <script>
         function fetchDrones() {
-            fetch('http://192.168.0.35:3000/drones')
+            fetch('http://192.168.1.84:3000/drones')
                 .then(response => response.json())
                 .then(data => displayDrones(data))
                 .catch(error => console.error('Error:', error));

@@ -375,4 +375,4 @@ if __name__ == "__main__":
     #Movil: 192.168.218.43
     #Alex: 192.168.0.35
     app.debug = True
-    app.run(host='192.168.0.35')#,ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
+    app.run(host='192.168.1.84')#,ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
