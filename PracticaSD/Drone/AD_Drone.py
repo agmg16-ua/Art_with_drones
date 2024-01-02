@@ -5,20 +5,32 @@ import time
 import requests
 import json
 from confluent_kafka import Consumer, Producer, KafkaError
+
 #Libreria para auditoria
-from loguru import logger
+import logging
 
-# Obtener la dirección IP de la máquina
-ip_address = socket.gethostbyname(socket.gethostname())
+# Obtiene la dirección IP local de la red actual
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+ip_address = s.getsockname()[0]
+s.close()
 
-# Configurar el sistema de registro con el formato personalizado
-logger.add('auditoria.log', level='INFO', format="{time} {level} - Acción: {function} - IP: {ip} - Descripción: {message}")
+# Configurar el sistema de registro
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+handler = logging.FileHandler('auditoria.log')
+handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - Acción: %(funcName)s - IP: ' + ip_address + ' - Descripción: %(message)s')
+handler.setFormatter(formatter)
+
+logger.addHandler(handler)
 
 # Decorador para asignar un Logger con IP a la función
 def logger_decorator(func):
     def wrapper(*args, **kwargs):
-        loguru_logger = logger.bind(function=func.__name__, ip=ip_address)
-        func.logger = loguru_logger
+        func.logger = logger
         return func(*args, **kwargs)
     return wrapper
 
@@ -29,6 +41,7 @@ class AD_Drone:
     #Además almacenará la posicion final del drone y la posicion actual del mismo como [x,y]
     #Tendrá el estado del drone y el mapa recibido por kafka, además de un booleano para detener la accion.
     def __init__(self, alias):
+        self.logger = logger
         self.alias = alias
         self.id = random.randint(1, 10000)
         self.id_virtual = -1
@@ -50,7 +63,7 @@ class AD_Drone:
     #Me uno a los topics con los roles correspondientes a Drone
     @logger_decorator
     def consumidorDestino(self):
-        self.consumidorDestino.logger.info('Consumidor de destinos creado')
+        self.logger.info('Consumidor de destinos creado')
         # Configura las propiedades del consumidor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
@@ -82,7 +95,7 @@ class AD_Drone:
 
     @logger_decorator
     def productorPosiciones(self):
-        self.productorPosiciones.logger.info('Productor de posiciones creado')
+        self.logger.info('Productor de posiciones creado')
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
@@ -95,7 +108,7 @@ class AD_Drone:
 
     @logger_decorator
     def productorActividad(self):
-        self.productorActividad.logger.info('Productor de actividad creado')
+        self.logger.info('Productor de actividad creado')
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
@@ -112,7 +125,7 @@ class AD_Drone:
     @logger_decorator
     def escucharPorKafkaDestino(self, consumidor):
         try:
-            self.escucharPorKafkaDestino.logger.info('Escuchando destino de drones')
+            self.logger.info('Escuchando destino de drones')
             topic = "destino"
             consumidor.subscribe(topics=[topic])
 
@@ -134,7 +147,7 @@ class AD_Drone:
                             self.posicionFin[1] = int(valores[2])
                             break
         except Exception as e:
-            self.escucharPorKafkaDestino.logger.error('Error escuchando destino de drones: ' + str(e))
+            self.logger.error('Error escuchando destino de drones: ' + str(e))
             print("Error escuchando destino de drones: ",e)
 
     #Eschucho el estado del mapa mientras no se detenga la operación.
@@ -160,7 +173,7 @@ class AD_Drone:
     #Envio mi posicionActual al engine
     @logger_decorator
     def enviarPosicion(self, productor):
-        self.enviarPosicion.logger.info('Enviando posición actual')
+        self.logger.info('Enviando posición actual')
         topic = "posiciones"
 
         productor.produce(topic, value=f"{self.id_virtual} {self.posicionActual[0]} {self.posicionActual[1]}")
@@ -180,7 +193,7 @@ class AD_Drone:
     #Si escucho uno nuevo cambio el estado a rojo.
     @logger_decorator
     def mover(self,productor,consumidorDestino):
-        self.mover.logger.info('Moviendo drone')
+        self.logger.info('Moviendo drone')
         while self.detener == False:
             while self.estado != "Verde" and self.detener == False:
                 if self.posicionFin[0] > self.posicionActual[0]:
@@ -209,7 +222,7 @@ class AD_Drone:
     #el mapa o salir el espectaculo,, deteniendo todos los hilos y volviendo al menu principal.
     @logger_decorator
     def run(self):
-        self.run.logger.info('Activando y ejecutando el drone')
+        self.logger.info('Activando y ejecutando el drone')
         try:
             consumidorDestino = self.consumidorDestino()
             #####consumidorMapa = self.consumidorMapa()
@@ -247,7 +260,7 @@ class AD_Drone:
                     self.detenerAccion()
 
         except Exception as e:
-            self.run.logger.error('Error durante la acción: ' + str(e))
+            self.logger.error('Error durante la acción: ' + str(e))
             print("Error durante la accion:", e)
 
     #Se registra con el registry mediante sockets y recibe el token de acceso.
@@ -275,13 +288,13 @@ class AD_Drone:
 
     @logger_decorator
     def registrarse(self, ip, puerto):
-        self.registrarse.logger.info('Registrando drone')
+        self.logger.info('Registrando drone')
         try:
             datos = {
                 'id': self.id,
                 'alias':self.alias
             }
-            url= 'http://192.168.1.84:5000/unirme'
+            url = 'http://192.168.1.84:5000/unirme'
             response = requests.post(url,json=datos)#,verify='certificados/certificado_registry.crt')
 
             #if response.status_code == 201:
@@ -293,7 +306,7 @@ class AD_Drone:
 
             self.token = diccionario_respuesta['data'][0]['token']
         except Exception as e:
-            self.registrarse.logger.error('Error registrando drone: ' + str(e))
+            self.logger.error('Error registrando drone: ' + str(e))
             # Handle any exceptions that may occur during the process
             response = {
                 'error' : False,
@@ -305,7 +318,7 @@ class AD_Drone:
     #Escribe en el socket mas controladamente.
     @logger_decorator
     def escribe_socket(self, sock, datos):
-        self.escribe_socket.logger.info('Escribiendo en socket')
+        self.logger.info('Escribiendo en socket')
         try:
             sock.send(datos.encode('utf-8'))
         except Exception as e:
@@ -315,12 +328,12 @@ class AD_Drone:
     #Lee del socket más controladamente
     @logger_decorator
     def lee_socket(self, sock):
-        self.lee_socket.logger.info('Leyendo socket')
+        self.logger.info('Leyendo socket')
         try:
             p_datos = sock.recv(1024).decode('utf-8')
             return p_datos
         except Exception as e:
-            self.lee_socket.logger.error('Error leyendo el socket: ' + str(e))
+            self.logger.error('Error leyendo el socket: ' + str(e))
             print("Error leyendo el socket: ", e)
             return ""
 
@@ -328,7 +341,7 @@ class AD_Drone:
     #o denegado.
     @logger_decorator
     def solicitar_inclusion(self, ip, puerto):
-        self.solicitar_inclusion.logger.info('Solicitando inclusion')
+        self.logger.info('Solicitando inclusion')
         aceptado = False
 
         try:
@@ -354,7 +367,7 @@ class AD_Drone:
 
             skcliente.close()
         except Exception as e:
-            self.solicitar_inclusion.logger.error('Error solicitando inclusion: ' + str(e))
+            self.logger.error('Error solicitando inclusion: ' + str(e))
             print("Error solicitando inclusion: " + str(e))
 
         return aceptado

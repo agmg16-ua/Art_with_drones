@@ -1,4 +1,4 @@
-from logging import Logger
+
 import time
 import threading
 from confluent_kafka import Consumer, Producer, KafkaError
@@ -10,23 +10,32 @@ import copy
 from Map import Map
 import requests
 import sqlite3
-from loguru import logger
+
+import logging
 
 # Obtener la dirección IP de la máquina
-ip_address = socket.gethostbyname(socket.gethostname())
+# Obtiene la dirección IP local de la red actual
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+ip_address = s.getsockname()[0]
+s.close()
 
-# Configurar el sistema de registro con el formato personalizado
-logger.add('auditoria.log', level='INFO', format="{time} {level} - Acción: {function} - IP: {ip} - Descripción: {message}")
+# Configurar el sistema de registro
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
-# Decorador para utilizar Logger con el módulo logging
+handler = logging.FileHandler('auditoria.log')
+handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - Acción: %(funcName)s - IP: ' + ip_address + ' - Descripción: %(message)s')
+handler.setFormatter(formatter)
+
+logger.addHandler(handler)
+
+# Decorador para asignar un Logger con IP a la función
 def logger_decorator(func):
     def wrapper(*args, **kwargs):
-        # Obtener un Logger de Loguru para la función
-        loguru_logger = logger.bind(function=func.__name__, ip=ip_address)
-        # Convertir el Logger de Loguru en un Logger de logging
-        logging_logger = Logger(loguru_logger)
-        # Asignar el Logger de logging a la función
-        func.logger = logging_logger
+        func.logger = logger
         return func(*args, **kwargs)
     return wrapper
 
@@ -36,13 +45,14 @@ class RecibirDrones(threading.Thread):
     #Inicializa el tread con el puerto de escucha del servidor.
     def __init__(self, puerto):
         super().__init__()
+        self.logger = logger
         self.puerto = puerto
 
     #Codigo que se ejecutará al hacer .start.
     #Crea el servidor concurrente para escuchar varios drones a la vez
     #Al unirse un nuevo drone lo separo y trabajo con el mediante la clase thread EscucharDrone
     def run(self):
-        logger.info("Iniciando servidor de drones")
+        self.logger.info("Iniciando servidor de drones")
         try:
             # Obtiene la dirección IP local de la red actual
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -69,7 +79,7 @@ class RecibirDrones(threading.Thread):
                     logger.error("Error escuchando al drone: ", e)
                     print("Error para escuchar al drone: ", e)
         except Exception as e:
-            logger.error("Error creando servidor: ", e)
+            self.logger.error("Error creando servidor: ", e)
             print("Error creando servidor: ", e)
 
 #Clase principal
@@ -85,6 +95,7 @@ class AD_Engine:
         self.detener = False
         self.detener_por_clima = False
         self.en_base_por_clima = False
+        self.logger = logger
 
     #Limpia la terminal para mejor legibilidad
     def clear_terminal(self):
@@ -98,11 +109,11 @@ class AD_Engine:
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
         }
         try:
-            productor_destinos.logger.info("Creando productor de destinos")
+            self.logger.info("Creando productor de destinos")
             # Crea una instancia del productor
             producer = Producer(config)
         except Exception as e:
-            productor_destinos.logger.error("Error creando productor de destinos: ",e)
+            self.logger.error("Error creando productor de destinos: ",e)
             print("Error creando consumidor de posiciones: ",e)
 
         return producer
@@ -131,11 +142,11 @@ class AD_Engine:
             'enable.auto.commit': False  # Deshabilita la confirmación automática
         }
         try:
-            consumidor_posiciones.logger.info("Creando consumidor de posiciones")
+            self.logger.info("Creando consumidor de posiciones")
             # Crea una instancia del consumidor
             consumer = Consumer(config)
         except Exception as e:
-            consumidor_posiciones.logger.error("Error creando consumidor de posiciones: ",e)
+            self.logger.error("Error creando consumidor de posiciones: ",e)
             print("Error creando consumidor de posiciones: ",e)
 
         return consumer
@@ -148,11 +159,11 @@ class AD_Engine:
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
         }
         try:
-            consumidor_activos.logger.info("Creando consumidor de activos")
+            self.logger.info("Creando consumidor de activos")
             # Crea una instancia del consumidor
             consumer = Consumer(config)
         except Exception as e:
-            consumidor_activos.logger.error("Error creando consumidor de posiciones: ",e)
+            self.logger.error("Error creando consumidor de posiciones: ",e)
             print("Error creando consumidor de posiciones: ",e)
 
         return consumer
@@ -240,7 +251,7 @@ class AD_Engine:
     @logger_decorator
     def enviar_por_kafka_destinos(self, productor):
         try:
-            enviar_por_kafka_destinos.logger.info("Enviando destinos")
+            self.logger.info("Enviando destinos")
             topic = "destino"
             #Envio los destinos de los que se encuentran aqui
 
@@ -249,9 +260,9 @@ class AD_Engine:
                 mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
                 productor.produce(topic, value=mensaje)
                 productor.flush()
-            enviar_por_kafka_destinos.logger.info("Destinos enviados")
+            self.logger.info("Destinos enviados")
         except Exception as e:
-            enviar_por_kafka_destinos.logger.error("Error enviando destinos: ",e)
+            self.logger.error("Error enviando destinos: ",e)
             print("Error enviando destinos: ",e)
 
     """
@@ -286,7 +297,7 @@ class AD_Engine:
     @logger_decorator
     def actualizarPosicionesBD(self, drone):
         try:
-            self.actualizarPosicionesBD.logger.info("Actualizando posiciones")
+            self.logger.info("Actualizando posiciones")
             conn = sqlite3.connect('registry')
 
             cursor = conn.cursor()
@@ -300,9 +311,9 @@ class AD_Engine:
             conn.commit()
 
             conn.close()
-            self.actualizarPosicionesBD.logger.info("Posiciones actualizadas")
+            self.logger.info("Posiciones actualizadas")
         except Exception as e:
-            self.actualizarPosicionesBD.logger.info("Error actualizando posiciones: ",e)
+            self.logger.info("Error actualizando posiciones: ",e)
             print("Error actualizando posiciones: ",e)
     
     def pintarVerde(self, id_virtual):
@@ -323,7 +334,7 @@ class AD_Engine:
     @logger_decorator
     def comprobarFinBD(self):
         try:
-            self.comprobarFinBD.logger.info("Comprobando fin")
+            self.logger.info("Comprobando fin")
             conn = sqlite3.connect('registry')
 
             cursor = conn.cursor()
@@ -343,16 +354,16 @@ class AD_Engine:
                                 break
 
             conn.close()
-            self.comprobarFinBD.logger.info("Fin comprobado")
+            self.logger.info("Fin comprobado")
         except Exception as e:
-            self.comprobarFinBD.logger.error("Error comprobando fin: ",e)
+            self.logger.error("Error comprobando fin: ",e)
             print("Error comprobando fin: ",e)
 
     #Escucha las posiciones que le van llegando de los drones.
     @logger_decorator
     def escuchar_posicion_drones(self, consumidor):
         try:
-            self.escuchar_posicion_drones.logger.info("Escuchando posiciones")
+            self.logger.info("Escuchando posiciones")
             topic = "posiciones"
             consumidor.subscribe(topics=[topic])
             while not self.figura_completada() and not self.detener and not self.en_base_por_clima:
@@ -397,13 +408,13 @@ class AD_Engine:
                                     self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
 
         except Exception as e:
-            self.escuchar_posicion_drones.logger.error("Error escuchando posiciones: ",e)
+            self.logger.error("Error escuchando posiciones: ",e)
             print("Error escuchando posiciones: ", e)
 
     #Leo las figuras que tenga el archivo Figuras.json y las almaceno en un vector. Despues de ello elimino el fichero de figuras
     @logger_decorator
     def leer_figuras(self):
-        self.leer_figuras.logger.info("Leyendo figuras")
+        self.logger.info("Leyendo figuras")
         inicio = time.time()
         tiempo_transcurrido = 0
         while not self.figuras and not self.detener and not self.detener_por_clima:
@@ -430,18 +441,18 @@ class AD_Engine:
                         drones.append([id_drone, [int(pos[0]),int(pos[1])]])
                     self.figuras.append([nombre_figura, drones])
             except Exception as e:
-                self.leer_figuras.logger.error("Error leyendo figuras ya que no hay: ",e)
+                self.logger.error("Error leyendo figuras ya que no hay: ",e)
                 pass
 
         # Eliminar el archivo JSON
         if self.detener_por_clima == False:
             try:
-                self.leer_figuras.logger.info("Eliminando archivo de figuras")
+                self.logger.info("Eliminando archivo de figuras")
                 os.remove('Figuras.json')
                 print(f"El archivo {'Figuras.json'} fue eliminado con éxito.")
-                self.leer_figuras.logger.info("Archivo de figuras eliminado")
+                self.logger.info("Archivo de figuras eliminado")
             except OSError as e:
-                self.leer_figuras.logger.error("Error eliminando archivo de figuras: ",e)
+                self.logger.error("Error eliminando archivo de figuras: ",e)
                 print(f"No se pudo eliminar el archivo {'Figuras.json'}: {e}")
 
         return True
@@ -449,7 +460,7 @@ class AD_Engine:
     #Veo si todos los drones estan en la base por el clima
     @logger_decorator
     def retirada_clima(self):
-        self.retirada_clima.logger.info("Comprobando si hay una retirada por clima")
+        self.logger.info("Comprobando si hay una retirada por clima")
         for index in range(len(self.dronesActuales)):
             if self.dronesActuales[index][1] != [-1,-1]:
                 return False
@@ -458,7 +469,7 @@ class AD_Engine:
     #Veo si la figura está completada o no
     @logger_decorator
     def figura_completada(self):
-        self.figura_completada.logger.info("Comprobando si la figura esta completada")
+        self.logger.info("Comprobando si la figura esta completada")
         if self.detener_por_clima == True and self.retirada_clima() == True:
             en_base_por_clima = True
             return True
@@ -469,30 +480,30 @@ class AD_Engine:
     #Leo el socket controladamente
     @logger_decorator
     def lee_socket(self, p_datos):
-        self.lee_socket.logger.info("Leyendo del socket")
+        self.logger.info("Leyendo del socket")
         try:
             aux = self.drone.recv(1024)
             p_datos = aux.decode()
         except Exception as e:
-            self.lee_socket.logger.error("Error leyendo del socket: ",e)
+            self.logger.error("Error leyendo del socket: ",e)
             print(f"Error leyendo del socket: {e}")
         return p_datos
 
     #Escribe en el socket de forma controlada
     @logger_decorator
     def escribe_socket(self, p_datos):
-        self.escribe_socket.logger.info("Escribiendo en el socket")
+        self.logger.info("Escribiendo en el socket")
         try:
             self.drone.send(p_datos.encode())
         except Exception as e:
-            self.escribe_socket.logger.error("Error escribiendo en el socket: ",e)
+            self.logger.error("Error escribiendo en el socket: ",e)
             print(f"Error escribiendo en el socket: {e}")
 
     #Motivos para detener la ejecucion
     #Se detiene debido al clima
     @logger_decorator
     def stop_clima(self):
-        self.stop_clima.logger.info("Deteniendo por clima")
+        self.logger.info("Deteniendo por clima")
         self.detener_por_clima = True
 
         for index in range(len(self.dronesFinales)):
@@ -501,7 +512,7 @@ class AD_Engine:
     #Se detiene por un mal funcionamiento
     @logger_decorator
     def stop(self):
-        self.stop.logger.info("Deteniendo por mal funcionamiento")
+        self.logger.info("Deteniendo por mal funcionamiento")
         self.detener = True
 
     #Función encargada de iniciar el espectaculo, se activa cuando existe el fichero Figuras.json
@@ -509,7 +520,7 @@ class AD_Engine:
     #Se ejecuta mientras hayan figuras o se detenga la ejecucion
     @logger_decorator
     def todosRojo(self):
-        self.todosRojo.logger.info("Poner todos los drones a rojo")
+        self.logger.info("Poner todos los drones a rojo")
         try:
             conn = sqlite3.connect('registry')
 
@@ -522,12 +533,12 @@ class AD_Engine:
             conn.close()
 
         except Exception as e:
-            self.todosRojo.logger.error("Error poniendolos a rojo: ",e)
+            self.logger.error("Error poniendolos a rojo: ",e)
             print("Error pintando de rojo: ",e)
 
     @logger_decorator
     def start(self, productor_destinos, consumidor_posiciones, consumidor_activos):
-        self.start.logger.info("Iniciando espectaculo")
+        self.logger.info("Iniciando espectaculo")
         hay_figura = self.leer_figuras()    #Lee las figuras del fichero json
         try:
             while hay_figura and self.detener == False and self.en_base_por_clima == False:
@@ -644,14 +655,14 @@ class AD_Engine:
 
             sys.exit(0)
         except Exception as e:
-            self.start.logger.error("Error durante el espectaculo: ",e)
+            self.logger.error("Error durante el espectaculo: ",e)
             print(f"Error en Engine: {e}")
 
 #Controlador del clima. Es un hilo. Recibe por parametros el engine, la ip y el puerto del weather y la ciudad donde tendrá ligar el espectaculo.
 #Esta función solicita el clima de la ciudad constantemente. Si la temperatura es <= a cero detiene al engine.
 @logger_decorator
 def clima(engine, a):
-    clima.logger.info("Controlando el clima")
+    logger.info("Controlando el clima")
     try:
         ciudad_antigua = ""
         while True:
@@ -688,12 +699,12 @@ def clima(engine, a):
 
         sys.exit(0)
     except FileNotFoundError as fileE:
-        clima.logger.error("Error solicitando clima de la ciudad en: ",fileE)
+        logger.error("Error solicitando clima de la ciudad en: ",fileE)
         print("El archivo ciudades.txt no existe")
         engine.stop_clima()
 
     except Exception as e:
-        clima.logger.error("Error durante la solicitud del clima: ",e)
+        logger.error("Error durante la solicitud del clima: ",e)
         print("Error solicitando clima: " + str(e))
         print("No se puede realizar el espectaculo")
         engine.stop_clima()

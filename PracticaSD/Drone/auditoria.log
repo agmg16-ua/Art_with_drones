@@ -1,0 +1,28 @@
+2024-01-02 14:31:23,390 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:31:23,405 - ERROR - Acción: registrarse - IP: 127.0.1.1 - Descripción: Error registrando drone: Expecting value: line 1 column 1 (char 0)
+2024-01-02 14:31:32,288 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:31:32,298 - ERROR - Acción: registrarse - IP: 127.0.1.1 - Descripción: Error registrando drone: Expecting value: line 1 column 1 (char 0)
+2024-01-02 14:39:16,538 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:39:16,554 - ERROR - Acción: registrarse - IP: 127.0.1.1 - Descripción: Error registrando drone: Expecting value: line 1 column 1 (char 0)
+2024-01-02 14:42:18,619 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:45:59,534 - INFO - Acción: solicitar_inclusion - IP: 127.0.1.1 - Descripción: Solicitando inclusion
+2024-01-02 14:45:59,534 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo en socket
+2024-01-02 14:45:59,534 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:00,837 - INFO - Acción: solicitar_inclusion - IP: 127.0.1.1 - Descripción: Solicitando inclusion
+2024-01-02 14:46:00,837 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo en socket
+2024-01-02 14:46:00,837 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:01,429 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:46:01,432 - ERROR - Acción: registrarse - IP: 127.0.1.1 - Descripción: Error registrando drone: HTTPConnectionPool(host='192.168.1.84', port=5000): Max retries exceeded with url: /unirme (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f684757fc10>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2024-01-02 14:46:02,020 - INFO - Acción: solicitar_inclusion - IP: 127.0.1.1 - Descripción: Solicitando inclusion
+2024-01-02 14:46:02,020 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo en socket
+2024-01-02 14:46:02,020 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:57,622 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:46:58,569 - INFO - Acción: solicitar_inclusion - IP: 127.0.1.1 - Descripción: Solicitando inclusion
+2024-01-02 14:46:58,570 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo en socket
+2024-01-02 14:46:58,570 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:58,571 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Activando y ejecutando el drone
+2024-01-02 14:46:58,571 - INFO - Acción: consumidorDestino - IP: 127.0.1.1 - Descripción: Consumidor de destinos creado
+2024-01-02 14:46:58,592 - INFO - Acción: productorPosiciones - IP: 127.0.1.1 - Descripción: Productor de posiciones creado
+2024-01-02 14:46:58,592 - INFO - Acción: productorActividad - IP: 127.0.1.1 - Descripción: Productor de actividad creado
+2024-01-02 14:46:58,593 - INFO - Acción: escucharPorKafkaDestino - IP: 127.0.1.1 - Descripción: Escuchando destino de drones
+2024-01-02 14:46:58,593 - INFO - Acción: escucharPorKafkaDestino - IP: 127.0.1.1 - Descripción: Escuchando destino de drones

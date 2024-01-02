@@ -3,20 +3,33 @@ import sys
 import os
 import copy
 import socket
+
 #Libreria para auditoria
-from loguru import logger
 
-# Obtener la dirección IP de la máquina
-ip_address = socket.gethostbyname(socket.gethostname())
+import logging
 
-# Configurar el sistema de registro con el formato personalizado
-logger.add('auditoria.log', level='INFO', format="{time} {level} - Acción: {function} - IP: {ip} - Descripción: {message}")
+# Obtiene la dirección IP local de la red actual
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+ip_address = s.getsockname()[0]
+s.close()
+
+# Configurar el sistema de registro
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+handler = logging.FileHandler('auditoria.log')
+handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - Acción: %(funcName)s - IP: ' + ip_address + ' - Descripción: %(message)s')
+handler.setFormatter(formatter)
+
+logger.addHandler(handler)
 
 # Decorador para asignar un Logger con IP a la función
 def logger_decorator(func):
     def wrapper(*args, **kwargs):
-        loguru_logger = logger.bind(function=func.__name__, ip=ip_address)
-        func.logger = loguru_logger
+        func.logger = logger
         return func(*args, **kwargs)
     return wrapper
 
@@ -40,6 +53,7 @@ class Drone:
 class Map:
     #Inicia el tamaño del mapa y el string que contiene el mapa a vacio
     def _init_(self):
+        self.logger = logger
         self.filas = 19
         self.columnas = 19
         self.mapa = ""
@@ -47,20 +61,20 @@ class Map:
     #Devuelve las filas del mapa
     @logger_decorator
     def get_filas(self):
-        self.get_filas.logger.info("Obteniendo filas")
+        self.logger.info("Obteniendo filas")
         return self.filas
 
     #Devuelve las columnas del mapa
     @logger_decorator
     def get_columnas(self):
-        self.get_columnas.logger.info("Obteniendo columnas")
+        self.logger.info("Obteniendo columnas")
         return self.columnas
 
     #Método principal para generar el mapa
     #Recibe las posiciones finales de los drones (drones) y los drones que hay en el sistema (dronesActuales)
     @logger_decorator
     def print_mapa(self, drones, dronesActuales):
-        self.print_mapa.logger.info("Generando mapa")
+        self.logger.info("Generando mapa")
         rojo = "\u001B[91m"
         verde = "\u001B[32m"
         reset = "\u001B[0m"
@@ -120,7 +134,7 @@ class Map:
     #Método para convertir los drones en un mapa en formato string
     @logger_decorator
     def to_string(self, drones, dronesActuales):
-        self.to_string.logger.info("Convirtiendo el mapa a un string")
+        self.logger.info("Convirtiendo el mapa a un string")
         dronesAux = drones.copy() #Copia las posiciones finales para no modificar el original
 
         if len(dronesActuales) == 0:
@@ -148,7 +162,7 @@ class Map:
 #Método para limpiar la terminal
 @logger_decorator
 def clear_terminal():
-    clear_terminal.logger.info("Limpiando terminal")
+    logger.info("Limpiando terminal")
     os.system('cls' if os.name == 'nt' else 'clear')
 
 """

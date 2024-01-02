@@ -1,0 +1,30 @@
+2024-01-02 14:31:16,024 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Iniciando servidor de drones
+2024-01-02 14:42:14,402 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Iniciando servidor de drones
+2024-01-02 14:42:18,625 - INFO - Acción: add_items - IP: 127.0.1.1 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-02 14:42:18,626 - INFO - Acción: generar_token - IP: 127.0.1.1 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-02 14:42:18,667 - INFO - Acción: controlar_token - IP: 127.0.1.1 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-02 14:42:38,701 - INFO - Acción: controlar_token - IP: 127.0.1.1 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-02 14:45:59,535 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Contactando drone
+2024-01-02 14:45:59,535 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:45:59,535 - INFO - Acción: autenticar - IP: 127.0.1.1 - Descripción: Autenticando drone
+2024-01-02 14:45:59,536 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo socket
+2024-01-02 14:45:59,536 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Cerrando socket
+2024-01-02 14:46:00,838 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Contactando drone
+2024-01-02 14:46:00,838 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:00,838 - INFO - Acción: autenticar - IP: 127.0.1.1 - Descripción: Autenticando drone
+2024-01-02 14:46:00,839 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo socket
+2024-01-02 14:46:00,839 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Cerrando socket
+2024-01-02 14:46:02,021 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Contactando drone
+2024-01-02 14:46:02,021 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:02,021 - INFO - Acción: autenticar - IP: 127.0.1.1 - Descripción: Autenticando drone
+2024-01-02 14:46:02,022 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo socket
+2024-01-02 14:46:02,022 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Cerrando socket
+2024-01-02 14:46:57,626 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-02 14:46:57,628 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-02 14:46:57,640 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-02 14:46:58,570 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Contactando drone
+2024-01-02 14:46:58,570 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:58,570 - INFO - Acción: autenticar - IP: 127.0.1.1 - Descripción: Autenticando drone
+2024-01-02 14:46:58,571 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo socket
+2024-01-02 14:46:58,571 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Cerrando socket
+2024-01-02 14:47:17,674 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
