@@ -11,6 +11,23 @@ from flask import Flask, request
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 
+#Libreria para auditoria
+from loguru import logger
+
+# Obtener la dirección IP de la máquina
+ip_address = socket.gethostbyname(socket.gethostname())
+
+# Configurar el sistema de registro con el formato personalizado
+logger.add('auditoria.log', level='INFO', format="{time} {level} - Acción: {function} - IP: {ip} - Descripción: {message}")
+
+# Decorador para asignar un Logger con IP a la función
+def logger_decorator(func):
+    def wrapper(*args, **kwargs):
+        loguru_logger = logger.bind(function=func.__name__, ip=ip_address)
+        func.logger = loguru_logger
+        return func(*args, **kwargs)
+    return wrapper
+
 #Se crea una
 app = Flask(__name__)
 
@@ -32,9 +49,11 @@ token_dron_actual = ""      #Token de acceso
 
 #Parte API_REST
 #Obtendrá los datos que haya en la base de datos
+@logger_decorator
 @app.route('/obtenerdatos', methods=['GET'])
 def get_items():
     try:
+        get_items.logger.info('Se ha solicitado obtener los datos de los drones de la base de datos')
         if request.method == "GET":
             # Conectar a la base de datos (creará el archivo si no existe)
             conn = sqlite3.connect('registry')
@@ -58,6 +77,7 @@ def get_items():
             # Return a JSON response with HTTP status code 200 (OK)
             return jsonify(response), 200
     except Exception as e:
+        get_items.logger.error(f'Error al obtener los datos de los drones de la base de datos: {e}')
         # Handle any exceptions that may occur during the process
         response = {
             'error': False,
@@ -68,12 +88,14 @@ def get_items():
         return jsonify(response), 500
 
 #Añade una serie de elementos en la base de datos
+@logger_decorator
 @app.route('/unirme', methods=['POST'])
 def add_items():
     global id_nueva
     existe = False
 
     try:
+        add_items.logger.info('Se ha solicitado añadir un nuevo drone a la base de datos')
         if request.method == "POST":
             # Get the JSON data from the request
             datas = request.get_json()
@@ -142,6 +164,7 @@ def add_items():
             # Return a JSON response with HTTP status code 201 (Created)
         return jsonify(response), 201
     except Exception as e:
+        add_items.logger.error(f'Error al añadir un nuevo drone a la base de datos: {e}')
         # Handle any exceptions that may occur during the process
         response = {
             'error' : False,
@@ -282,13 +305,17 @@ def escribir_bd(id, alias):
         print("Error escribiendo bd:", e)
 """
 #Genera un token de acceso
+@logger_decorator
 def generar_token():
+    generar_token.logger.info('Se ha generado un nuevo token de acceso')
     token = str(uuid.uuid4())
     return token
 
 #Vacia el fichero antiguo de drones antes de empezar a registrar
+@logger_decorator
 def borrar_bd():
     try:
+        borrar_bd.logger.info('Se ha solicitado vaciar el fichero de drones')
         app = Flask(__name__)
 
         # Conectar a la base de datos (creará el archivo si no existe)
@@ -302,6 +329,7 @@ def borrar_bd():
 
         conn.close()
     except Exception as e:
+        borrar_bd.logger.error(f'Error al vaciar el fichero de drones: {e}')
         print("Error al vaciar el fichero:", e)
 
 """
@@ -343,7 +371,9 @@ def handleSockets(num_args,puerto_args,socket):
         print("Error:", e)
 """
 
+@logger_decorator
 def controlar_token(token):
+    controlar_token.logger.info('Se ha iniciado el hilo para controlar el token de acceso')
     time.sleep(20)
     print("Ya es la horaaa")
     # Conectar a la base de datos (o crearla si no existe)
@@ -363,6 +393,7 @@ def controlar_token(token):
 
     # Cerrar la conexión
     conexion.close()
+    controlar_token.logger.info('Se ha borrado el token de acceso del drone')
 
 if __name__ == "__main__":
     """
