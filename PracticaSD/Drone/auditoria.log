@@ -26,3 +26,13 @@
 2024-01-02 14:46:58,592 - INFO - Acción: productorActividad - IP: 127.0.1.1 - Descripción: Productor de actividad creado
 2024-01-02 14:46:58,593 - INFO - Acción: escucharPorKafkaDestino - IP: 127.0.1.1 - Descripción: Escuchando destino de drones
 2024-01-02 14:46:58,593 - INFO - Acción: escucharPorKafkaDestino - IP: 127.0.1.1 - Descripción: Escuchando destino de drones
+2024-01-02 15:26:38,502 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-02 15:26:38,790 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-02 15:26:38,791 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-02 15:26:38,791 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-02 15:26:38,793 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-02 15:26:38,793 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-02 15:26:38,796 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-02 15:26:38,796 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-02 15:26:38,797 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-02 15:26:38,797 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones

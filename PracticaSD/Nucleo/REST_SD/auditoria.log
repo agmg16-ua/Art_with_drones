@@ -1,0 +1,45 @@
+2024-01-02 15:26:31 - INFO - Acción: app.listen(port, () - IP: 192.168.1.84 - Descripción: Servidor iniciado en http://localhost:3000
+2024-01-02 15:26:31 - INFO - Acción: db - IP: 192.168.1.84 - Descripción: Conexión a la base de datos correcta
+2024-01-02 15:27:01 - INFO - Acción: app.get("/") - IP: ::ffff:127.0.0.1 - Descripción: Página de inicio de aplicación de ejemplo de SD
+2024-01-02 15:27:24 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:27:24 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:28:43 - ERROR - Acción: app.use((req, res) - IP: ::ffff:127.0.0.1 - Descripción: Ruta no encontrada
+2024-01-02 15:28:43 - ERROR - Acción: app.use((req, res) - IP: ::ffff:127.0.0.1 - Descripción: Ruta no encontrada
+2024-01-02 15:28:51 - ERROR - Acción: app.use((req, res) - IP: ::ffff:127.0.0.1 - Descripción: Ruta no encontrada
+2024-01-02 15:29:02 - INFO - Acción: app.get("/mapa") - IP: ::ffff:127.0.0.1 - Descripción: Mostrando mapa
+2024-01-02 15:29:02 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Mapa mostrado correctamente
+2024-01-02 15:30:42 - ERROR - Acción: app.use((req, res) - IP: ::ffff:127.0.0.1 - Descripción: Ruta no encontrada
+2024-01-02 15:30:47 - INFO - Acción: app.get("/mapa") - IP: ::ffff:127.0.0.1 - Descripción: Mostrando mapa
+2024-01-02 15:30:47 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Mapa mostrado correctamente
+2024-01-02 15:31:47 - INFO - Acción: app.get("/mapa") - IP: ::ffff:127.0.0.1 - Descripción: Mostrando mapa
+2024-01-02 15:31:47 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Mapa mostrado correctamente
+2024-01-02 15:31:47 - INFO - Acción: app.get("/mapa") - IP: ::ffff:127.0.0.1 - Descripción: Mostrando mapa
+2024-01-02 15:31:47 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Mapa mostrado correctamente
+2024-01-02 15:31:47 - INFO - Acción: app.get("/mapa") - IP: ::ffff:127.0.0.1 - Descripción: Mostrando mapa
+2024-01-02 15:31:47 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Mapa mostrado correctamente
+2024-01-02 15:31:47 - INFO - Acción: app.get("/mapa") - IP: ::ffff:127.0.0.1 - Descripción: Mostrando mapa
+2024-01-02 15:31:47 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Mapa mostrado correctamente
+2024-01-02 15:31:48 - INFO - Acción: app.get("/mapa") - IP: ::ffff:127.0.0.1 - Descripción: Mostrando mapa
+2024-01-02 15:31:48 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Mapa mostrado correctamente
+2024-01-02 15:31:51 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:31:51 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:31:53 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:31:53 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:31:53 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:31:53 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:31:53 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:31:53 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:31:54 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:31:54 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:33:01 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:33:01 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:33:02 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:33:02 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:33:02 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:33:02 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:33:02 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:33:02 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:33:02 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:33:02 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-02 15:33:02 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
+2024-01-02 15:33:02 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
