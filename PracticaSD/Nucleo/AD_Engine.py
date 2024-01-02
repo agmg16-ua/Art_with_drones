@@ -31,6 +31,7 @@ def logger_decorator(func):
     return wrapper
 
 #Thread para escuchar drones en paralelo a la ejecucion del espectaculo.
+@logger_decorator
 class RecibirDrones(threading.Thread):
     #Inicializa el tread con el puerto de escucha del servidor.
     def __init__(self, puerto):
@@ -73,7 +74,6 @@ class RecibirDrones(threading.Thread):
 
 #Clase principal
 class AD_Engine:
-
     #El engine tendrá los dronesFinales que deben haber para que este terminada la figura.
     #Tendrá los dronesActuales en cada momento, todas las figuras leidas del fichero y si debe parar la ejecucion por el clima o por otro problema.
     def __init__(self):
@@ -91,15 +91,18 @@ class AD_Engine:
         os.system('cls' if os.name == 'nt' else 'clear')
 
     #Me conecto a cada topic con el rol correspondiente
+    @logger_decorator
     def productor_destinos(self, broker):
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
         }
         try:
+            productor_destinos.logger.info("Creando productor de destinos")
             # Crea una instancia del productor
             producer = Producer(config)
         except Exception as e:
+            productor_destinos.logger.error("Error creando productor de destinos: ",e)
             print("Error creando consumidor de posiciones: ",e)
 
         return producer
@@ -118,7 +121,7 @@ class AD_Engine:
 
         return producer
     """
-
+    @logger_decorator
     def consumidor_posiciones(self, broker):
         # Configura las propiedades del consumidor
         config = {
@@ -128,13 +131,15 @@ class AD_Engine:
             'enable.auto.commit': False  # Deshabilita la confirmación automática
         }
         try:
+            consumidor_posiciones.logger.info("Creando consumidor de posiciones")
             # Crea una instancia del consumidor
             consumer = Consumer(config)
         except Exception as e:
+            consumidor_posiciones.logger.error("Error creando consumidor de posiciones: ",e)
             print("Error creando consumidor de posiciones: ",e)
 
         return consumer
-
+    
     def consumidor_activos(self,broker):
         # Configura las propiedades del consumidor
         config = {
@@ -143,12 +148,15 @@ class AD_Engine:
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
         }
         try:
+            consumidor_activos.logger.info("Creando consumidor de activos")
             # Crea una instancia del consumidor
             consumer = Consumer(config)
         except Exception as e:
+            consumidor_activos.logger.error("Error creando consumidor de posiciones: ",e)
             print("Error creando consumidor de posiciones: ",e)
 
         return consumer
+    
 
     #Operaciones en kafka
     #Comprueba los drones que están activos realmente y los compara con los dronesActuales
@@ -229,8 +237,10 @@ class AD_Engine:
             print("Error escuchando activos: ", e)
 
     #Envia los destinos Finales a los drones por kafka
+    @logger_decorator
     def enviar_por_kafka_destinos(self, productor):
         try:
+            enviar_por_kafka_destinos.logger.info("Enviando destinos")
             topic = "destino"
             #Envio los destinos de los que se encuentran aqui
 
@@ -239,8 +249,9 @@ class AD_Engine:
                 mensaje = f"{str(drone[0])} {str(pos[0])} {str(pos[1])}"
                 productor.produce(topic, value=mensaje)
                 productor.flush()
-
+            enviar_por_kafka_destinos.logger.info("Destinos enviados")
         except Exception as e:
+            enviar_por_kafka_destinos.logger.error("Error enviando destinos: ",e)
             print("Error enviando destinos: ",e)
 
     """
@@ -272,8 +283,10 @@ class AD_Engine:
             print("Error enviando mapa: ",e)
     """
     
+    @logger_decorator
     def actualizarPosicionesBD(self, drone):
         try:
+            self.actualizarPosicionesBD.logger.info("Actualizando posiciones")
             conn = sqlite3.connect('registry')
 
             cursor = conn.cursor()
@@ -287,8 +300,9 @@ class AD_Engine:
             conn.commit()
 
             conn.close()
-
+            self.actualizarPosicionesBD.logger.info("Posiciones actualizadas")
         except Exception as e:
+            self.actualizarPosicionesBD.logger.info("Error actualizando posiciones: ",e)
             print("Error actualizando posiciones: ",e)
     
     def pintarVerde(self, id_virtual):
@@ -306,8 +320,10 @@ class AD_Engine:
         except Exception as e:
             print("Error pintando de verde: ",e)
 
+    @logger_decorator
     def comprobarFinBD(self):
         try:
+            self.comprobarFinBD.logger.info("Comprobando fin")
             conn = sqlite3.connect('registry')
 
             cursor = conn.cursor()
@@ -327,13 +343,16 @@ class AD_Engine:
                                 break
 
             conn.close()
-
+            self.comprobarFinBD.logger.info("Fin comprobado")
         except Exception as e:
+            self.comprobarFinBD.logger.error("Error comprobando fin: ",e)
             print("Error comprobando fin: ",e)
 
     #Escucha las posiciones que le van llegando de los drones.
+    @logger_decorator
     def escuchar_posicion_drones(self, consumidor):
         try:
+            self.escuchar_posicion_drones.logger.info("Escuchando posiciones")
             topic = "posiciones"
             consumidor.subscribe(topics=[topic])
             while not self.figura_completada() and not self.detener and not self.en_base_por_clima:
@@ -378,10 +397,13 @@ class AD_Engine:
                                     self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
 
         except Exception as e:
+            self.escuchar_posicion_drones.logger.error("Error escuchando posiciones: ",e)
             print("Error escuchando posiciones: ", e)
 
     #Leo las figuras que tenga el archivo Figuras.json y las almaceno en un vector. Despues de ello elimino el fichero de figuras
+    @logger_decorator
     def leer_figuras(self):
+        self.leer_figuras.logger.info("Leyendo figuras")
         inicio = time.time()
         tiempo_transcurrido = 0
         while not self.figuras and not self.detener and not self.detener_por_clima:
@@ -408,28 +430,35 @@ class AD_Engine:
                         drones.append([id_drone, [int(pos[0]),int(pos[1])]])
                     self.figuras.append([nombre_figura, drones])
             except Exception as e:
+                self.leer_figuras.logger.error("Error leyendo figuras ya que no hay: ",e)
                 pass
 
         # Eliminar el archivo JSON
         if self.detener_por_clima == False:
             try:
+                self.leer_figuras.logger.info("Eliminando archivo de figuras")
                 os.remove('Figuras.json')
                 print(f"El archivo {'Figuras.json'} fue eliminado con éxito.")
+                self.leer_figuras.logger.info("Archivo de figuras eliminado")
             except OSError as e:
+                self.leer_figuras.logger.error("Error eliminando archivo de figuras: ",e)
                 print(f"No se pudo eliminar el archivo {'Figuras.json'}: {e}")
 
         return True
 
     #Veo si todos los drones estan en la base por el clima
+    @logger_decorator
     def retirada_clima(self):
+        self.retirada_clima.logger.info("Comprobando si hay una retirada por clima")
         for index in range(len(self.dronesActuales)):
             if self.dronesActuales[index][1] != [-1,-1]:
                 return False
-
         return True
 
     #Veo si la figura está completada o no
+    @logger_decorator
     def figura_completada(self):
+        self.figura_completada.logger.info("Comprobando si la figura esta completada")
         if self.detener_por_clima == True and self.retirada_clima() == True:
             en_base_por_clima = True
             return True
@@ -438,38 +467,49 @@ class AD_Engine:
 
     #Operaciones con sockets
     #Leo el socket controladamente
+    @logger_decorator
     def lee_socket(self, p_datos):
+        self.lee_socket.logger.info("Leyendo del socket")
         try:
             aux = self.drone.recv(1024)
             p_datos = aux.decode()
         except Exception as e:
+            self.lee_socket.logger.error("Error leyendo del socket: ",e)
             print(f"Error leyendo del socket: {e}")
         return p_datos
 
     #Escribe en el socket de forma controlada
+    @logger_decorator
     def escribe_socket(self, p_datos):
+        self.escribe_socket.logger.info("Escribiendo en el socket")
         try:
             self.drone.send(p_datos.encode())
         except Exception as e:
+            self.escribe_socket.logger.error("Error escribiendo en el socket: ",e)
             print(f"Error escribiendo en el socket: {e}")
 
     #Motivos para detener la ejecucion
     #Se detiene debido al clima
+    @logger_decorator
     def stop_clima(self):
+        self.stop_clima.logger.info("Deteniendo por clima")
         self.detener_por_clima = True
 
         for index in range(len(self.dronesFinales)):
             self.dronesFinales[index][1] = [-1,-1]
 
     #Se detiene por un mal funcionamiento
+    @logger_decorator
     def stop(self):
+        self.stop.logger.info("Deteniendo por mal funcionamiento")
         self.detener = True
 
     #Función encargada de iniciar el espectaculo, se activa cuando existe el fichero Figuras.json
     #Recibe por parametros el productor de destinos, de mapa y el consumidor de posiciones de los drones
     #Se ejecuta mientras hayan figuras o se detenga la ejecucion
-
+    @logger_decorator
     def todosRojo(self):
+        self.todosRojo.logger.info("Poner todos los drones a rojo")
         try:
             conn = sqlite3.connect('registry')
 
@@ -482,10 +522,12 @@ class AD_Engine:
             conn.close()
 
         except Exception as e:
+            self.todosRojo.logger.error("Error poniendolos a rojo: ",e)
             print("Error pintando de rojo: ",e)
 
-    #productor_mapa
+    @logger_decorator
     def start(self, productor_destinos, consumidor_posiciones, consumidor_activos):
+        self.start.logger.info("Iniciando espectaculo")
         hay_figura = self.leer_figuras()    #Lee las figuras del fichero json
         try:
             while hay_figura and self.detener == False and self.en_base_por_clima == False:
@@ -602,12 +644,14 @@ class AD_Engine:
 
             sys.exit(0)
         except Exception as e:
+            self.start.logger.error("Error durante el espectaculo: ",e)
             print(f"Error en Engine: {e}")
 
 #Controlador del clima. Es un hilo. Recibe por parametros el engine, la ip y el puerto del weather y la ciudad donde tendrá ligar el espectaculo.
 #Esta función solicita el clima de la ciudad constantemente. Si la temperatura es <= a cero detiene al engine.
+@logger_decorator
 def clima(engine, a):
-
+    clima.logger.info("Controlando el clima")
     try:
         ciudad_antigua = ""
         while True:
@@ -644,10 +688,12 @@ def clima(engine, a):
 
         sys.exit(0)
     except FileNotFoundError as fileE:
+        clima.logger.error("Error solicitando clima de la ciudad en: ",fileE)
         print("El archivo ciudades.txt no existe")
         engine.stop_clima()
 
     except Exception as e:
+        clima.logger.error("Error durante la solicitud del clima: ",e)
         print("Error solicitando clima: " + str(e))
         print("No se puede realizar el espectaculo")
         engine.stop_clima()
