@@ -12,8 +12,10 @@ from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 
 #Libreria para auditoria
-
 import logging
+
+#Librerias seguridad
+import hashlib
 
 # Obtiene la dirección IP local de la red actual
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -122,11 +124,14 @@ def add_items():
             cursor.execute('SELECT * FROM drones')
             data = cursor.fetchall()
 
+            token = ""
+            id = 0
+            
             for item in data:
                 if item[0] == datas['id']:
                     existe = True
+                    id = datas['id']
 
-            token = ""
             if existe == False:
                 # Create a cursor object for interacting with the MySQL database
                 # Extract the 'alias' and 'token' fields from the JSON data
@@ -135,24 +140,30 @@ def add_items():
                 agregarlo = "INSERT INTO drones (id, id_virtual, alias, token, posicion, fin) VALUES (?, ?, ?, ?, ?, ?)"
 
                 token = generar_token()
-                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token, "[0, 0]", "no"))
-                # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
-                #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
-                # Commit the changes to the database
-                conn.commit()
+                token_hash = hashlib.sha256(token.encode('utf-8')).hexdigest()
+                
                 # Create a response dictionary for a successful operation
                 data = [{'id': id, 'id_virtual': id_nueva, 'alias': alias, 'token': token}]
-                id_nueva += 1
-
+                
                 response = {
                     'error' : False,
                     'message': 'Item Added Successfully',
                     'data': data
                 }
+                
+                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token_hash, "[0, 0]", "no"))
+                
+                # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
+                #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
+                # Commit the changes to the database
+                conn.commit()
+                
+                id_nueva += 1
             else:
                 agregartoken = "UPDATE drones SET token = ? WHERE id = ?"
                 token = generar_token()
-                cursor.execute(agregartoken,(token,datas['id']))
+                token_hash = hashlib.sha256(token.encode('utf-8')).hexdigest()
+                cursor.execute(agregartoken,(token_hash,datas['id']))
 
                 # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
                 #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
@@ -166,8 +177,8 @@ def add_items():
                     'data': data
                 }
 
-            #Ejecuta el hilo para mantenerme a la escucha de las posiciones de los drones.
-            expirar_token = threading.Thread(target=controlar_token,args=(token,))
+            #Ejecuta el hilo para controlar el token.
+            expirar_token = threading.Thread(target=controlar_token,args=(id,))
             expirar_token.start()
 
             # Close the database cursor
@@ -384,7 +395,7 @@ def handleSockets(num_args,puerto_args,socket):
 """
 
 @logger_decorator
-def controlar_token(token):
+def controlar_token(id):
     logger.info('Se ha iniciado el hilo para controlar el token de acceso')
     time.sleep(20)
     print("Ya es la horaaa")
@@ -395,10 +406,10 @@ def controlar_token(token):
     cursor = conexion.cursor()
 
     # Sentencia SQL DELETE
-    consulta_borrado = "UPDATE drones SET token = NULL WHERE token = ?"
+    consulta_borrado = "UPDATE drones SET token = NULL WHERE id = ?"
 
     # Ejecutar la sentencia con el parámetro proporcionado
-    cursor.execute(consulta_borrado, (token,))
+    cursor.execute(consulta_borrado, (id,))
 
     # Confirmar la transacción
     conexion.commit()
@@ -418,4 +429,4 @@ if __name__ == "__main__":
     #Movil: 192.168.218.43
     #Alex: 192.168.0.35
     app.debug = True
-    app.run(host='192.168.1.84')#,ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
+    app.run(host='192.168.1.84',ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))

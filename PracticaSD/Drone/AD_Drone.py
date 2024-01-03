@@ -9,6 +9,9 @@ from confluent_kafka import Consumer, Producer, KafkaError
 #Libreria para auditoria
 import logging
 
+#Librerias seguridad
+import hashlib
+
 # Obtiene la dirección IP local de la red actual
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))
@@ -345,7 +348,8 @@ class AD_Drone:
         aceptado = False
 
         try:
-            cadena = f"{self.token} {self.id}"
+            token_hash = hashlib.sha256(self.token.encode('utf-8')).hexdigest()
+            cadena = f"{token_hash} {self.id}"
 
             skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             skcliente.connect((ip, int(puerto)))
