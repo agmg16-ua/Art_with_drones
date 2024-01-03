@@ -685,7 +685,7 @@ def clima(engine, archivoApiKey):
             
             ciudad_antigua = ciudad
             
-            apiKey = leerApiKeyOpenWeather()
+            apiKey = leerApiKeyOpenWeather('API_KEY')
 
             url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={apiKey}&units=metric'
             
@@ -696,7 +696,7 @@ def clima(engine, archivoApiKey):
                 temperatura = data['main']['temp']
                 print("Temperatura actual: " + str(temperatura))
 
-                if float(temperatura) <= 0.0 and len(temperatura) > 0:
+                if temperatura <= 0.0:
                     engine.stop_clima()
                     break
 

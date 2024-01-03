@@ -65,3 +65,83 @@
 2024-01-03 14:53:31,917 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
 2024-01-03 14:53:31,918 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
 2024-01-03 14:53:31,918 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:35,235 - INFO - Acción: mover - IP: 192.168.1.84 - Descripción: Moviendo drone
+2024-01-03 15:08:36,236 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:37,930 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:38,931 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:39,933 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:40,934 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:41,935 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:41,936 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:44,286 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:44,287 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:46,300 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:46,301 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:48,438 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:48,438 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:50,354 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:50,355 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:52,369 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:52,369 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:54,377 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:54,377 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:56,398 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:56,399 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:58,410 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:58,410 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:00,423 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:00,423 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:02,439 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:02,440 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:04,450 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:04,450 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:06,463 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:06,463 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:08,470 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:08,471 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:10,482 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:10,483 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:12,504 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:12,505 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:14,517 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:14,518 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:16,523 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:16,524 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:18,537 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:18,538 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:20,547 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:20,548 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:22,558 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:22,559 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:24,578 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:24,579 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:26,591 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:26,592 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:28,597 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:28,598 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:30,609 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:30,610 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:32,621 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:32,622 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:34,642 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:34,643 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:36,649 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:36,650 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:38,665 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:38,666 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:40,680 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:40,681 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:42,700 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:42,701 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:44,715 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:44,716 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:46,723 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:46,724 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:48,739 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:48,740 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:50,751 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:50,752 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:52,765 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:52,766 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:54,783 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:54,784 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
