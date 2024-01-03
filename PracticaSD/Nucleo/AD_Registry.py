@@ -7,7 +7,7 @@ import sqlite3
 import ssl
 
 #Librerías para API_REST
-from flask import Flask, request
+from flask import Flask, request,abort
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
 
@@ -16,6 +16,7 @@ import logging
 
 #Librerias seguridad
 import hashlib
+from functools import wraps
 
 # Obtiene la dirección IP local de la red actual
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -42,6 +43,17 @@ def logger_decorator(func):
         return func(*args, **kwargs)
     return wrapper
 
+#Decorador api_key
+def require_api_key(view_function):
+    @wraps(view_function)
+    def decorated_function(*args, **kwargs):
+        with open('API_KEY_REGISTRY.txt', 'r') as file:
+            api_key = file.read().strip()
+        if request.headers.get('x-api-key') != api_key:
+            abort(401)
+        return view_function(*args, **kwargs)
+    return decorated_function
+
 #Se crea una
 app = Flask(__name__)
 
@@ -65,6 +77,7 @@ token_dron_actual = ""      #Token de acceso
 #Obtendrá los datos que haya en la base de datos
 @logger_decorator
 @app.route('/obtenerdatos', methods=['GET'])
+@require_api_key
 def get_items():
     try:
         logger.info('Se ha solicitado obtener los datos de los drones de la base de datos')
@@ -104,6 +117,7 @@ def get_items():
 #Añade una serie de elementos en la base de datos
 @logger_decorator
 @app.route('/unirme', methods=['POST'])
+@require_api_key
 def add_items():
     global id_nueva
     existe = False
@@ -429,4 +443,4 @@ if __name__ == "__main__":
     #Movil: 192.168.218.43
     #Alex: 192.168.0.35
     app.debug = True
-    app.run(host='192.168.1.84',ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
+    app.run(host='192.168.1.84')

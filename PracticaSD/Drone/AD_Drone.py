@@ -298,12 +298,19 @@ class AD_Drone:
                 'alias':self.alias
             }
             url = 'http://192.168.1.84:5000/unirme'
-            response = requests.post(url,json=datos)#,verify='certificados/certificado_registry.crt')
+            
+            #Lee la API key del archivo
+            with open('API_KEY_REGISTRY.txt', 'r') as file:
+                api_key = file.read().strip()
+            
+            # Incluye la API key en los encabezados de la solicitud
+            headers = {'x-api-key': api_key}
+            
+            response = requests.post(url,json=datos,headers=headers)
 
             #if response.status_code == 201:
             contenido=response.content
-            # print (contenido)
-            # print (response.json())
+            
             diccionario_respuesta=response.json()
             print(json.dumps(diccionario_respuesta, indent=4,sort_keys=True))
 

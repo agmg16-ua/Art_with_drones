@@ -36,3 +36,32 @@
 2024-01-02 15:26:38,796 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
 2024-01-02 15:26:38,797 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
 2024-01-02 15:26:38,797 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 14:05:39,094 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:05:39,098 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+2024-01-03 14:05:54,034 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:05:54,037 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+2024-01-03 14:10:18,383 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:10:18,387 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+2024-01-03 14:19:16,382 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:19:16,386 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+2024-01-03 14:19:48,120 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:19:48,140 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: HTTPSConnectionPool(host='192.168.1.84', port=5000): Max retries exceeded with url: /unirme (Caused by SSLError(CertificateError("hostname '192.168.1.84' doesn't match 'victor'")))
+2024-01-03 14:21:50,959 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:21:50,980 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: HTTPSConnectionPool(host='victor', port=5000): Max retries exceeded with url: /unirme (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f372250b220>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution'))
+2024-01-03 14:23:44,908 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:23:44,921 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: HTTPSConnectionPool(host='192.168.1.84', port=5000): Max retries exceeded with url: /unirme (Caused by SSLError(CertificateError("hostname '192.168.1.84' doesn't match 'victor'")))
+2024-01-03 14:49:58,316 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:52:02,873 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:53:30,442 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-03 14:53:30,442 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-03 14:53:30,442 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-03 14:53:31,476 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:53:31,911 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-03 14:53:31,911 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-03 14:53:31,911 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-03 14:53:31,913 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-03 14:53:31,914 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-03 14:53:31,916 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-03 14:53:31,917 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-03 14:53:31,918 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 14:53:31,918 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones

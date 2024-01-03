@@ -46,3 +46,40 @@
 2024-01-02 15:34:06 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
 2024-01-02 15:34:06 - INFO - Acción: app.get("/drones") - IP: ::ffff:127.0.0.1 - Descripción: Listando los drones registrados
 2024-01-02 15:34:06 - INFO - Acción: db - IP: ::ffff:127.0.0.1 - Descripción: Listado de drones correcto
+2024-01-03 14:04:55,724 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Iniciando servidor de drones
+2024-01-03 14:13:31,751 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-03 14:13:31,752 - ERROR - Acción: add_items - IP: 192.168.1.84 - Descripción: Error al añadir un nuevo drone a la base de datos: list indices must be integers or slices, not str
+2024-01-03 14:13:57,161 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-03 14:13:57,162 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-03 14:13:57,166 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-03 14:14:17,225 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-03 14:14:46,115 - INFO - Acción: get_items - IP: 192.168.1.84 - Descripción: Se ha solicitado obtener los datos de los drones de la base de datos
+2024-01-03 14:15:02,014 - INFO - Acción: get_items - IP: 192.168.1.84 - Descripción: Se ha solicitado obtener los datos de los drones de la base de datos
+2024-01-03 14:49:58,322 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-03 14:49:58,323 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-03 14:49:58,336 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-03 14:50:18,370 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-03 14:52:02,877 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-03 14:52:02,878 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-03 14:52:02,891 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-03 14:52:22,914 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-03 14:53:30,443 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Contactando drone
+2024-01-03 14:53:30,443 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-03 14:53:30,443 - INFO - Acción: autenticar - IP: 192.168.1.84 - Descripción: Autenticando drone
+2024-01-03 14:53:30,444 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo socket
+2024-01-03 14:53:30,444 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Cerrando socket
+2024-01-03 14:53:31,480 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-03 14:53:31,480 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-03 14:53:31,493 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-03 14:53:31,912 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Contactando drone
+2024-01-03 14:53:31,912 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-03 14:53:31,912 - INFO - Acción: autenticar - IP: 192.168.1.84 - Descripción: Autenticando drone
+2024-01-03 14:53:31,913 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo socket
+2024-01-03 14:53:31,913 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Cerrando socket
+2024-01-03 14:53:51,527 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-03 14:54:08,046 - INFO - Acción: clima - IP: 192.168.1.84 - Descripción: Controlando el clima
+2024-01-03 14:54:08,046 - INFO - Acción: productor_destinos - IP: 192.168.1.84 - Descripción: Creando productor de destinos
+2024-01-03 14:54:08,049 - INFO - Acción: consumidor_posiciones - IP: 192.168.1.84 - Descripción: Creando consumidor de posiciones
+2024-01-03 14:54:08,049 - INFO - Acción: consumidor_activos - IP: 192.168.1.84 - Descripción: Creando consumidor de activos
+2024-01-03 14:54:08,062 - INFO - Acción: stop_clima - IP: 192.168.1.84 - Descripción: Deteniendo por clima
+2024-01-03 15:03:36,705 - INFO - Acción: get_items - IP: 192.168.1.84 - Descripción: Se ha solicitado obtener los datos de los drones de la base de datos
