@@ -107,6 +107,9 @@ class AD_Engine:
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
+            'ssl.ca.location': 'SSL/ca-cert',
+            'ssl.certificate.location': 'SSL/client-cert',
+            'ssl.key.location': 'SSL/client-key',
         }
         try:
             self.logger.info("Creando productor de destinos")
@@ -136,11 +139,15 @@ class AD_Engine:
     def consumidor_posiciones(self, broker):
         # Configura las propiedades del consumidor
         config = {
-            'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'group.id': 'grupo_9',
+            'bootstrap.servers': broker,  #El broker es la ip y el puerto
+            'group.id': 'grupo_9',  #El grupo es el mismo para todos los consumidores
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
-            'enable.auto.commit': False  # Deshabilita la confirmación automática
+            'enable.auto.commit': False,  # Deshabilita la confirmación automática
+            'ssl.ca.location': 'SSL/ca-cert',
+            'ssl.certificate.location': 'SSL/client-cert',
+            'ssl.key.location': 'SSL/client-key',
         }
+        
         try:
             self.logger.info("Creando consumidor de posiciones")
             # Crea una instancia del consumidor
@@ -157,6 +164,9 @@ class AD_Engine:
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
             'group.id': 'grupo_9',
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
+            'ssl.ca.location': 'SSL/ca-cert',
+            'ssl.certificate.location': 'SSL/client-cert',
+            'ssl.key.location': 'SSL/client-key',
         }
         try:
             self.logger.info("Creando consumidor de activos")
