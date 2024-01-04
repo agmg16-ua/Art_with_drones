@@ -11,6 +11,7 @@ import logging
 
 #Librerias seguridad
 import hashlib
+import ssl
 
 # Obtiene la dirección IP local de la red actual
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -73,31 +74,17 @@ class AD_Drone:
             'group.id': 'grupo_' + str(self.id_virtual),
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
             'enable.auto.commit': False,  # Deshabilita la confirmación automática
+            'security.protocol': 'SSL',
             'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert',
-            'ssl.key.location': 'SSL/client-key',
+            'ssl.certificate.location': 'SSL/client-cert.pem',
+            'ssl.key.location': 'SSL/client-key.pem',
+            'ssl.key.password': '123456',
         }
 
         # Crea una instancia del consumidor
         consumidor = Consumer(config)
 
         return consumidor
-
-    """
-    def consumidorMapa(self):
-        # Configura las propiedades del consumidor
-        config = {
-            'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'group.id': 'grupo_' + str(self.id_virtual),
-            'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
-            'enable.auto.commit': False  # Deshabilita la confirmación automática
-        }
-
-        # Crea una instancia del consumidor
-        consumidor = Consumer(config)
-
-        return consumidor
-    """
 
     @logger_decorator
     def productorPosiciones(self):
@@ -105,9 +92,11 @@ class AD_Drone:
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
+            'security.protocol': 'SSL',
             'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert',
-            'ssl.key.location': 'SSL/client-key',
+            'ssl.certificate.location': 'SSL/client-cert.pem',
+            'ssl.key.location': 'SSL/client-key.pem',
+            'ssl.key.password': '123456',
         }
 
         # Crea una instancia del productor
@@ -121,9 +110,11 @@ class AD_Drone:
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
+            'security.protocol': 'SSL',
             'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert',
-            'ssl.key.location': 'SSL/client-key',
+            'ssl.certificate.location': 'SSL/client-cert.pem',
+            'ssl.key.location': 'SSL/client-key.pem',
+            'ssl.key.password': '123456',
         }
 
         # Crea una instancia del productor
@@ -161,26 +152,6 @@ class AD_Drone:
         except Exception as e:
             self.logger.error('Error escuchando destino de drones: ' + str(e))
             print("Error escuchando destino de drones: ",e)
-
-    #Eschucho el estado del mapa mientras no se detenga la operación.
-    #Almaceno el mapa en mi variable mapa como un string
-    """
-    def escucharEstadoMapa(self, consumidor):
-        topic = "mapa"
-        consumidor.subscribe(topics=[topic])
-
-        while self.detener == False:
-            mensaje = consumidor.poll(0.1)
-
-            if mensaje is not None:
-                if mensaje.error():
-                    if mensaje.error().code() == KafkaError._PARTITION_EOF:
-                        print('No más mensajes en la partición')
-                    else:
-                        print('Error al recibir mensaje: {}'.format(mensaje.error()))
-                else:
-                    self.mapa = str(mensaje.value().decode('utf-8'))
-    """
 
     #Envio mi posicionActual al engine
     @logger_decorator
@@ -332,7 +303,7 @@ class AD_Drone:
                 'message': f'Error Ocurred: {e}',
                 'data': None
             }
-            print (json.dumps(response, indent=4, sort_keys=True))
+            print(json.dumps(response, indent=4, sort_keys=True))
 
     #Escribe en el socket mas controladamente.
     @logger_decorator
@@ -367,12 +338,20 @@ class AD_Drone:
             token_hash = hashlib.sha256(self.token.encode('utf-8')).hexdigest()
             cadena = f"{token_hash} {self.id}"
 
+            # Crea el socket
             skcliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            skcliente.connect((ip, int(puerto)))
+            
+            # Envuelve el socket con SSL
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            context.load_verify_locations(cafile='engine_dron/cert.pem')
+            ssock = context.wrap_socket(skcliente)
 
-            self.escribe_socket(skcliente, cadena)
+            # Conecta el socket
+            ssock.connect((ip, int(puerto)))
 
-            inclusion = self.lee_socket(skcliente)
+            self.escribe_socket(ssock, cadena)
+
+            inclusion = self.lee_socket(ssock)
 
             dron = inclusion.split(" ")
 
@@ -385,7 +364,7 @@ class AD_Drone:
             else:
                 print("---No se ha podido unir---\n")
 
-            skcliente.close()
+            ssock.close()
         except Exception as e:
             self.logger.error('Error solicitando inclusion: ' + str(e))
             print("Error solicitando inclusion: " + str(e))

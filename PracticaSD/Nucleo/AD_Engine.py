@@ -10,6 +10,7 @@ import copy
 from Map import Map
 import requests
 import sqlite3
+import ssl
 
 import logging
 
@@ -64,12 +65,17 @@ class RecibirDrones(threading.Thread):
             s_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s_socket.bind((local_ip, self.puerto))
             s_socket.listen()
-
+            
+            #Envuelvo el socket en ssl
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(certfile='engine_dron/cert.pem', keyfile='engine_dron/key.pem')
+            ssock = context.wrap_socket(s_socket, server_side=True)
+            
             # Me mantengo en escucha de nuevos drones mientras no quiera detener el Engine
             while True:
                 try:
                     print("Esperando drone...")
-                    conn, addr = s_socket.accept()
+                    conn, addr = ssock.accept()
 
                     #Escucho al drone que se acaba de conectar
                     escuchar = EscucharDrone(conn)
@@ -107,9 +113,11 @@ class AD_Engine:
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
+            'security.protocol': 'SSL',
             'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert',
-            'ssl.key.location': 'SSL/client-key',
+            'ssl.certificate.location': 'SSL/client-cert.pem',
+            'ssl.key.location': 'SSL/client-key.pem',
+            'ssl.key.password': '123456',
         }
         try:
             self.logger.info("Creando productor de destinos")
@@ -120,21 +128,7 @@ class AD_Engine:
             print("Error creando consumidor de posiciones: ",e)
 
         return producer
-
-    """
-    def productor_mapa(self, broker):
-        # Configura las propiedades del productor
-        config = {
-            'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
-        }
-        try:
-            # Crea una instancia del productor
-            producer = Producer(config)
-        except Exception as e:
-            print("Error creando productor de mapas: ",e)
-
-        return producer
-    """
+    
     @logger_decorator
     def consumidor_posiciones(self, broker):
         # Configura las propiedades del consumidor
@@ -143,9 +137,11 @@ class AD_Engine:
             'group.id': 'grupo_9',  #El grupo es el mismo para todos los consumidores
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
             'enable.auto.commit': False,  # Deshabilita la confirmación automática
+            'security.protocol': 'SSL',
             'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert',
-            'ssl.key.location': 'SSL/client-key',
+            'ssl.certificate.location': 'SSL/client-cert.pem',
+            'ssl.key.location': 'SSL/client-key.pem',
+            'ssl.key.password': '123456',
         }
         
         try:
@@ -164,9 +160,11 @@ class AD_Engine:
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
             'group.id': 'grupo_9',
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
+            'security.protocol': 'SSL',
             'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert',
-            'ssl.key.location': 'SSL/client-key',
+            'ssl.certificate.location': 'SSL/client-cert.pem',
+            'ssl.key.location': 'SSL/client-key.pem',
+            'ssl.key.password': '123456',
         }
         try:
             self.logger.info("Creando consumidor de activos")
@@ -275,34 +273,6 @@ class AD_Engine:
             self.logger.error("Error enviando destinos: ",e)
             print("Error enviando destinos: ",e)
 
-    """
-    #Envia el mapa como un string a los drones. Si la figura está completada tambien se añade el mensaje de finalizacion.
-    #Para el mapa utilizamos una clase mapa que genera el mapa y tiene una opcion .to_string.
-    def enviar_mapa(self, productor):
-        try:
-            topic = "mapa"
-
-            mapa = Map()
-            mensaje = ""
-            mensaje = mapa.to_string(self.dronesFinales,self.dronesActuales)
-            self.clear_terminal()
-
-            if self.figura_completada():
-                if self.detener_por_clima:
-                    mensaje = "**************************CONDICIONES CLIMATICAS ADVERSAS. ESPECTACULO FINALIZADO***********************************" + "\n" + mensaje
-                else:
-                    mensaje = "*********************************************Figura Completada******************************************************" + "\n" + mensaje
-
-            print(mensaje)
-            #print("DRONES ACTUALES: " + str(self.dronesActuales))
-            #print("POSICIONES FINALES: " + str(self.dronesFinales))
-            #print("DRONES DESACTIVADOS: " + str(self.dronesDesactivados))
-            productor.produce(topic, value=mensaje)
-            productor.flush()
-
-        except Exception as e:
-            print("Error enviando mapa: ",e)
-    """
     
     @logger_decorator
     def actualizarPosicionesBD(self, drone):
