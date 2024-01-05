@@ -343,8 +343,9 @@ class AD_Drone:
             
             # Envuelve el socket con SSL
             context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-            context.load_verify_locations(cafile='engine_dron/cert.pem')
-            ssock = context.wrap_socket(skcliente)
+            context.load_verify_locations(cafile='engine_dron/engine_dron.pem')
+            context.check_hostname = False
+            ssock = context.wrap_socket(skcliente, server_hostname='localhost')
 
             # Conecta el socket
             ssock.connect((ip, int(puerto)))

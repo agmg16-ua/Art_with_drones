@@ -68,7 +68,7 @@ class RecibirDrones(threading.Thread):
             
             #Envuelvo el socket en ssl
             context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-            context.load_cert_chain(certfile='engine_dron/cert.pem', keyfile='engine_dron/key.pem')
+            context.load_cert_chain(certfile='engine_dron/engine_dron.pem', keyfile='engine_dron/key.pem')
             ssock = context.wrap_socket(s_socket, server_side=True)
             
             # Me mantengo en escucha de nuevos drones mientras no quiera detener el Engine

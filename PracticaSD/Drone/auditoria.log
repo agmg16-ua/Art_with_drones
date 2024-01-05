@@ -291,3 +291,32 @@
 2024-01-04 16:34:38,835 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
 2024-01-04 16:34:38,840 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
 2024-01-04 16:34:38,841 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-05 11:01:50,480 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:01:53,363 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:01:53,366 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [Errno 2] No such file or directory
+2024-01-05 11:01:57,953 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:01:57,954 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [Errno 2] No such file or directory
+2024-01-05 11:02:35,062 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:02:35,063 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [Errno 2] No such file or directory
+2024-01-05 11:02:37,673 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:02:37,905 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:02:37,910 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: check_hostname requires server_hostname
+2024-01-05 11:04:32,211 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:04:32,467 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:04:32,500 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: IP address mismatch, certificate is not valid for '192.168.1.84'. (_ssl.c:1007)
+2024-01-05 11:06:09,857 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:06:10,092 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:06:10,110 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'engine_dron.pem'. (_ssl.c:1007)
+2024-01-05 11:06:25,178 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:06:25,391 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:06:25,409 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'localhost'. (_ssl.c:1007)
+2024-01-05 11:07:44,661 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:07:44,849 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:07:44,868 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-05 11:07:44,868 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-05 11:07:44,871 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-05 11:07:44,871 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-05 11:07:44,896 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-05 11:07:44,899 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-05 11:07:44,902 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-05 11:07:44,902 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
