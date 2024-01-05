@@ -607,7 +607,7 @@ def clima(engine, archivoApiKey):
             
             ciudad_antigua = ciudad
             
-            apiKey = leerApiKeyOpenWeather()
+            apiKey = leerApiKeyOpenWeather(archivoApiKey)
 
             url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={apiKey}&units=metric'
             
