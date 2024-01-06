@@ -11777,3 +11777,107 @@
 2024-01-05 11:08:04,715 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
 2024-01-05 11:09:33 - INFO - Acción: app.listen(port, () - IP: 192.168.1.84 - Descripción: Servidor iniciado en http://localhost:3000
 2024-01-05 11:09:33 - INFO - Acción: db - IP: 192.168.1.84 - Descripción: Conexión a la base de datos correcta
+2024-01-06 19:15:05 - INFO - Acción: app.listen(port, () - IP: 192.168.1.84 - Descripción: Servidor iniciado en http://localhost:3000
+2024-01-06 19:15:05 - INFO - Acción: db - IP: 192.168.1.84 - Descripción: Conexión a la base de datos correcta
+2024-01-06 19:15:37,202 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-06 19:15:37,203 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-06 19:15:37,216 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-06 19:15:56,394 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-06 19:15:56,395 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-06 19:15:56,435 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-06 19:15:57,250 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-06 19:16:01,764 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-06 19:16:01,765 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-06 19:16:01,768 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-06 19:16:07,232 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-06 19:16:07,233 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-06 19:16:07,246 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-06 19:16:11,941 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-06 19:16:11,942 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-06 19:16:11,982 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-06 19:16:16,465 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-06 19:16:19,857 - INFO - Acción: add_items - IP: 192.168.1.84 - Descripción: Se ha solicitado añadir un nuevo drone a la base de datos
+2024-01-06 19:16:19,857 - INFO - Acción: generar_token - IP: 192.168.1.84 - Descripción: Se ha generado un nuevo token de acceso
+2024-01-06 19:16:19,875 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha iniciado el hilo para controlar el token de acceso
+2024-01-06 19:16:21,789 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-06 19:16:27,278 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-06 19:16:32,042 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-06 19:16:39,905 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
+2024-01-06 19:16:44 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:44 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:45 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:45 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:46 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:46 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:47 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:47 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:48 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:48 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:49 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:49 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:50 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:50 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:51 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:51 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:52 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:52 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:53 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:53 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:54 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:54 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:55 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:55 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:56 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:56 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:57 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:57 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:58 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:58 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:16:59 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:16:59 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:00 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:00 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:01 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:01 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:02 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:02 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:03 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:03 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:04 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:04 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:05 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:05 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:06 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:06 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:07 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:07 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:08 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:08 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:09 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:09 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:10 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:10 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:11 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:11 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:12 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:12 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:13 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:13 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:14 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:14 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:16 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:16 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:17 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:17 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:18 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:18 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:19 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:19 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:20 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:20 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:21 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:21 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:22 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:22 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
+2024-01-06 19:17:23 - INFO - Acción: app.get("/drones") - IP: ::ffff:192.168.1.84 - Descripción: Listando los drones registrados
+2024-01-06 19:17:23 - INFO - Acción: db - IP: ::ffff:192.168.1.84 - Descripción: Listado de drones correcto
