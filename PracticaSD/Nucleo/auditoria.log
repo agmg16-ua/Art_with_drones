@@ -11777,3 +11777,6 @@
 2024-01-05 11:08:04,715 - INFO - Acción: controlar_token - IP: 192.168.1.84 - Descripción: Se ha borrado el token de acceso del drone
 2024-01-05 11:09:33 - INFO - Acción: app.listen(port, () - IP: 192.168.1.84 - Descripción: Servidor iniciado en http://localhost:3000
 2024-01-05 11:09:33 - INFO - Acción: db - IP: 192.168.1.84 - Descripción: Conexión a la base de datos correcta
+2024-01-06 19:08:53,164 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Iniciando servidor de drones
+2024-01-06 19:09:03,112 - INFO - Acción: borrar_bd - IP: 192.168.1.84 - Descripción: Se ha solicitado vaciar el fichero de drones
+2024-01-06 19:09:03,559 - INFO - Acción: borrar_bd - IP: 192.168.1.84 - Descripción: Se ha solicitado vaciar el fichero de drones
