@@ -143,7 +143,7 @@ def add_items():
                     break
 
             token = ""
-            
+            id = 0
             if existe == False:
                 # Create a cursor object for interacting with the MySQL database
                 # Extract the 'alias' and 'token' fields from the JSON data
@@ -170,14 +170,10 @@ def add_items():
                     'data': dataRes
                 }
                 
-                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token_hash, "[0, 0]", "no"))
-                
                 # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
                 #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
                 # Commit the changes to the database
                 conn.commit()
-                
-                id_nueva += 1
             else:
                 agregartoken = "UPDATE drones SET token = ? WHERE id = ?"
                 actualizarActivo = "UPDATE drones SET activos = ? WHERE id = ?"

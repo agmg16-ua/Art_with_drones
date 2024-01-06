@@ -12,11 +12,8 @@
     "request": "^2.88.2",
     "request-ip": "^3.3.0",
     "sqlite": "^5.1.1",
-<<<<<<< HEAD
-    "sqlite3": "^5.1.7"
-=======
-    "sqlite3": "^5.1.7-rc.0"
->>>>>>> fix_security_auditory
+    "sqlite3": "^5.1.7",
+    "winston-transport": "^4.6.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
