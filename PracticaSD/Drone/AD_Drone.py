@@ -147,14 +147,6 @@ class AD_Drone:
         productor.produce(topic, value=f"{self.id_virtual} {self.posicionActual[0]} {self.posicionActual[1]}")
         productor.flush()
 
-    #Envio mi id y espero tres segundo
-    def estoyActivo(self,productor):
-        while self.detener == False:
-            topic = "activos"
-
-            productor.produce(topic, value=f"{self.id_virtual}")
-            productor.flush()
-
     #Operaciones con el mapa
     #Cada vez que me muevo una casilla envio mi posicionActual al engine y espero 2 segundos.
     #Cuando haya llegado a mi destino me mantengo a la escucha de nuevos destinos.
@@ -178,6 +170,7 @@ class AD_Drone:
                     self.estado = "Verde"
                 time.sleep(1)
                 self.enviarPosicion(productor)
+            self.enviarPosicion(productor)
             self.escucharPorKafkaDestino(consumidorDestino)
 
             self.estado = "Rojo"
@@ -195,15 +188,6 @@ class AD_Drone:
             consumidorDestino = self.consumidorDestino()
             #####consumidorMapa = self.consumidorMapa()
             productorPosicion = self.productorPosiciones()
-            productorActividad = self.productorActividad()
-
-            #Los drones envian su id si se encuentran activos
-            estoyActivo = threading.Thread(target=self.estoyActivo,args=(productorActividad,))
-            estoyActivo.start()
-
-            #Los drones envian su id si se encuentran activos
-            estoyActivo = threading.Thread(target=self.escucharPorKafkaDestino,args=(consumidorDestino,))
-            estoyActivo.start()
 
             destino = self.escucharPorKafkaDestino(consumidorDestino)
 
@@ -217,14 +201,11 @@ class AD_Drone:
 
             #Menu con opcion de imprimir el mapa o detener la accion
             opcionAux = -1
-            while opcionAux != 2 and self.detener == False:
-                print("[1] Imprimir Mapa")
-                print("[2] Salir del espectaculo")
+            while self.detener == False:
+                print("[1] Salir del espectaculo")
 
                 opcionAux = int(input())
                 if opcionAux == 1:
-                    print(self.mapa)
-                elif opcionAux == 2:
                     self.detenerAccion()
 
         except Exception as e:
@@ -378,7 +359,7 @@ if __name__ == "__main__":
     ip_Registry = sys.argv[6]
     puerto_Registry = sys.argv[7]
 
-    #SI hay un noveno paraametro lo asigno a la id del drone
+    #SI hay un noveno parametro lo asigno a la id del drone
     if len(sys.argv) == 9:
         if int(sys.argv[8]) == -1:
             drone.auto = True

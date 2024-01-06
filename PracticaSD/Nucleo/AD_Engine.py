@@ -39,6 +39,7 @@ def logger_decorator(func):
         func.logger = logger
         return func(*args, **kwargs)
     return wrapper
+import datetime
 
 #Thread para escuchar drones en paralelo a la ejecucion del espectaculo.
 @logger_decorator
@@ -96,11 +97,10 @@ class AD_Engine:
         #Formato de cada drone añadido: [id,[posX,posY]]
         self.figuras = []
         self.dronesFinales = []
-        self.dronesActuales = []
-        self.dronesDesactivados = []
         self.detener = False
         self.detener_por_clima = False
         self.en_base_por_clima = False
+        self.last_position_received = {} # Diccionario que almacena la última posición recibida de cada drone y el momento de recibirla
         self.logger = logger
 
     #Limpia la terminal para mejor legibilidad
@@ -143,103 +143,8 @@ class AD_Engine:
             print("Error creando consumidor de posiciones: ",e)
 
         return consumer
-    
-    def consumidor_activos(self,broker):
-        # Configura las propiedades del consumidor
-        config = {
-            'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'group.id': 'grupo_9',
-            'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
-        }
-        try:
-            self.logger.info("Creando consumidor de activos")
-            # Crea una instancia del consumidor
-            consumer = Consumer(config)
-        except Exception as e:
-            self.logger.error("Error creando consumidor de posiciones: ",e)
-            print("Error creando consumidor de posiciones: ",e)
-
-        return consumer
-    
 
     #Operaciones en kafka
-    #Comprueba los drones que están activos realmente y los compara con los dronesActuales
-    def comprueba_activos(self,consumidor):
-        try:
-            topic = "activos"
-            consumidor.subscribe(topics=[topic])
-
-            activos = []
-            for dron in self.dronesActuales:
-                activos.append(False)
-
-            inicio = time.time()
-
-            #Escucha las posiciones de los drones mientras la figura no este completada o no se haya detenido el programa
-            while not self.detener and not self.en_base_por_clima:
-                mensaje = consumidor.poll(0.1)
-                if mensaje is not None:
-                    if mensaje.error():
-                        if mensaje.error().code() == KafkaError._PARTITION_EOF:
-                            print('No más mensajes en la partición')
-                        else:
-                            print('Error al recibir mensaje: {}'.format(mensaje.error()))
-                    else:
-                        #Si el drone que envio su id se encuentra entre los desactivados lo vuelvo a incluir a la accion
-                        if len(self.dronesDesactivados) != 0:
-                            for drone in self.dronesDesactivados:
-                                if int(mensaje.value().decode('utf-8')) == drone[0][0]:
-                                    self.dronesActuales.append(drone[0])
-                                    #Como vuelve a estar activado creo una auxiliar para modificar el tamaño de activos
-                                    activos.append(True)
-
-                                    #Compruebo si he cambiado de figura
-                                    existe = False
-                                    for dron in self.dronesFinales:
-                                        if dron[0] == drone[1][0]:
-                                            existe = True
-                                    if existe == False:
-                                        self.dronesFinales.append(drone[1])
-                                        self.dronesFinales = sorted(self.dronesFinales, key=lambda x: x[0])
-
-                                    self.dronesDesactivados.remove(drone)
-
-                        try:
-                            if len(self.dronesActuales) != 0 and len(self.dronesActuales) == len(activos):
-                                #Compruebo las ids que me han mandado en el intervalo de tiempo de 5 segundos
-                                index = 0
-                                for drone in self.dronesActuales:
-                                    if int(mensaje.value().decode('utf-8')) == drone[0]:
-                                        activos[index] = True
-                                        break
-                                    index += 1
-                        except Exception as e:
-                            print("Error eliminando los drones del espectaculo: ",e)
-
-                #Si he leido durante 5 segundos salgo del bucle
-                final = time.time() - inicio
-                if final >= 5:
-                    break
-
-            try:
-                #Si alguno no está activo tengo que añadirlo a desactivados
-                if len(activos) != 0 and all(activos) == False:
-                    #Ahora compruebo los que estan activos y los que no
-                    indice = 0
-                    for activo in activos:
-                        if activo == False:
-                            self.dronesDesactivados.append([self.dronesActuales[indice],self.dronesFinales[indice]])
-                            del self.dronesActuales[indice]
-                            del self.dronesFinales[indice]
-                            indice-=1
-                        indice+=1
-                self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
-            except Exception as e:
-                print("Error eliminando los drones del espectaculo: ",e)
-
-        except Exception as e:
-            print("Error escuchando activos: ", e)
-
     #Envia los destinos Finales a los drones por kafka
     @logger_decorator
     def enviar_por_kafka_destinos(self, productor):
@@ -268,7 +173,7 @@ class AD_Engine:
             cursor = conn.cursor()
 
             id = drone[0]
-
+            
             posicion = str(drone[1])
 
             cursor.execute("UPDATE drones SET posicion = ? WHERE id_virtual = ?", (posicion, id,))
@@ -323,7 +228,33 @@ class AD_Engine:
         except Exception as e:
             self.logger.error("Error comprobando fin: ",e)
             print("Error comprobando fin: ",e)
+    
+    def actualizar_momento(self,id_virtual):
+        self.last_position_received[id_virtual] = datetime.datetime.now()
+        
+    def check_drones(self):
+        # Conectar a la base de datos
+        conn = sqlite3.connect('registry')
+        cur = conn.cursor()
+    
+        while True:
+            now = datetime.datetime.now()
+            for id_virtual, last_received in self.last_position_received.items():
+                if (now - last_received).total_seconds() > 10:  # Si ha pasado más de 10 segundos
+                    print(f"El drone {id_virtual} no está activo")
+                    
+                    cur.execute("UPDATE drones SET activos = ? WHERE id_virtual = ?", (0, id_virtual,))
+                    
+                    conn.commit()
+                else:
+                    cur.execute("UPDATE drones SET activos = ? WHERE id_virtual = ?", (1, id_virtual,))
+                    
+                    conn.commit()
+                    
+            time.sleep(10)  # Esperar 10 segundos antes de comprobar de nuevo
 
+        conn.close()
+            
     #Escucha las posiciones que le van llegando de los drones.
     @logger_decorator
     def escuchar_posicion_drones(self, consumidor):
@@ -331,7 +262,12 @@ class AD_Engine:
             self.logger.info("Escuchando posiciones")
             topic = "posiciones"
             consumidor.subscribe(topics=[topic])
+            
+            # Iniciar el hilo de comprobación de los drones activos
+            threading.Thread(target=self.check_drones, daemon=True).start()
+            
             while not self.figura_completada() and not self.detener and not self.en_base_por_clima:
+                
                 mensaje = consumidor.poll(0.1)
                 if mensaje is not None:
                     if mensaje.error():
@@ -343,35 +279,11 @@ class AD_Engine:
                         valores = mensaje.value().decode('utf-8').split()
                         aux = [int(valores[0]),[int(valores[1]),int(valores[2])]]
                         
+                        self.actualizar_momento(int(valores[0]))
+                        
                         self.actualizarPosicionesBD(aux)
 
-                        self.comprobarFinBD()
-
-                        #Si el drone esta desactivado no deberian llegarme mensajes de el
-                        esta_desactivado = False
-                        if len(self.dronesDesactivados) != 0:
-                            for drone in self.dronesDesactivados:
-                                if aux[0] == drone[0][0]:
-                                    esta_desactivado = True
-
-                        if esta_desactivado == False:
-                            #Si no hay drones añadidos a mi vector de drones actuales añado al nuevo
-                            if len(self.dronesActuales) == 0:
-                                self.dronesActuales.append(aux)
-
-                            #Compruebo si el drone ya lo tengo guardado.
-                            existe = False
-                            for dron in self.dronesActuales:
-                                if dron[0] == aux[0]:
-                                    dron[1] = aux[1]
-                                    existe = True
-                                    break
-
-                            #Si el drone no existe entre los guardados en actuales lo añado al vector
-                            if existe == False:
-                                    self.dronesActuales.append(aux)
-                                    self.dronesActuales = sorted(self.dronesActuales, key=lambda x: x[0])
-
+                        self.comprobarFinBD()            
         except Exception as e:
             self.logger.error("Error escuchando posiciones: ",e)
             print("Error escuchando posiciones: ", e)
@@ -426,9 +338,20 @@ class AD_Engine:
     @logger_decorator
     def retirada_clima(self):
         self.logger.info("Comprobando si hay una retirada por clima")
-        for index in range(len(self.dronesActuales)):
-            if self.dronesActuales[index][1] != [-1,-1]:
+        conn = sqlite3.connect('registry')
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM drones"
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        for row in result:
+            if row[3] != [-1, -1]:
+                conn.close()
                 return False
+
+        conn.close()
+        
         return True
 
     #Veo si la figura está completada o no
@@ -439,7 +362,26 @@ class AD_Engine:
             en_base_por_clima = True
             return True
 
-        return self.dronesActuales == self.dronesFinales
+        conn = sqlite3.connect('registry')
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM drones"
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        self.dronesActuales = []
+        for row in result:
+            self.dronesActuales.append([row[1], eval(row[4])])
+            
+        print("Drones actuales: " + str(self.dronesActuales))
+        print("Drones finales: " + str(self.dronesFinales))
+        iguales = True
+        for drone in self.dronesFinales:
+            if drone not in self.dronesActuales:
+                iguales = False
+                break
+            
+        return iguales
 
     #Operaciones con sockets
     #Leo el socket controladamente
@@ -502,7 +444,7 @@ class AD_Engine:
             print("Error pintando de rojo: ",e)
 
     @logger_decorator
-    def start(self, productor_destinos, consumidor_posiciones, consumidor_activos):
+    def start(self, productor_destinos, consumidor_posiciones):
         self.logger.info("Iniciando espectaculo")
         hay_figura = self.leer_figuras()    #Lee las figuras del fichero json
         try:
@@ -550,10 +492,6 @@ class AD_Engine:
                     #time.sleep(5)
                     #Comprueba los drones que esten activos actualmente
                     #Espero a que no exista ya el mismo hilo.
-                    dronesActivos = None
-                    if dronesActivos == None or dronesActivos.is_alive() == False:
-                        dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                        dronesActivos.start()
 
                     #Escucha las posiciones de los drones en todo momento
                     escucharPosiciones = threading.Thread(target=self.escuchar_posicion_drones,args=(consumidor_posiciones,))
@@ -565,10 +503,6 @@ class AD_Engine:
                         self.enviar_por_kafka_destinos(productor_destinos) #Envio los destinos a los drones
                         ##########self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
                         #Espero a que no exista ya el mismo hilo.
-                        if dronesActivos.is_alive() == False:
-                            #Comprueba los drones que esten activos actualmente
-                            dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                            dronesActivos.start()
                         time.sleep(1)
 
 
@@ -596,13 +530,6 @@ class AD_Engine:
                             while not self.figura_completada():
                                 self.enviar_por_kafka_destinos(productor_destinos) #Envio los destinos a los drones
                                 #############self.enviar_mapa(productor_mapa) #Envio el mapa una ultima vez porque sale del bucle antes de imprimir y enviar el ultimo mensaje
-
-                                #Espero a que no exista ya el mismo hilo.
-                                if dronesActivos.is_alive() == False:
-                                    #Comprueba los drones que esten activos actualmente
-                                    dronesActivos = threading.Thread(target=self.comprueba_activos,args=(consumidor_activos,))
-                                    dronesActivos.start()
-
                                 time.sleep(1)
 
                             self.clear_terminal()
@@ -650,7 +577,7 @@ def clima(engine, archivoApiKey):
             
             ciudad_antigua = ciudad
             
-            apiKey = leerApiKeyOpenWeather('API_KEY')
+            apiKey = leerApiKeyOpenWeather(archivoApiKey)
 
             url = f'https://api.openweathermap.org/data/2.5/weather?q={ciudad}&appid={apiKey}&units=metric'
             
@@ -722,13 +649,12 @@ if __name__ == "__main__":
     productor_destinos = engine.productor_destinos(ip_puerto_broker)
     #########productor_mapa = engine.productor_mapa(ip_puerto_broker)
     consumidor_posiciones = engine.consumidor_posiciones(ip_puerto_broker)
-    consumidor_activos = engine.consumidor_activos(ip_puerto_broker)
 
     time.sleep(2)
 
     #Si el clima no es malo comienzo el espectaculo.
     if engine.detener_por_clima == False:
-        engine.start(productor_destinos, consumidor_posiciones, consumidor_activos) #productor_mapa
+        engine.start(productor_destinos, consumidor_posiciones) #productor_mapa
     else:
         print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
     sys.exit(0)

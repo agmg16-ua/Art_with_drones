@@ -82,16 +82,18 @@
                         const dronesData = [];
 
                         data.forEach(drone => {
-                            // Suponemos que la posición se almacena como "[x,y]"
-                            const [x, y] = JSON.parse(drone.posicion);
+                            if (drone.activos === 1) {
+                                // Suponemos que la posición se almacena como "[x,y]"
+                                const [x, y] = JSON.parse(drone.posicion);
 
-                            // Almacena la información de cada drone en el vector
-                            dronesData.push({
-                                id: drone.id_virtual,
-                                x: parseFloat(x),
-                                y: parseFloat(y),
-                                fin: drone.fin === 'ok' ? 'ok' : 'no'
-                            });
+                                // Almacena la información de cada drone en el vector
+                                dronesData.push({
+                                    id: drone.id_virtual,
+                                    x: parseFloat(x),
+                                    y: parseFloat(y),
+                                    fin: drone.fin === 'ok' ? 'ok' : 'no'
+                                });
+                            }
                         });
 
                         // Muestra el vector en la tabla HTML
