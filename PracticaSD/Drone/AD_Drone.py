@@ -74,11 +74,6 @@ class AD_Drone:
             'group.id': 'grupo_' + str(self.id_virtual),
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
             'enable.auto.commit': False,  # Deshabilita la confirmación automática
-            'security.protocol': 'SSL',
-            'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert.pem',
-            'ssl.key.location': 'SSL/client-key.pem',
-            'ssl.key.password': '123456',
         }
 
         # Crea una instancia del consumidor
@@ -92,11 +87,6 @@ class AD_Drone:
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'security.protocol': 'SSL',
-            'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert.pem',
-            'ssl.key.location': 'SSL/client-key.pem',
-            'ssl.key.password': '123456',
         }
 
         # Crea una instancia del productor
@@ -110,11 +100,6 @@ class AD_Drone:
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'security.protocol': 'SSL',
-            'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert.pem',
-            'ssl.key.location': 'SSL/client-key.pem',
-            'ssl.key.password': '123456',
         }
 
         # Crea una instancia del productor

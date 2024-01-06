@@ -113,11 +113,6 @@ class AD_Engine:
         # Configura las propiedades del productor
         config = {
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
-            'security.protocol': 'SSL',
-            'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert.pem',
-            'ssl.key.location': 'SSL/client-key.pem',
-            'ssl.key.password': '123456',
         }
         try:
             self.logger.info("Creando productor de destinos")
@@ -137,11 +132,6 @@ class AD_Engine:
             'group.id': 'grupo_9',  #El grupo es el mismo para todos los consumidores
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
             'enable.auto.commit': False,  # Deshabilita la confirmación automática
-            'security.protocol': 'SSL',
-            'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert.pem',
-            'ssl.key.location': 'SSL/client-key.pem',
-            'ssl.key.password': '123456',
         }
         
         try:
@@ -160,11 +150,6 @@ class AD_Engine:
             'bootstrap.servers': broker,  # Cambia esto a la dirección de tu cluster Kafka
             'group.id': 'grupo_9',
             'auto.offset.reset': 'latest',  # Comienza desde el inicio del topic
-            'security.protocol': 'SSL',
-            'ssl.ca.location': 'SSL/ca-cert',
-            'ssl.certificate.location': 'SSL/client-cert.pem',
-            'ssl.key.location': 'SSL/client-key.pem',
-            'ssl.key.password': '123456',
         }
         try:
             self.logger.info("Creando consumidor de activos")
