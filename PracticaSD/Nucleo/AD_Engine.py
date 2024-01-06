@@ -373,8 +373,6 @@ class AD_Engine:
         for row in result:
             self.dronesActuales.append([row[1], eval(row[4])])
             
-        print("Drones actuales: " + str(self.dronesActuales))
-        print("Drones finales: " + str(self.dronesFinales))
         iguales = True
         for drone in self.dronesFinales:
             if drone not in self.dronesActuales:
