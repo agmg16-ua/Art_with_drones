@@ -72,7 +72,7 @@ def get_items():
 def add_items():
     global id_nueva
     existe = False
-
+    existeDesactivados = False
     try:
         if request.method == "POST":
             # Get the JSON data from the request
@@ -82,57 +82,62 @@ def add_items():
             conn = sqlite3.connect('registry')
             # Crear un cursor para ejecutar comandos SQL
             cursor = conn.cursor()
-            data = []
             # Consultar datos
-
+            dataRes = []
             cursor.execute('SELECT * FROM drones')
             data = cursor.fetchall()
-
+            
             for item in data:
                 if item[0] == datas['id']:
                     existe = True
+                    break
 
             token = ""
+            
             if existe == False:
                 # Create a cursor object for interacting with the MySQL database
                 # Extract the 'alias' and 'token' fields from the JSON data
                 id = datas['id']
                 alias = datas['alias']
-                agregarlo = "INSERT INTO drones (id, id_virtual, alias, token, posicion, fin) VALUES (?, ?, ?, ?, ?, ?)"
+                agregarlo = "INSERT INTO drones (id, id_virtual, alias, token, posicion, fin, activos) VALUES (?, ?, ?, ?, ?, ?, ?)"
 
                 token = generar_token()
-                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token, "[0, 0]", "no"))
+                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token, "[0, 0]", "no", 1))
                 # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
                 #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
                 # Commit the changes to the database
                 conn.commit()
+                
                 # Create a response dictionary for a successful operation
-                data = [{'id': id, 'id_virtual': id_nueva, 'alias': alias, 'token': token}]
+                dataRes = [{'id': id, 'id_virtual': id_nueva, 'alias': alias, 'token': token}]
                 id_nueva += 1
 
                 response = {
                     'error' : False,
                     'message': 'Item Added Successfully',
-                    'data': data
+                    'data': dataRes
                 }
             else:
                 agregartoken = "UPDATE drones SET token = ? WHERE id = ?"
+                actualizarActivo = "UPDATE drones SET activos = ? WHERE id = ?"
+                
                 token = generar_token()
+                
                 cursor.execute(agregartoken,(token,datas['id']))
-
-                # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
-                #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
+                cursor.execute(actualizarActivo,(1,datas['id']))
+                
                 # Commit the changes to the database
                 conn.commit()
-                data = [{'id': datas['id'],'token': token}]
+                
+                dataRes = [{'id': datas['id'],'token': token}]
 
                 response = {
                     'error' : False,
                     'message': 'Item Updated Successfully',
-                    'data': data
+                    'data': dataRes
                 }
 
-            #Ejecuta el hilo para mantenerme a la escucha de las posiciones de los drones.
+            #Ejecuta el hilo para controlar el token
             expirar_token = threading.Thread(target=controlar_token,args=(token,))
             expirar_token.start()
 
@@ -150,77 +155,6 @@ def add_items():
         }
         # Return a JSON response with HTTP status code 500 (Internal ServerError)
         return jsonify(response), 500
-
-#Actualiza el item correspondiente a la id pasada como parametro, Aqui no deberiamos tener que actualizar valores
-"""
-@app.route('/updateitems/<int:item_id>', methods=['PUT'])
-def update_item(item_id):
-    try:
-        # Get the JSON data from the request
-        datas = request.get_json()
-        print(datas)
-        # Extract the 'name' and 'id' fields from the JSON data
-        id = datas['id']
-        alias = datas['alias']
-
-        # Create a cursor object for interacting with the MySQL database
-        cur = mysql.connection.cursor()
-        # Execute an SQL query to update the 'alias' and 'token' of an item with a specific 'item_id'
-        cur.execute('UPDATE drones SET alias = %s, id = %s WHERE id = %s', (alias, item_id))
-        # Commit the changes to the database
-        mysql.connection.commit()
-        # Close the database cursor
-        cur.close()
-        # Create a response dictionary for a successful update
-        response = {
-            'error' : False,
-            'message': 'Item Updated Successfully',
-            'data': { 'item_id': item_id }
-        }
-        # Return a JSON response with HTTP status code 201 (Created)
-        return jsonify(response), 201
-    except Exception as e:
-        # Handle any exceptions that may occur during the process
-        response = {
-            'error' : False,
-            'message': f'Error Occurred: {e}',
-            'data': None
-        }
-        # Return a JSON response with HTTP status code 500 (Internal ServerError)
-        return jsonify(response), 500
-"""
-
-#Elimina el item con la id pasada por parámetro. EL cliente no debería poder eliminar nada
-"""
-@app.route('/deleteitems/<int:item_id>', methods=['DELETE'])
-def delete_items(item_id):
-    try:
-        # Create a cursor object for interacting with the MySQL database
-        cur = mysql.connection.cursor()
-        # Execute an SQL query to delete an item with a specific 'item_id'
-        cur.execute('DELETE FROM drones WHERE id = %s', (item_id,))
-        # Commit the changes to the database
-        mysql.connection.commit()
-        # Close the database cursor
-        cur.close()
-        # Create a response dictionary for a successful deletion
-        response = {
-            'error' : False,
-            'message': 'Item Deleted Successfully',
-            'data': { 'item_id': item_id }
-        }
-        # Return a JSON response with HTTP status code 201 (Created)
-        return jsonify(response), 201
-    except Exception as e:
-        # Handle any exceptions that may occur during the process
-        response = {
-            'error' : False,
-            'message': f'Error Occurred: {e}',
-            'data': None
-        }
-        # Return a JSON response with HTTP status code 500 (Internal ServerError)
-        return jsonify(response), 500
-"""
 
 """
 #Parte mediante sockets
@@ -374,5 +308,6 @@ if __name__ == "__main__":
     #EPS: 172.27.173.122
     #Movil: 192.168.218.43
     #Alex: 192.168.0.35
+    borrar_bd()
     app.debug = True
     app.run(host='192.168.1.84')#,ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
