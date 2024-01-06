@@ -7,9 +7,52 @@ import sqlite3
 import ssl
 
 #Librerías para API_REST
-from flask import Flask, request
+from flask import Flask, request,abort
 from flask import jsonify
 from flask_sqlalchemy import SQLAlchemy
+
+#Libreria para auditoria
+import logging
+
+#Librerias seguridad
+import hashlib
+from functools import wraps
+
+# Obtiene la dirección IP local de la red actual
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(("8.8.8.8", 80))
+ip_address = s.getsockname()[0]
+s.close()
+
+# Configurar el sistema de registro
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+handler = logging.FileHandler('auditoria.log')
+handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - Acción: %(funcName)s - IP: ' + ip_address + ' - Descripción: %(message)s')
+handler.setFormatter(formatter)
+
+logger.addHandler(handler)
+
+# Decorador para asignar un Logger con IP a la función
+def logger_decorator(func):
+    def wrapper(*args, **kwargs):
+        func.logger = logger
+        return func(*args, **kwargs)
+    return wrapper
+
+#Decorador api_key
+def require_api_key(view_function):
+    @wraps(view_function)
+    def decorated_function(*args, **kwargs):
+        with open('API_KEY_REGISTRY.txt', 'r') as file:
+            api_key = file.read().strip()
+        if request.headers.get('x-api-key') != api_key:
+            abort(401)
+        return view_function(*args, **kwargs)
+    return decorated_function
 
 #Se crea una
 app = Flask(__name__)
@@ -32,9 +75,12 @@ token_dron_actual = ""      #Token de acceso
 
 #Parte API_REST
 #Obtendrá los datos que haya en la base de datos
+@logger_decorator
 @app.route('/obtenerdatos', methods=['GET'])
+@require_api_key
 def get_items():
     try:
+        logger.info('Se ha solicitado obtener los datos de los drones de la base de datos')
         if request.method == "GET":
             # Conectar a la base de datos (creará el archivo si no existe)
             conn = sqlite3.connect('registry')
@@ -58,6 +104,7 @@ def get_items():
             # Return a JSON response with HTTP status code 200 (OK)
             return jsonify(response), 200
     except Exception as e:
+        logger.error(f'Error al obtener los datos de los drones de la base de datos: {e}')
         # Handle any exceptions that may occur during the process
         response = {
             'error': False,
@@ -68,12 +115,15 @@ def get_items():
         return jsonify(response), 500
 
 #Añade una serie de elementos en la base de datos
+@logger_decorator
 @app.route('/unirme', methods=['POST'])
+@require_api_key
 def add_items():
     global id_nueva
     existe = False
     existeDesactivados = False
     try:
+        logger.info('Se ha solicitado añadir un nuevo drone a la base de datos')
         if request.method == "POST":
             # Get the JSON data from the request
             datas = request.get_json()
@@ -102,7 +152,9 @@ def add_items():
                 agregarlo = "INSERT INTO drones (id, id_virtual, alias, token, posicion, fin, activos) VALUES (?, ?, ?, ?, ?, ?, ?)"
 
                 token = generar_token()
-                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token, "[0, 0]", "no", 1))
+                token_hash = hashlib.sha256(token.encode('utf-8')).hexdigest()
+                
+                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token_hash, "[0, 0]", "no", 1))
                 # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
                 #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
                 # Commit the changes to the database
@@ -117,13 +169,23 @@ def add_items():
                     'message': 'Item Added Successfully',
                     'data': dataRes
                 }
+                
+                cursor.execute(agregarlo, (int(id),int(id_nueva),alias, token_hash, "[0, 0]", "no"))
+                
+                # Execute an SQL query to insert the 'alias' and 'token' into the 'drones' table
+                #cur.execute('INSERT INTO drones (alias, token) VALUES (%s, %s)',(alias, token))
+                # Commit the changes to the database
+                conn.commit()
+                
+                id_nueva += 1
             else:
                 agregartoken = "UPDATE drones SET token = ? WHERE id = ?"
                 actualizarActivo = "UPDATE drones SET activos = ? WHERE id = ?"
                 
                 token = generar_token()
                 
-                cursor.execute(agregartoken,(token,datas['id']))
+                token_hash = hashlib.sha256(token.encode('utf-8')).hexdigest()
+                cursor.execute(agregartoken,(token_hash,datas['id']))
                 cursor.execute(actualizarActivo,(1,datas['id']))
                 
                 # Commit the changes to the database
@@ -137,8 +199,8 @@ def add_items():
                     'data': dataRes
                 }
 
-            #Ejecuta el hilo para controlar el token
-            expirar_token = threading.Thread(target=controlar_token,args=(token,))
+            #Ejecuta el hilo para controlar el token.
+            expirar_token = threading.Thread(target=controlar_token,args=(id,))
             expirar_token.start()
 
             # Close the database cursor
@@ -147,6 +209,7 @@ def add_items():
             # Return a JSON response with HTTP status code 201 (Created)
         return jsonify(response), 201
     except Exception as e:
+        logger.error(f'Error al añadir un nuevo drone a la base de datos: {e}')
         # Handle any exceptions that may occur during the process
         response = {
             'error' : False,
@@ -216,13 +279,17 @@ def escribir_bd(id, alias):
         print("Error escribiendo bd:", e)
 """
 #Genera un token de acceso
+@logger_decorator
 def generar_token():
+    logger.info('Se ha generado un nuevo token de acceso')
     token = str(uuid.uuid4())
     return token
 
 #Vacia el fichero antiguo de drones antes de empezar a registrar
+@logger_decorator
 def borrar_bd():
     try:
+        logger.info('Se ha solicitado vaciar el fichero de drones')
         app = Flask(__name__)
 
         # Conectar a la base de datos (creará el archivo si no existe)
@@ -236,6 +303,7 @@ def borrar_bd():
 
         conn.close()
     except Exception as e:
+        logger.error(f'Error al vaciar el fichero de drones: {e}')
         print("Error al vaciar el fichero:", e)
 
 """
@@ -277,7 +345,9 @@ def handleSockets(num_args,puerto_args,socket):
         print("Error:", e)
 """
 
-def controlar_token(token):
+@logger_decorator
+def controlar_token(id):
+    logger.info('Se ha iniciado el hilo para controlar el token de acceso')
     time.sleep(20)
     print("Ya es la horaaa")
     # Conectar a la base de datos (o crearla si no existe)
@@ -287,16 +357,17 @@ def controlar_token(token):
     cursor = conexion.cursor()
 
     # Sentencia SQL DELETE
-    consulta_borrado = "UPDATE drones SET token = NULL WHERE token = ?"
+    consulta_borrado = "UPDATE drones SET token = NULL WHERE id = ?"
 
     # Ejecutar la sentencia con el parámetro proporcionado
-    cursor.execute(consulta_borrado, (token,))
+    cursor.execute(consulta_borrado, (id,))
 
     # Confirmar la transacción
     conexion.commit()
 
     # Cerrar la conexión
     conexion.close()
+    logger.info('Se ha borrado el token de acceso del drone')
 
 if __name__ == "__main__":
     """
@@ -310,4 +381,4 @@ if __name__ == "__main__":
     #Alex: 192.168.0.35
     borrar_bd()
     app.debug = True
-    app.run(host='192.168.1.84')#,ssl_context=('certificados/certificado_registry.crt', 'certificados/clave_privada_registry.pem'))
+    app.run(host='192.168.1.84')

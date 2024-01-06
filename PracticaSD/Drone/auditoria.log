@@ -1,0 +1,322 @@
+2024-01-02 14:31:23,390 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:31:23,405 - ERROR - Acción: registrarse - IP: 127.0.1.1 - Descripción: Error registrando drone: Expecting value: line 1 column 1 (char 0)
+2024-01-02 14:31:32,288 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:31:32,298 - ERROR - Acción: registrarse - IP: 127.0.1.1 - Descripción: Error registrando drone: Expecting value: line 1 column 1 (char 0)
+2024-01-02 14:39:16,538 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:39:16,554 - ERROR - Acción: registrarse - IP: 127.0.1.1 - Descripción: Error registrando drone: Expecting value: line 1 column 1 (char 0)
+2024-01-02 14:42:18,619 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:45:59,534 - INFO - Acción: solicitar_inclusion - IP: 127.0.1.1 - Descripción: Solicitando inclusion
+2024-01-02 14:45:59,534 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo en socket
+2024-01-02 14:45:59,534 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:00,837 - INFO - Acción: solicitar_inclusion - IP: 127.0.1.1 - Descripción: Solicitando inclusion
+2024-01-02 14:46:00,837 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo en socket
+2024-01-02 14:46:00,837 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:01,429 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:46:01,432 - ERROR - Acción: registrarse - IP: 127.0.1.1 - Descripción: Error registrando drone: HTTPConnectionPool(host='192.168.1.84', port=5000): Max retries exceeded with url: /unirme (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f684757fc10>: Failed to establish a new connection: [Errno 111] Connection refused'))
+2024-01-02 14:46:02,020 - INFO - Acción: solicitar_inclusion - IP: 127.0.1.1 - Descripción: Solicitando inclusion
+2024-01-02 14:46:02,020 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo en socket
+2024-01-02 14:46:02,020 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:57,622 - INFO - Acción: registrarse - IP: 127.0.1.1 - Descripción: Registrando drone
+2024-01-02 14:46:58,569 - INFO - Acción: solicitar_inclusion - IP: 127.0.1.1 - Descripción: Solicitando inclusion
+2024-01-02 14:46:58,570 - INFO - Acción: escribe_socket - IP: 127.0.1.1 - Descripción: Escribiendo en socket
+2024-01-02 14:46:58,570 - INFO - Acción: lee_socket - IP: 127.0.1.1 - Descripción: Leyendo socket
+2024-01-02 14:46:58,571 - INFO - Acción: run - IP: 127.0.1.1 - Descripción: Activando y ejecutando el drone
+2024-01-02 14:46:58,571 - INFO - Acción: consumidorDestino - IP: 127.0.1.1 - Descripción: Consumidor de destinos creado
+2024-01-02 14:46:58,592 - INFO - Acción: productorPosiciones - IP: 127.0.1.1 - Descripción: Productor de posiciones creado
+2024-01-02 14:46:58,592 - INFO - Acción: productorActividad - IP: 127.0.1.1 - Descripción: Productor de actividad creado
+2024-01-02 14:46:58,593 - INFO - Acción: escucharPorKafkaDestino - IP: 127.0.1.1 - Descripción: Escuchando destino de drones
+2024-01-02 14:46:58,593 - INFO - Acción: escucharPorKafkaDestino - IP: 127.0.1.1 - Descripción: Escuchando destino de drones
+2024-01-02 15:26:38,502 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-02 15:26:38,790 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-02 15:26:38,791 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-02 15:26:38,791 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-02 15:26:38,793 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-02 15:26:38,793 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-02 15:26:38,796 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-02 15:26:38,796 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-02 15:26:38,797 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-02 15:26:38,797 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 14:05:39,094 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:05:39,098 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+2024-01-03 14:05:54,034 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:05:54,037 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+2024-01-03 14:10:18,383 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:10:18,387 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+2024-01-03 14:19:16,382 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:19:16,386 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: ('Connection aborted.', ConnectionResetError(104, 'Connection reset by peer'))
+2024-01-03 14:19:48,120 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:19:48,140 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: HTTPSConnectionPool(host='192.168.1.84', port=5000): Max retries exceeded with url: /unirme (Caused by SSLError(CertificateError("hostname '192.168.1.84' doesn't match 'victor'")))
+2024-01-03 14:21:50,959 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:21:50,980 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: HTTPSConnectionPool(host='victor', port=5000): Max retries exceeded with url: /unirme (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f372250b220>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution'))
+2024-01-03 14:23:44,908 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:23:44,921 - ERROR - Acción: registrarse - IP: 192.168.1.84 - Descripción: Error registrando drone: HTTPSConnectionPool(host='192.168.1.84', port=5000): Max retries exceeded with url: /unirme (Caused by SSLError(CertificateError("hostname '192.168.1.84' doesn't match 'victor'")))
+2024-01-03 14:49:58,316 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:52:02,873 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:53:30,442 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-03 14:53:30,442 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-03 14:53:30,442 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-03 14:53:31,476 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-03 14:53:31,911 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-03 14:53:31,911 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-03 14:53:31,911 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-03 14:53:31,913 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-03 14:53:31,914 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-03 14:53:31,916 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-03 14:53:31,917 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-03 14:53:31,918 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 14:53:31,918 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:35,235 - INFO - Acción: mover - IP: 192.168.1.84 - Descripción: Moviendo drone
+2024-01-03 15:08:36,236 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:37,930 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:38,931 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:39,933 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:40,934 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:41,935 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:41,936 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:44,286 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:44,287 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:46,300 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:46,301 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:48,438 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:48,438 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:50,354 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:50,355 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:52,369 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:52,369 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:54,377 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:54,377 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:56,398 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:56,399 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:08:58,410 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:08:58,410 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:00,423 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:00,423 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:02,439 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:02,440 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:04,450 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:04,450 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:06,463 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:06,463 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:08,470 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:08,471 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:10,482 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:10,483 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:12,504 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:12,505 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:14,517 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:14,518 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:16,523 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:16,524 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:18,537 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:18,538 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:20,547 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:20,548 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:22,558 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:22,559 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:24,578 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:24,579 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:26,591 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:26,592 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:28,597 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:28,598 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:30,609 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:30,610 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:32,621 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:32,622 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:34,642 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:34,643 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:36,649 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:36,650 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:38,665 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:38,666 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:40,680 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:40,681 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:42,700 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:42,701 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:44,715 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:44,716 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:46,723 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:46,724 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:48,739 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:48,740 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:50,751 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:50,752 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:52,765 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:52,766 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-03 15:09:54,783 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
+2024-01-03 15:09:54,784 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 12:58:06,873 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 12:58:11,362 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 12:58:11,363 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 12:58:11,363 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 12:58:11,364 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 12:58:11,365 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 12:58:11,384 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 12:58:11,385 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 12:58:11,385 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 12:58:11,385 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 13:01:52,373 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 13:01:52,602 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 13:01:52,603 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 13:01:52,603 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 13:01:52,604 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 13:01:52,604 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 13:01:52,607 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 13:01:52,607 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 13:01:52,608 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 13:01:52,608 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 13:02:04,858 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 13:02:05,064 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 13:02:05,064 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 13:02:05,064 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 13:02:05,066 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 13:02:05,066 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 13:02:05,067 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 13:02:05,068 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 13:02:05,068 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 13:02:05,068 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 13:03:30,109 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 13:03:32,036 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 13:03:32,037 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 13:03:32,037 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 13:03:32,038 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 13:03:32,039 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 13:03:32,041 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 13:03:32,042 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 13:03:32,042 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 13:03:32,042 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 15:07:06,863 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 15:07:07,258 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 15:07:07,258 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 15:07:07,258 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 15:07:07,260 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 15:07:07,260 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 15:07:07,261 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 15:07:07,261 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 15:07:07,262 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 15:07:07,262 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 15:08:34,103 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 15:08:34,474 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 15:08:34,475 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 15:08:34,475 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 15:08:34,476 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 15:08:34,476 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 15:08:34,479 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 15:08:34,480 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 15:08:34,481 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 15:08:34,481 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 15:08:49,880 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 15:08:50,091 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 15:08:50,091 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 15:08:50,091 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 15:08:50,092 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 15:08:50,092 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 15:08:50,094 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 15:08:50,094 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 15:08:50,094 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 15:08:50,095 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 15:10:23,026 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 15:10:23,279 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 15:10:23,280 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 15:10:23,280 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 15:10:23,281 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 15:10:23,281 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 15:10:23,300 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to create consumer: ssl.certificate.location failed: error:0A080009:SSL routines::PEM lib"}
+2024-01-04 15:12:29,520 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 15:12:29,735 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 15:12:29,735 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 15:12:29,736 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 15:12:29,737 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 15:12:29,737 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 15:12:29,746 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to create consumer: ssl.key.location failed: error:0A080009:SSL routines::PEM lib"}
+2024-01-04 15:14:16,943 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 15:14:17,161 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 15:14:17,161 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 15:14:17,161 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 15:14:17,163 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 15:14:17,163 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 15:14:17,175 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to create consumer: Private key check failed: error:0A0000B1:SSL routines::no certificate assigned"}
+2024-01-04 16:05:08,348 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 16:05:10,097 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 16:05:10,097 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 16:05:10,097 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 16:05:10,099 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 16:05:10,099 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 16:05:10,110 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to create consumer: Private key check failed: error:0A0000B1:SSL routines::no certificate assigned"}
+2024-01-04 16:07:26,898 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 16:07:27,274 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 16:07:27,274 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 16:07:27,275 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 16:07:27,276 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 16:07:27,276 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 16:07:27,283 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to create consumer: ssl.certificate.location failed: error:0A080009:SSL routines::PEM lib"}
+2024-01-04 16:10:01,246 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 16:10:01,460 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 16:10:01,461 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 16:10:01,461 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 16:10:01,462 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 16:10:01,463 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 16:10:01,469 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to create consumer: ssl.certificate.location failed: error:0A080009:SSL routines::PEM lib"}
+2024-01-04 16:11:06,301 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 16:11:06,547 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 16:11:06,547 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 16:11:06,547 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 16:11:06,549 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 16:11:06,549 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 16:11:06,560 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to create consumer: Private key check failed: error:0A0000B1:SSL routines::no certificate assigned"}
+2024-01-04 16:32:06,267 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 16:32:07,468 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 16:32:07,469 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 16:32:07,469 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 16:32:07,471 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 16:32:07,471 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 16:32:07,480 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: KafkaError{code=_INVALID_ARG,val=-186,str="Failed to create consumer: ssl.key.location failed: error:0A080002:SSL routines::system lib"}
+2024-01-04 16:33:09,084 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 16:33:10,259 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 16:33:10,259 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 16:33:10,259 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 16:33:10,261 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 16:33:10,261 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 16:33:10,271 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 16:33:10,276 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 16:33:10,282 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 16:33:10,283 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 16:34:38,574 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-04 16:34:38,818 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-04 16:34:38,818 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-04 16:34:38,819 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-04 16:34:38,821 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-04 16:34:38,821 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-04 16:34:38,831 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-04 16:34:38,835 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-04 16:34:38,840 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-04 16:34:38,841 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-05 11:01:50,480 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:01:53,363 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:01:53,366 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [Errno 2] No such file or directory
+2024-01-05 11:01:57,953 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:01:57,954 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [Errno 2] No such file or directory
+2024-01-05 11:02:35,062 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:02:35,063 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [Errno 2] No such file or directory
+2024-01-05 11:02:37,673 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:02:37,905 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:02:37,910 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: check_hostname requires server_hostname
+2024-01-05 11:04:32,211 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:04:32,467 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:04:32,500 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: IP address mismatch, certificate is not valid for '192.168.1.84'. (_ssl.c:1007)
+2024-01-05 11:06:09,857 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:06:10,092 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:06:10,110 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'engine_dron.pem'. (_ssl.c:1007)
+2024-01-05 11:06:25,178 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:06:25,391 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:06:25,409 - ERROR - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Error solicitando inclusion: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'localhost'. (_ssl.c:1007)
+2024-01-05 11:07:44,661 - INFO - Acción: registrarse - IP: 192.168.1.84 - Descripción: Registrando drone
+2024-01-05 11:07:44,849 - INFO - Acción: solicitar_inclusion - IP: 192.168.1.84 - Descripción: Solicitando inclusion
+2024-01-05 11:07:44,868 - INFO - Acción: escribe_socket - IP: 192.168.1.84 - Descripción: Escribiendo en socket
+2024-01-05 11:07:44,868 - INFO - Acción: lee_socket - IP: 192.168.1.84 - Descripción: Leyendo socket
+2024-01-05 11:07:44,871 - INFO - Acción: run - IP: 192.168.1.84 - Descripción: Activando y ejecutando el drone
+2024-01-05 11:07:44,871 - INFO - Acción: consumidorDestino - IP: 192.168.1.84 - Descripción: Consumidor de destinos creado
+2024-01-05 11:07:44,896 - INFO - Acción: productorPosiciones - IP: 192.168.1.84 - Descripción: Productor de posiciones creado
+2024-01-05 11:07:44,899 - INFO - Acción: productorActividad - IP: 192.168.1.84 - Descripción: Productor de actividad creado
+2024-01-05 11:07:44,902 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-05 11:07:44,902 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
