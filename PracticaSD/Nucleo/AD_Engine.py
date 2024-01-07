@@ -237,7 +237,7 @@ class AD_Engine:
         conn = sqlite3.connect('registry')
         cur = conn.cursor()
     
-        while True:
+        while self.detener == False and self.detener_por_clima == False:
             now = datetime.datetime.now()
             for id_virtual, last_received in self.last_position_received.items():
                 if (now - last_received).total_seconds() > 10:  # Si ha pasado más de 10 segundos
@@ -410,9 +410,11 @@ class AD_Engine:
     def stop_clima(self):
         self.logger.info("Deteniendo por clima")
         self.detener_por_clima = True
-
+        
         for index in range(len(self.dronesFinales)):
             self.dronesFinales[index][1] = [-1,-1]
+            
+        self.todosRojo()
 
     #Se detiene por un mal funcionamiento
     @logger_decorator
@@ -540,8 +542,6 @@ class AD_Engine:
             #Si la ejecución se ha detenido por el clima sale el mensaje de finalización
             if self.detener_por_clima == True:
                 print("CONDICIONES CLIMATICAS ADVERSAS.ESPECTACULO FINALIZADO")
-                if escucharPosiciones.is_alive():
-                    escucharPosiciones.detener()
 
             sys.exit(0)
         except Exception as e:
