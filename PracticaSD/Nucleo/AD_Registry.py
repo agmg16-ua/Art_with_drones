@@ -377,4 +377,4 @@ if __name__ == "__main__":
     #Alex: 192.168.0.35
     borrar_bd()
     app.debug = True
-    app.run(host='192.168.1.84')
+    app.run(host='192.168.1.84',ssl_context=('engine_dron/engine_dron.pem', 'engine_dron/decrypted_key.pem'))

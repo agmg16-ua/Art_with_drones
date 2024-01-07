@@ -13,6 +13,10 @@ import logging
 import hashlib
 import ssl
 
+#Desactivar warnings de certificados autofirmados
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 # Obtiene la dirección IP local de la red actual
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.connect(("8.8.8.8", 80))
@@ -230,7 +234,7 @@ class AD_Drone:
                 'id': self.id,
                 'alias':self.alias
             }
-            url = 'http://192.168.1.84:5000/unirme'
+            url = 'https://192.168.1.84:5000/unirme'
             
             #Lee la API key del archivo
             with open('API_KEY_REGISTRY.txt', 'r') as file:
@@ -238,8 +242,8 @@ class AD_Drone:
             
             # Incluye la API key en los encabezados de la solicitud
             headers = {'x-api-key': api_key}
-            
-            response = requests.post(url,json=datos,headers=headers)
+            cert = ('engine_dron/engine_dron.pem', 'engine_dron/decrypted_key.pem')
+            response = requests.post(url,json=datos,headers=headers,cert=cert,verify=False)
 
             #if response.status_code == 201:
             contenido=response.content
