@@ -94,19 +94,6 @@ class AD_Drone:
 
         return productor
 
-    @logger_decorator
-    def productorActividad(self):
-        self.logger.info('Productor de actividad creado')
-        # Configura las propiedades del productor
-        config = {
-            'bootstrap.servers': self.broker,  # Cambia esto a la dirección de tu cluster Kafka
-        }
-
-        # Crea una instancia del productor
-        productor = Producer(config)
-
-        return productor
-
     #Operaciones en kafka
     #Escuha todos los destinos de los drones y filtro para elegir el mío.
     #Al encontrarlo almaceno el destino en mi posicionFin.

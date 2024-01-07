@@ -6007,3 +6007,4 @@
 2024-01-07 11:19:22,436 - INFO - Acción: enviarPosicion - IP: 192.168.1.84 - Descripción: Enviando posición actual
 2024-01-07 11:19:22,437 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
 2024-01-07 11:19:22,438 - INFO - Acción: escucharPorKafkaDestino - IP: 192.168.1.84 - Descripción: Escuchando destino de drones
+2024-01-07 12:43:07,776 - ERROR - Acción: run - IP: 192.168.1.84 - Descripción: Error durante la acción: 
