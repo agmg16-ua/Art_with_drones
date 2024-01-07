@@ -237,7 +237,7 @@ class AD_Engine:
         conn = sqlite3.connect('registry')
         cur = conn.cursor()
     
-        while True:
+        while self.detener_por_clima == False:
             now = datetime.datetime.now()
             for id_virtual, last_received in self.last_position_received.items():
                 if (now - last_received).total_seconds() > 10:  # Si ha pasado más de 10 segundos
